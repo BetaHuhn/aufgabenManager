@@ -1,0 +1,38 @@
+<!-- index.html - Maximilian Schiller 2020 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Fehler</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/register/main.css">
+</head>
+
+<body>
+  <div class="topnav" id="myTopnav">
+    <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
+    <a id="logout" href="/logout" class="menu" style="display: none;">Logout</a>
+    <a href="/settings" class="menu" style="display: none;">Settings</a>
+    <a href="/peers" class="menu" style="display: none;">Peers</a>
+    <a href="javascript:void(0);" class="icon"  style="display: none;" onclick="myFunction()">
+      <i class="burger fa fa-bars"></i>
+    </a>
+  </div>
+  <main>
+    <div class="container">
+      <div id="user" style="height: 80px;" class="login">
+        <div id="register">
+          <p class="invite" id="error"><%=message%></p>
+          
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="/register/main.js"></script>
+</body>
+
+</html>
