@@ -1,0 +1,43 @@
+<!-- index.html - Maximilian Schiller 2020 -->
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    <meta name="viewport" content="widp=device-widp,initial-scale=1">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="main.css">
+    <script src="https://kit.fontawesome.com/ca8ffbc206.js" crossorigin="anonymous"></script>
+</head>
+
+<body onload="auth()">
+  <div class="topnav" id="myTopnav">
+    <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
+    <a id="logout" href="/logout" class="menu">Logout</a>
+    <a id="new" href="/new" class="menu">Neu</a>
+    <a href="/" class="menu active">Aufgaben</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="burger fa fa-bars"></i>
+    </a>
+  </div>
+
+  <main>
+    <div class="dashboard" id="dashboard">
+      <h1>Aufgaben</h1>
+      <div id="legend" class="legend parent">
+        <p class="leftest">Fach</p>
+        <p class="child second" >Abgabe</p>
+        <p class="child third">Aufgabe</p>
+        <p class="child fourth">Downloads</p>
+        <p class="child fith">Dateien</p>
+        
+      </div>
+    </div>
+  </main>
+  <script src="main.js"></script>
+</body>
+
+</html>
