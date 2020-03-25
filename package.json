@@ -27,6 +27,7 @@
     "mongoose": "^5.9.2",
     "nanoid": "^2.1.11",
     "nodemailer": "^6.4.6",
+    "request": "^2.88.2",
     "validator": "^13.0.0",
     "zip-folder": "^1.0.0"
   }

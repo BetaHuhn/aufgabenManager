@@ -3,6 +3,7 @@ const generate = require('nanoid/generate')
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const fileUpload = require('express-fileupload');
+const request = require('request');
 const _ = require('lodash');
 var path = require('path');
 const zipFolder = require('zip-folder');
@@ -55,6 +56,21 @@ let transporter = nodemailer.createTransport({
 
 var isNew = true;
 var apiKey = require('../key.json').key
+
+async function sendPush(name, klasse, fach, abgabe){
+    var url = "https://maker.ifttt.com/trigger/aufgabenBotAufgabe/with/key/eRyGmfJa6ti49eJB84D5xSEGfvYYmasLmNkrhOPPXlp"
+    request(url + "?value1=" + name + "&value2=" + fach +"(" + klasse + ")" + "&value3=" + abgabe, (err, res, body) => {
+        if(err){
+            console.log(err)
+        }
+    });
+    var url = "https://maker.ifttt.com/trigger/meow/with/key/c93lQIUSaBNCaVxAimevf"
+    request(url + "?value1=" + name + "&value2=" + fach + "&value3=" + abgabe, (err, res, body) => {
+        if(err){
+            console.log(err)
+        }
+    });
+}
 
 router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middleware.cache(900)
     console.log(req.session.name + " is getting home data")
@@ -201,6 +217,7 @@ router.post('/api/new/aufgabe', middleware.auth({lehrer: true}), async (req, res
                                     downloads: doc.downloads
                                 }
                             });
+                            sendPush(req.session.name, doc.klasse, doc.fach, doc.abgabe)
                         }
                     })
                 } catch (error) {

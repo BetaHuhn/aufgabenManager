@@ -127,7 +127,11 @@ async function upload() {
             document.getElementById('error').innerHTML = `<p class="message" id="message">Hochladen...</h1>`;
             document.getElementById('form').style.display = "none";
             var e = document.getElementById("klasse");
-            var klasse = e.options[e.selectedIndex].value;
+            if(role == "admin"){
+                var klasse = e.value;
+            }else{
+                var klasse = e.options[e.selectedIndex].value;
+            }
             const options = {
                 method: 'POST',
                 headers: {
