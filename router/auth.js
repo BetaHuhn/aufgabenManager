@@ -91,7 +91,7 @@ router.post('/auth/register', async(req, res) => {
             res.json({
                 status: '406'
             });
-        } else if (password.match("^[-_!?a-zA-Z0-9]*$")) {
+        } else if (password.length >= 0) {
             if (validEmail(email) == false) {
                 console.log(email + " not valid");
                 res.json({

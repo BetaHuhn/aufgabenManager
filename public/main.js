@@ -53,12 +53,14 @@ async function auth(){
         text.id = 'message'
         last.parentElement.appendChild(text)
     }
-    var button = document.createElement('button')
-    button.className = 'addButton';
-    button.onclick = function(){window.location.replace('/new')};
-    button.innerHTML = 'Aufgabe erstellen';
-    button.id = "addBtn"
-    last.parentElement.appendChild(button);
+    if(role != 'user'){
+      var button = document.createElement('button')
+      button.className = 'addButton';
+      button.onclick = function(){window.location.replace('/new')};
+      button.innerHTML = 'Aufgabe erstellen';
+      button.id = "addBtn"
+      last.parentElement.appendChild(button);
+    }
   } else if (json.status == 405) {
     console.log(json);
     var message = createElement('div', 'message', 'message')
