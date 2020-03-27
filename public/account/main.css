@@ -146,7 +146,7 @@ body {
 
 .login h1{
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin-top: 1.3rem;
     margin-bottom: 1rem;
     color: var(--font-color)
@@ -154,7 +154,7 @@ body {
 
 .login p{
     margin-left: 10px;
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
 .input {
@@ -167,38 +167,15 @@ body {
     border-radius: 10px;
     border: 0;
     outline: 0;
-    margin-top: -0.5rem;
+    margin-top: 1rem;
     padding: 12px 14px;
 }
 
-.klasse {
-    display: block;
-    margin: auto;
-    width: 90px;
-    background: var(--input-color);
-    color: var(--font-color-hover);
-    font-size: 1rem;
-    border-radius: 10px;
-    border: 0;
-    outline: 0;
-    margin-top: -0.5rem;
-    padding: 12px 14px;
-    margin-left: 20px;
-    float: left;
+.klassen {
+    font-size: 20px;
 }
 
-.login select{
-    margin-left: 20px;
-    width: 100px;
-}
-
-#fach{
-    width: 300px;
-    float: left;
-    margin-left: 5px;
-}
-
-.login textarea {
+.result{
     display: block;
     margin: auto;
     width: 440px;
@@ -228,62 +205,6 @@ body {
     border-radius: 10px;
     font-size: 1rem;
     padding: 15px 38px;
-}
-
-.file input{
-    font-size: 1rem;
-    display: block;
-    margin: auto;
-    width: 440px;
-    background: var(--white);
-    color: var(--font-color-hover);
-    font-size: 1rem;
-    border-radius: 10px;
-    border: 0;
-    outline: 0;
-    margin-top: 0.5rem;
-    padding: 12px 14px;
-}
-
-.container{
-    margin: auto;
-}
-
-
-.saveBtn{
-    display: block;
-    border: 0;
-    outline: 0;
-    cursor: pointer;
-    margin: auto;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: var(--primary-color);
-    color: #fff;
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    font-size: 1rem;
-    padding: 15px 38px;
-}
-
-#loader {
-    position: absolute;
-    left: 50%;
-    top: 10px;
-    z-index: 1;
-    width: 100px;
-    height: 100px;
-    margin: -75px 0 0 -75px;
-    border: 16px solid #ffffff;
-    border-radius: 50%;
-    border-top: 16px solid #7f8ff4;
-    width: 120px;
-    height: 120px;
-    -webkit-animation: spin 2s linear infinite;
-    animation: spin 2s linear infinite;
 }
 
 @-webkit-keyframes spin {
@@ -356,10 +277,15 @@ body {
     
     .login p{
         margin-left: 10px;
-        font-size: 1.2rem;
+        font-size: 1rem;
     }
     
     .input {
+        width: 400px;
+        padding: 15px 16px;
+    }
+
+    .result{
         width: 400px;
         padding: 15px 16px;
     }
@@ -414,6 +340,11 @@ body {
         padding: 15px 16px;
     }
 
+    .result{
+        width: 350px;
+        padding: 15px 16px;
+    }
+
     .login textarea {
         width: 350px;
         padding: 12px 14px;
@@ -428,10 +359,6 @@ body {
         width: 200px;
         float: left;
         margin-left: 5px;
-    }
-    .file input{
-        width: 320px;
-        font-size: 0.8rem;
     }
 }
 
@@ -461,11 +388,16 @@ body {
     
     .login p{
         margin-left: 6px;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
     
     .input {
-        width: 280px;
+        width: 270px;
+        padding: 12px 12px;
+    }
+
+    .result{
+        width: 270px;
         padding: 12px 12px;
     }
 
@@ -484,11 +416,6 @@ body {
         width: 150px;
         float: left;
         margin-left: 5px;
-    }
-
-    .file input{
-        width: 280px;
-        font-size: 0.8rem;
     }
 }
 

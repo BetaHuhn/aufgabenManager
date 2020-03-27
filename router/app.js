@@ -76,7 +76,7 @@ router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middlewa
     console.log(req.session.name + " is getting home data")
     try{
         var aufgaben = await Aufgabe.findBySession(req.session)
-        console.log(aufgaben)
+        //console.log(aufgaben)
         var data = []
         for(i in aufgaben){
             data.push({
@@ -99,18 +99,17 @@ router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middlewa
             user:{
                 user_id: req.session.user_id,
                 name: req.session.name,
-                email: req.session.email,
                 role: req.session.role,
                 klassen: req.session.klassen
             }
         })
     }catch(error){
        if (error.code == 405) {
-            console.log("File not found")
-            res.json({status: 404, response:"file not found"})
+            console.log("user not found")
+            res.json({status: 404, response:"user not found"})
         } else {
             console.log(error)
-            res.json({status: 404, response:"file not found"})
+            res.json({status: 500, response:"error"})
         }
     }
 });
@@ -120,7 +119,7 @@ router.post('/api/new/aufgabe', middleware.auth({lehrer: true}), async (req, res
     if(req.body != undefined){
         if((req.body.klasse != undefined || req.body.klasse != '' || req.body.klasse.length != 0) && req.body.fach != undefined && req.body.abgabe != undefined && req.body.text != undefined){
             if(req.session.klassen.includes(req.body.klasse) || req.session.role == "admin"){
-                var uid = generate('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 16)
+                var uid = generate('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 32)
                 if (!req.files || Object.keys(req.files).length === 0) {
                     var files = {count: 0}
                 } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
@@ -260,6 +259,7 @@ router.get('/api/delete/aufgabe', middleware.auth({lehrer: true}), async(req, re
             .then(doc => {
                 console.log(doc)
                 middleware.resetCache(doc.klasse)
+                console.log("Aufgabe: " + aufgabe.aufgaben_id + " deleted by " + req.session.name)
                 res.json({
                     status: 200,
                     response: 'success'
@@ -287,8 +287,7 @@ router.get('/api/delete/aufgabe', middleware.auth({lehrer: true}), async(req, re
 });
 
 router.get('/register', async(req, res) => {
-    console.log("/register")
-    console.log(req.query.token)
+    console.log(req.query.token + " was accessed")
     if(req.query == undefined){
         res.render('inviteError.ejs', {message: 'Um einen Account zu erstellen, brauchst du zur Zeit einen Invite Link. Sende uns eine Mail für weitere Infos: zgk@mxis.ch'})
     }else if(req.query.token != undefined){
@@ -358,7 +357,7 @@ router.post('/api/v1/create/invite', limitApi, async(req, res) => {
                             });
                         }
                     } else {
-                        console.log(doc)
+                        console.log("Invite created: " + doc.token + " with role: " + doc.role)
                         res.json({
                             status: '200',
                             response: "invite created",
@@ -396,8 +395,6 @@ router.post('/api/v1/create/invite', limitApi, async(req, res) => {
 })
 
 router.get('/api/v1/get/invites', limitApi, async(req, res) => {
-    console.log("/register")
-    console.log(req.query.apiKey)
     if(req.query != undefined){
         if(req.query.apiKey == apiKey){
             try{
@@ -416,7 +413,7 @@ router.get('/api/v1/get/invites', limitApi, async(req, res) => {
                 }else{
                     var invite = await Invite.findAll()
                 }
-                console.log(invite)
+                //console.log(invite)
                 var data = []
                 for(i in invite){
                     data.push({
@@ -539,7 +536,6 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
                 if(req.query.new != undefined){
                     //console.log(req.query.new)
                     if(req.query.new == 'true'){
-                        console.log("is new: " + isNew)
                         if(isNew == true){
                             var run = true;
                         }else{
@@ -563,7 +559,8 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
                     }else{
                         var aufgaben = await Aufgabe.findAll()
                     }
-                    console.log(aufgaben)
+                    console.log("API is getting data")
+                    console.log(req.query)
                     var data = []
                     for(i in aufgaben){
                         data.push({
@@ -615,6 +612,7 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
 });
 
 router.get('/api/v1/get/user', limitApi, async(req, res) => {
+    console.log(req.query)
     if(req.query != undefined){
         if(req.query.apiKey == apiKey){
             try{
@@ -629,7 +627,7 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
                 }else{
                     var user = await User.findAll()
                 }
-                console.log(user)
+                //console.log(user)
                 var data = []
                 for(i in user){
                     data.push({
@@ -641,6 +639,8 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
                         registeredAt: user[i].registeredAt
                     })
                 }
+                console.log("Sending user")
+                console.log(data)
                 res.json({
                     status: 200,
                     response: 'success',
@@ -657,12 +657,14 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
                 }
             }
         }else{
+            console.log("not authorized")
             res.json({
                 status: '401',
                 response: "nicht autorisiert"
             });
         }
     }else{
+        console.log("not api key sent")
         res.json({
             status: '400',
             response: 'kein api key gesendet'
@@ -675,41 +677,45 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
         if(req.query.apiKey == apiKey){
             try{
                 var user = await User.findByOneEmail(req.query.email)
-                console.log(user)
-                var code = generate('123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnpqrstuvwxyz', 6)
-                var email = user.email
-                var vorname = user.name.split(' ')[0]
-                var data = await ejs.renderFile('./views/verifyMail.ejs', { name: vorname, code: code });
-                const mailOptions = {
-                    from: `"ZGK Mailer" zgk@mxis.ch`,
-                    replyTo: 'zgk@mxis.ch',
-                    to: email,
-                    subject: 'Email Verifizierung',
-                    html: data,
-                    text: `Moin, ${vorname}!\n Du willst den Bot nutzen? Dann musst du nur noch schnell deine Email Verifizieren. Gib dazu einfach folgenden Code bei dem Bot ein: \n ${code}\n Falls du keinen Bot erstellt hast, ignoriere diese Email einfach`
-                };
-                //console.log(mailOptions)
-                transporter.sendMail(mailOptions, function(err, info) {
-                    if (err) {
-                        console.log(err)
-                    } else {
-                        console.log(info.messageTime + " ms");
-                        console.log("Verify email send to: " + email + " with code: " + code)
-                        //console.log(info)
+                //console.log(user)
+                /*if(user.botKey == undefined){
+                    try{
+                        var botKey = await User.generateBotKey(user.user_id)
+                    }catch(error){
+                        if (error.code == 405) {
+                            console.log("User not found - botkey")
+                            res.json({status: 404, response:"user nicht gefunden"})
+                        } else {
+                            console.log(error)
+                            res.json({status: 500, response:"internal error, bitte kontaktiere support"})
+                        }
                     }
-                });
+                }else{
+                    var botKey = user.botKey
+                }*/
+                try{
+                    var botKey = await User.generateBotKey(user.user_id)
+                }catch(error){
+                    if (error.code == 405) {
+                        console.log("User not found - botkey")
+                        res.json({status: 404, response:"user nicht gefunden"})
+                    } else {
+                        console.log(error)
+                        res.json({status: 500, response:"internal error, bitte kontaktiere support"})
+                    }
+                }
+                console.log("Verifying User: " + user.name + " with code: " + botKey)
                 res.json({
                     status: 200,
                     response: 'success',
                     type: 'data',
                     data: {
-                        code: code,
-                        email: email
+                        code: botKey,
+                        user_id: user.user_id
                     }
                 })
-                  
             }catch(error){
-            if (error.code == 405) {
+                if (error.code == 405) {
                     console.log("User not found")
                     res.json({status: 404, response:"user nicht gefunden"})
                 } else {
@@ -734,7 +740,7 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
 router.post('/api/v1/create/aufgabe', limitApi, async(req, res) => {
     if(req.body != undefined){
         if(req.body.apiKey == apiKey){
-            var uid = generate('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 16)
+            var uid = generate('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 32)
             var query = {   
                 aufgaben_id: uid,
                 user_id: req.body.user_id,
@@ -766,7 +772,7 @@ router.post('/api/v1/create/aufgabe', limitApi, async(req, res) => {
                             });
                         }
                     } else {
-                        console.log(doc)
+                        //console.log(doc)
                         isNew = true;
                         middleware.resetCache(doc.klasse)
                         console.log("Aufgabe added as: " + uid)
@@ -819,7 +825,7 @@ router.post('/api/v1/delete/aufgabe', limitApi, middleware.auth(), async(req, re
                 }
                 await aufgabe.deleteOne({ aufgaben_id: aufgabe.aufgaben_id })
                     .then(doc => {
-                        console.log(doc)
+                        console.log("Aufgabe: " + aufgabe.aufgaben_id + " was deleted by API")
                         middleware.resetCache(doc.klasse)
                         res.json({
                             status: 200,

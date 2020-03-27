@@ -15,6 +15,7 @@ require('./database/database')
 
 const authRouter = require('./router/auth')
 const appRouter = require('./router/app.js')
+const middleware = require("./middleware/middleware")
 
 app.listen(5500, () => console.log('listening on port 5500'));
 app.use(express.static('public'));
@@ -24,6 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(compression());
 app.use(helmet());
+app.use(middleware.log())
 app.use(authRouter)
 app.use(appRouter)
 app.set('trust proxy', 1);
@@ -35,7 +37,7 @@ var corsOptions = {
 }
 app.use(cors(corsOptions))
 
-
+console.log("Ready")
 
 process.on('unhandledRejection', (reason, p) => {
     console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
