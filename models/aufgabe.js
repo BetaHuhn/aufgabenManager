@@ -47,6 +47,9 @@ let aufgabeSchema = new mongoose.Schema({
     downloads: {
         type: Number
     },
+    solutions: [{
+        type: String
+    }],
     createdAt: {
         type: Date,
         required: true
@@ -66,7 +69,7 @@ aufgabeSchema.statics.findBySession = async(session) => {
     if (session.role == 'admin') {
         var aufgabe = await Aufgabe.find({})
     } else {
-        var aufgabe = await Aufgabe.find( { klasse: { $in: session.klassen } } )
+        var aufgabe = await Aufgabe.find({ klasse: { $in: session.klassen } })
     }
     if (!aufgabe) {
         throw ({ error: 'No aufgabe found', code: 405 })
@@ -84,6 +87,22 @@ aufgabeSchema.statics.findAll = async() => {
 
 aufgabeSchema.statics.findById = async(aufgaben_id) => {
     var aufgabe = await Aufgabe.find({ aufgaben_id })
+    if (!aufgabe) {
+        throw ({ error: 'No aufgabe found', code: 405 })
+    }
+    return aufgabe
+}
+
+aufgabeSchema.statics.findOneById = async(aufgaben_id) => {
+    var aufgabe = await Aufgabe.findOne({ aufgaben_id })
+    if (!aufgabe) {
+        throw ({ error: 'No aufgabe found', code: 405 })
+    }
+    return aufgabe
+}
+
+aufgabeSchema.statics.findOneById = async(aufgaben_id) => {
+    var aufgabe = await Aufgabe.findOne({ aufgaben_id })
     if (!aufgabe) {
         throw ({ error: 'No aufgabe found', code: 405 })
     }

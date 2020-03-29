@@ -1,4 +1,4 @@
-<!-- index.html - Maximilian Schiller 2020 --> 
+<!-- index.html - Maximilian Schiller 2020 -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,17 +20,17 @@
         <a href="/new" class="menu active">Neu</a>
         <a href="/" class="menu">Aufgaben</a>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-          <i class="burger fa fa-bars"></i>
+            <i class="burger fa fa-bars"></i>
         </a>
-      </div>
+    </div>
     <main>
         <div class="container">
             <div id="user" class="login">
                 <h1 id="heading">Erstelle eine Aufgabe</h1>
                 <div id="form">
                     <p>Fach:</p>
-                    <input required title="Gib ein Fach ein" class="input" type="text" id="fach"/>
-                    
+                    <input required title="Gib ein Fach ein" class="input" type="text" id="fach" />
+
                     <select required title="Wähle eine Klasse aus" id="klasse">
                         <option selected disabled>Klasse</option>
                         
@@ -40,10 +40,10 @@
                     <textarea required maxlength="250" title="Aufgaben Text der den Schülern angezeigt wird" rows="5" cols="50" class="form__field" id="text"></textarea>
 
                     <p>Abgabe Termin:</p>
-                    <input required class="input" title="Gib einen Abgabe Termin ein" type="date" id="abgabe"/>
+                    <input required class="input" title="Gib einen Abgabe Termin ein" type="date" id="abgabe" />
 
                     <p title="Datei Namen welchen die Schüler beim Download sehen">Datei Name ohne Dateiendung (Optional):</p>
-                    <input class="input" type="text" maxlength="25" onkeypress="return AvoidSpace(event)" id="name"/>
+                    <input class="input" type="text" maxlength="25" onkeypress="return AvoidSpace(event)" id="name" />
 
                     <div class="file" id="fileDiv">
                         <form title="Wähle eine oder mehrere Dateien aus" id="upload" method="POST" action="/api/new/aufgabe" enctype="multipart/form-data">

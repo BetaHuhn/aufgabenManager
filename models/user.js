@@ -24,7 +24,16 @@ let userSchema = new mongoose.Schema({
     klasse: {
         type: String
     },
-    klassen:  [{
+    schule: {
+        type: String
+    },
+    klassen: [{
+        type: String
+    }],
+    aufgaben: [{
+        type: String
+    }],
+    solutions: [{
         type: String
     }],
     password: {
@@ -37,13 +46,13 @@ let userSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    token:{
+    token: {
         type: String
     },
-    botKey:{
+    botKey: {
         type: String
     },
-    invite_id:{
+    invite_id: {
         type: String
     },
     role: {
@@ -66,7 +75,7 @@ userSchema.pre('save', async function(next) {
 
 userSchema.statics.changePassword = async function(user_id, password) {
     var user = await User.findOne({ user_id })
-    if(!user){
+    if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
     user.password = password;
@@ -80,7 +89,7 @@ userSchema.statics.changePassword = async function(user_id, password) {
 
 userSchema.statics.generateBotKey = async function(user_id) {
     var user = await User.findOne({ user_id })
-    if(!user){
+    if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
     var botKey = generate('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ', 8)
@@ -155,7 +164,7 @@ userSchema.statics.findByOneEmail = async(email) => {
 }
 
 userSchema.statics.findByEmail = async(email) => {
-    var emailHash =  hashEmailAddress(email.toLowerCase(), salt)
+    var emailHash = hashEmailAddress(email.toLowerCase(), salt)
     var user = await User.find({ email: emailHash })
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
@@ -168,7 +177,7 @@ userSchema.statics.findByKlasse = async(klasse) => {
     var user = await User.find({ klasse })
     if (user == undefined || user.length < 1) {
         console.log("By Klassen")
-        var user = await User.find({ klassen: klasse } )
+        var user = await User.find({ klassen: klasse })
         if (user == undefined || user.length < 1) {
             throw ({ error: 'No user found', code: 405 })
         }
@@ -197,7 +206,7 @@ function hashEmailAddress(email, salt) {
     var sum = crypto.createHash('sha256');
     sum.update(email.toLowerCase() + salt);
     return sum.digest('hex');
-  }
+}
 
 const User = mongoose.model('User', userSchema)
 module.exports = User

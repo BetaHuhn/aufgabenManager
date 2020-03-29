@@ -10,7 +10,7 @@ let inviteSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    type:{
+    type: {
         type: String,
         required: true
     },
@@ -18,16 +18,21 @@ let inviteSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    klasse:  {
-        type: String,
-        required: true
+    klasse: {
+        id: {
+            type: String
+        },
+        name: {
+            type: String
+        }
+
+    },
+    schule: {
+        type: String
     },
     role: {
         type: String,
         required: true
-    },
-    roleString:{
-        type: String
     },
     used: {
         active: {
@@ -36,16 +41,16 @@ let inviteSchema = new mongoose.Schema({
         count: {
             type: Number
         },
-        max:{
+        max: {
             type: Number
         }
     },
-    token:{
+    token: {
         type: String,
         required: true,
         unique: true
     },
-    inviteUrl:{
+    inviteUrl: {
         type: String
     },
     createdAt: {
@@ -76,8 +81,8 @@ inviteSchema.statics.checkToken = async(token) => {
     if (!invite) {
         throw ({ error: 'No invite found', code: 405 })
     }
-    if(invite.used.active == true){
-        if(invite.used.count >= invite.used.max){
+    if (invite.used.active == true) {
+        if (invite.used.count >= invite.used.max) {
             invite.used.active = false;
             invite.save(function(err) {
                 if (err) {
@@ -85,10 +90,10 @@ inviteSchema.statics.checkToken = async(token) => {
                 }
             });
             throw ({ error: 'invite not active', code: 408 })
-        }else{
+        } else {
             return invite
         }
-    }else{
+    } else {
         throw ({ error: 'invite not active', code: 408 })
     }
 }
