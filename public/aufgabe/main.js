@@ -30,15 +30,14 @@ var last = document.getElementById('fileDiv')
 
 document.getElementById("loader").style.display = "none";
 
+var url_string = window.location.href; //window.location.href
+var url = new URL(url_string);
+var aufgabenId = url.searchParams.get("id")
+console.log("Aufgabe: " + aufgabenId)
 var role;
 
 function validateForm() {
-    var a = document.getElementById('fach').value;
-    var b = document.getElementById('klasse').value;
-    var c = document.getElementById('text').value;
-    var d = document.getElementById('abgabe').value;
-    console.log("a: " + a + " b: " + b + " c: " + c + " d: " + d)
-    if (a == null || a == "", b == null || b == "", c == null || c == "", d == null || d == "" || b == "Klasse") {
+    if (document.getElementById('select-button').files.length === 0) {
         //console.log(false)
         return false;
     } else {
@@ -68,29 +67,18 @@ async function upload() {
             }
             //document.getElementById("loader").style.display = "block";
             progressDiv.style.display = "block";
-            document.getElementById('error').innerHTML = `<h1>Hochladen...</h1>`;
+            document.getElementById('error').innerHTML = `<p>Hochladen...</p>`;
             document.getElementById('form').style.display = "none";
             var form = document.getElementById('upload');
             var xhr = new XMLHttpRequest(); // create XMLHttpRequest
             var data = new FormData(form); // create formData object
-            data.append("filename", document.getElementById('name').value);
-            data.append("text", document.getElementById('text').value);
-            data.append("fach", document.getElementById('fach').value)
-            data.append("abgabe", document.getElementById('abgabe').value)
-            var e = document.getElementById("klasse");
-            if (role == "admin") {
-                var klasse = e.value;
-            } else {
-                var klasse = e.options[e.selectedIndex].value;
-            }
-            console.log(klasse)
-            data.append("klasse", klasse)
+            data.append("filename", document.getElementById('filename').value);
+            data.append("id", aufgabenId);
             console.log(data)
             xhr.upload.addEventListener("progress", function(event) {
                 if (event.lengthComputable) {
-
                     var complete = (event.loaded / event.total * 100 | 0);
-                    moveBar(complete)
+                    //moveBar(complete)
                     var loaded = formatBytes(event.loaded).split(" ")[0];
                     var total = formatBytes(event.total);
                     document.getElementById("status").innerHTML = `<p>${loaded}/${total}</p>`;
@@ -104,9 +92,9 @@ async function upload() {
                     var json = JSON.parse(this.responseText)
                     console.log(json);
                     if (json.status == 200) {
-                        document.getElementById('heading').style.display = "none";
-                        document.getElementById('error').innerHTML = `Aufgabe erfolgreich erstellt! <a href="/new">Noch eine erstellen</a>`;
-                        //document.getElementById('form').style.display = "block";
+                        document.getElementById('error').innerHTML = `Lösung erfolgreich hochgeladen!`;
+                        renderUser()
+                            //document.getElementById('form').style.display = "block";
                     } else if (json.status == 405) {
                         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
                         window.location.replace('/login')
@@ -124,37 +112,7 @@ async function upload() {
             xhr.open("post", form.action); // open connection
             xhr.send(data);
         } else {
-            document.getElementById('error').innerHTML = `<p class="message" id="message">Hochladen...</h1>`;
-            document.getElementById('form').style.display = "none";
-            var e = document.getElementById("klasse");
-            if (role == "admin") {
-                var klasse = e.value;
-            } else {
-                var klasse = e.options[e.selectedIndex].value;
-            }
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ text: document.getElementById('text').value, filename: document.getElementById('name').value, fach: document.getElementById('fach').value, abgabe: document.getElementById('abgabe').value, klasse: klasse })
-            };
-            const response = await fetch('/api/new/aufgabe', options);
-            const json = await response.json();
-            if (json.status == 200) {
-                //(id, name, ip, send, receive, lastHandshake, createdAt, pub, priv){
-                document.getElementById('error').innerHTML = `Aufgabe erfolgreich erstellt! <a href="/new">Noch eine erstellen</a>`;
-                document.getElementById('heading').style.display = "none";
-            } else if (json.status == 405) {
-                console.log(json);
-                document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-                window.location.replace('/login')
-            } else if (json.status == 421) {
-                document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
-                document.getElementById('form').style.display = "block";
-            } else {
-                document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
-            }
+            document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
         }
     } else {
         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
@@ -174,26 +132,6 @@ function moveBar(progress) {
 
 }
 
-function Filevalidation() {
-    const fi = document.getElementById('select-button');
-    // Check if any file is selected. 
-    if (fi.files.length > 0) {
-        console.log(fi.files)
-        for (i in fi.files) {
-            var fsize = fi.files.item(i).size;
-            var file = Math.round(fsize);
-            // The size of the file.
-            if (file >= 52428800) {
-                document.getElementById('size').innerHTML = '<b>' +
-                    formatBytes(file) + '</b> (max. 50MB)';
-            } else {
-                document.getElementById('size').innerHTML = '<b>' +
-                    formatBytes(file) + '</b>';
-            }
-        }
-    }
-}
-
 function formatBytes(bytes, decimals) {
     if (bytes == 0) return '0 Bytes';
     var k = 1024,
@@ -211,38 +149,97 @@ async function authenticate() {
             'Content-Type': 'application/json'
         },
     };
-    const response = await fetch('/api/auth/new', options);
+    const response = await fetch('/api/auth/aufgabe?id=' + aufgabenId, options);
     const json = await response.json();
     if (json.status == 200) {
         console.log(json);
-        role = json.data.role
-        if (json.data.klassen == null) {
-            var el = document.getElementById('klasse');
-            var newEl = document.createElement('input');
-            newEl.id = 'klasse';
-            newEl.placeholder = "klasse";
-            newEl.className = 'klasse'
-                // replace el with newEL
-            el.parentNode.replaceChild(newEl, el);
-        } else {
-            for (i in json.data.klassen) {
-                console.log(json.data.klassen[i])
-                var sel = document.getElementById('klasse');
-                var opt = document.createElement('option');
-                opt.appendChild(document.createTextNode(json.data.klassen[i]));
-                opt.value = json.data.klassen[i];
-                sel.appendChild(opt);
-            }
+        role = json.user.role
+        document.getElementById('fach').innerHTML = json.data.fach + " Aufgabe (" + json.data.klasse + ")";
+        document.getElementById('text').innerHTML = json.data.text;
+        var abgabe = new Date(json.data.abgabe)
+        document.getElementById('abgabe').innerHTML = abgabe.toLocaleDateString();
+        document.title = json.data.fach + " Aufgabe (" + json.data.klasse + ")"
+        if (json.data.fileUrl != undefined) {
+            //<span onclick="download();" id="abcdefg" title="Aufgabe Herunterladen" class="fas fa-cloud-download-alt icon"></span>
+            var p = document.createElement('p');
+            p.hidden = "";
+            p.innerHTML = `
+            <span onclick="document.getElementById('${"link_" + json.data.aufgaben_id}').click()" id="${json.data.aufgaben_id}" title="Aufgabe Herunterladen" class="fas fa-cloud-download-alt icon"></span>
+            <a id="link_${json.data.aufgaben_id}" href="${json.data.fileUrl} hidden=""></a>
+            `
+            document.getElementById('abgabe').parentElement.appendChild(p);
         }
-        //   var text = createElement('p', 'message', 'message', "Hallo!")
-        //   text.id = 'message'
-        //   last.parentElement.appendChild(text)
+        renderUser();
+        /*if(role == 'user'){
+            renderUser()
+        }else{
+            renderLehrer()
+        }*/
+    } else if (json.status == 403) {
+        console.log(json);
+        var message = createElement('div', 'message', 'message')
+        last.parentElement.appendChild(message)
+        message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 405) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
+    } else if (json.status == 404) {
+        console.log(json);
+        var message = createElement('div', 'message', 'message')
+        last.parentElement.appendChild(message)
+        message.innerHTML = `<p class="message" id="message">Diese Aufgabe gibt es nicht</p>`
+        window.location.replace('/')
+    } else {
+        var message = createElement('div', 'message', 'message')
+        last.parentElement.appendChild(message)
+        message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
         window.location.replace('/login')
+    }
+}
+
+async function renderUser() {
+    document.querySelectorAll('.solution').forEach(e => e.remove());
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    };
+    const response = await fetch('/api/get/solutions?id=' + aufgabenId, options);
+    const json = await response.json();
+    if (json.status == 200) {
+        console.log(json);
+        for (i in json.data) {
+            var div = document.createElement('div');
+            div.id = json.data.solution_id;
+            div.className = "solution"
+            var date = new Date(json.data[i].createdAt)
+            div.innerHTML = `
+                <p class="accent name">${json.data[i].files.fileName + "." + json.data[i].files.type}</p>
+                <p class="accent abgabe">${date.toLocaleString()}</p>
+            `
+            document.getElementById('solutionHead').parentElement.insertBefore(div, document.getElementById('form'))
+        }
+
+    } else if (json.status == 403) {
+        console.log(json);
+        var message = createElement('div', 'message', 'message')
+        last.parentElement.appendChild(message)
+        message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
+    } else if (json.status == 405) {
+        console.log(json);
+        var message = createElement('div', 'message', 'message')
+        last.parentElement.appendChild(message)
+        message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
+    } else if (json.status == 404) {
+        console.log(json);
+        document.getElementById('solutionHead').innerHTML = "Lösung Hochladen:"
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)

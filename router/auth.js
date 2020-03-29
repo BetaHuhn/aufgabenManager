@@ -8,8 +8,10 @@ const bcrypt = require('bcryptjs')
 
 const router = express.Router()
 const middleware = require("../middleware/middleware")
-var User = require("../models/user")
-var Invite = require("../models/invite")
+const User = require("../models/user")
+const Invite = require("../models/invite")
+const Aufgabe = require('../models/aufgabe.js')
+
 
 var salt = require('../key.json').salt
 
@@ -17,14 +19,15 @@ router.use(session({
     secret: crypto.randomBytes(64).toString("base64"),
     resave: true,
     saveUninitialized: true,
-    cookie: { 
-        secure: true,
-        maxAge: 15 * 60 * 60 * 1000
+    cookie: {
+        secure: false,
+        maxAge: 15 * 60 * 60 * 1000,
+        httpOnly: true
     }
 }));
 
 router.post('/auth/login', async(req, res) => {
-    try{
+    try {
         var user = await User.checkLogin(req.body.email, req.body.password)
         console.log("Login: " + user.name + " success")
         req.session.role = user.role;
@@ -33,8 +36,8 @@ router.post('/auth/login', async(req, res) => {
         req.session.user_id = user.user_id;
         req.session.klasse = user.klasse;
         req.session.klassen = user.klassen;
-        res.json({status:200, response: "success", data: {name: user.name, role: user.role, klassen: user.klassen}})
-    }catch(error){
+        res.json({ status: 200, response: "success", data: { name: user.name, role: user.role, klassen: user.klassen } })
+    } catch (error) {
         if (error.code == 408) {
             console.log("Login: Wrong Password")
             res.json({
@@ -62,9 +65,9 @@ router.post('/auth/register', async(req, res) => {
     var email = req.body.email
     var password = req.body.password;
     var name = req.body.name;
-    try{
+    try {
         var invite = await Invite.checkToken(req.body.token)
-        //console.log(invite)
+            //console.log(invite)
         if (!req.body.ref) {
             var ref = "/"
         } else {
@@ -99,7 +102,7 @@ router.post('/auth/register', async(req, res) => {
             } else {
                 console.log("Name: " + email + " is using Invite: " + invite.invite_id + " with role: " + invite.role)
                 var query = {
-                    user_id: generate('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 12),
+                    user_id: generate('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 16),
                     email: email,
                     name: name,
                     password: password,
@@ -162,7 +165,7 @@ router.post('/auth/register', async(req, res) => {
                 status: '401'
             });
         }
-    }catch(error){
+    } catch (error) {
         if (error.code == 408) {
             console.log("invite already used")
             res.json({
@@ -188,9 +191,9 @@ router.post('/auth/register', async(req, res) => {
 
 router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
     //console.log(req.session)
-    if(req.body != undefined){
-        if(req.body.oldPassword != undefined && req.body.newPassword != undefined){
-            try{
+    if (req.body != undefined) {
+        if (req.body.oldPassword != undefined && req.body.newPassword != undefined) {
+            try {
                 var user = await User.checkPassword(req.session.user_id, req.body.oldPassword)
                 console.log(user.name + " is trying to change their password")
                 if (/\s/.test(req.body.newPassword)) {
@@ -209,9 +212,9 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                         status: '406'
                     });
                 } else if (req.body.newPassword.length >= 0) {
-                    try{
+                    try {
                         var user = await User.changePassword(req.session.user_id, req.body.newPassword)
-                        if(!user){
+                        if (!user) {
                             console.log(user)
                             return res.json({
                                 status: '400',
@@ -220,17 +223,17 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                         }
                         console.log(user.name + " changed their password")
                         res.json({
-                            status: 200, 
+                            status: 200,
                             response: "changed"
                         })
-                    }catch(error){
+                    } catch (error) {
                         if (error.code == 405) {
                             console.log(error.error)
                             res.json({
                                 status: '403',
                                 response: "user doesn't exist"
                             });
-                
+
                         } else {
                             console.log(error)
                             res.json({
@@ -245,14 +248,14 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                         status: '401'
                     });
                 }
-            }catch(error){
+            } catch (error) {
                 if (error.code == 405) {
                     console.log(error.error)
                     res.json({
                         status: '403',
                         response: "user doesn't exist"
                     });
-        
+
                 } else if (error.code == 406) {
                     console.log(error.error)
                     res.json({
@@ -267,13 +270,13 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                     });
                 }
             }
-        }else{
+        } else {
             res.json({
                 status: '407',
                 response: "no password sent"
             });
         }
-    }else{
+    } else {
         res.json({
             status: '407',
             response: "no password sent"
@@ -282,7 +285,7 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
 })
 
 router.post('/auth/check/invite', async(req, res) => {
-    try{
+    try {
         var invite = await Invite.checkToken(req.body.token)
         res.json({
             status: 200,
@@ -299,7 +302,7 @@ router.post('/auth/check/invite', async(req, res) => {
                 type: invite.type
             }
         })
-    }catch(error){
+    } catch (error) {
         if (error.code == 408) {
             console.log("invite already used")
             res.json({
@@ -326,10 +329,10 @@ router.post('/auth/check/invite', async(req, res) => {
 router.get('/api/auth/', middleware.auth(), async(req, res) => {
     //console.log(req.session)
     res.json({
-        status: 200, 
-        response: "authenticated", 
+        status: 200,
+        response: "authenticated",
         data: {
-            name: req.session.name, 
+            name: req.session.name,
             role: req.session.role,
             klassen: req.session.klassen
         }
@@ -356,13 +359,13 @@ router.get('/api/hash/emails', async(req, res) => {
     })
 })*/
 
-router.get('/api/auth/new', middleware.auth({lehrer: true}), async(req, res) => {
+router.get('/api/auth/new', middleware.auth({ lehrer: true }), async(req, res) => {
     console.log(req.session.name + " visited /new")
     res.json({
-        status: 200, 
-        response: "authenticated", 
+        status: 200,
+        response: "authenticated",
         data: {
-            name: req.session.name, 
+            name: req.session.name,
             role: req.session.role,
             klassen: (req.session.role == 'admin') ? null : req.session.klassen
         }
@@ -371,44 +374,91 @@ router.get('/api/auth/new', middleware.auth({lehrer: true}), async(req, res) => 
 
 router.get('/api/auth/account', middleware.auth(), async(req, res) => {
     console.log(req.session.name + " visited /account")
-    try{
+    try {
         var user = await User.findByOneUserId(req.session.user_id)
-        if(user.botKey == undefined){
+        if (user.botKey == undefined) {
             var botKey = await User.generateBotKey(req.session.user_id);
-        }else{
+        } else {
             var botKey = user.botKey;
         }
         res.json({
-            status: 200, 
-            response: "authenticated", 
+            status: 200,
+            response: "authenticated",
             data: {
-                name: req.session.name, 
+                name: req.session.name,
                 role: req.session.role,
                 botKey: botKey,
                 klassen: (req.session.role == 'admin') ? null : req.session.klassen
             }
         })
-    }catch(error){
+    } catch (error) {
         if (error.code == 405) {
             console.log("user not found")
-            res.json({status: 405, response:"user not found"})
+            res.json({ status: 405, response: "user not found" })
         } else {
             console.log(error)
-            res.json({status: 404, response:"file not found"})
+            res.json({ status: 404, response: "file not found" })
         }
     }
 })
 
-router.get('/logout', function (req, res) {
+router.get('/api/auth/aufgabe', middleware.auth(), async(req, res) => {
+    console.log(req.session.name + " visited /aufgabe")
+    if (req.query != undefined) {
+        if (req.query.id != undefined) {
+            try {
+                var aufgabe = await Aufgabe.findOneById(req.query.id)
+                if (req.session.klassen.includes(aufgabe.klasse)) {
+                    res.json({
+                        status: 200,
+                        response: "authenticated",
+                        data: {
+                            text: aufgabe.text,
+                            fach: aufgabe.fach,
+                            abgabe: aufgabe.abgabe,
+                            aufgaben_id: aufgabe.aufgaben_id,
+                            fileUrl: aufgabe.files.fileUrl,
+                            klasse: aufgabe.klasse
+                        },
+                        user: {
+                            name: req.session.name,
+                            role: req.session.role,
+                            user_id: req.session.user_id,
+                        }
+                    })
+                } else {
+                    console.log("Fehler: " + req.session.name + " ist gehört nicht der Klasse: " + aufgabe.klasse + " an")
+                    res.json({ status: 403, response: "nicht autorisiert" })
+                }
+            } catch (error) {
+                if (error.code == 405) {
+                    console.log("aufgabe not found")
+                    res.json({ status: 404, response: "aufgabe nicht gefunden" })
+                } else {
+                    console.log(error)
+                    res.json({ status: 400, response: "error" })
+                }
+            }
+        } else {
+            console.log("Fehler: keine aufgaben id gesendet")
+            res.json({ status: 404, response: "aufgabe nicht gefunden" })
+        }
+    } else {
+        console.log("Fehler: keine aufgaben id gesendet")
+        res.json({ status: 405, response: "aufgabe nicht gefunden" })
+    }
+})
+
+router.get('/logout', function(req, res) {
     console.log(req.session.name + " logged out")
     req.session.destroy();
     res.redirect('/');
 });
 
 function hashEmailAddress(email, salt) {
-  var sum = crypto.createHash('sha256');
-  sum.update(email + salt);
-  return sum.digest('hex');
+    var sum = crypto.createHash('sha256');
+    sum.update(email + salt);
+    return sum.digest('hex');
 }
 
 function CurrentDate() {

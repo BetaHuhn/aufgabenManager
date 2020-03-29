@@ -1,0 +1,61 @@
+<!-- index.html - Maximilian Schiller 2020 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Deutsch Aufgabe</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="main.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <script src="https://kit.fontawesome.com/ca8ffbc206.js" crossorigin="anonymous"></script>
+</head>
+
+<body onload="authenticate()">
+    <div class="topnav" id="myTopnav">
+        <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
+        <a id="logout" href="/logout" class="menu">Logout</a>
+        <a href="/account" class="menu">Account</a>
+        <a href="/new" class="menu">Neu</a>
+        <a href="/" class="menu">Aufgaben</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="burger fa fa-bars"></i>
+        </a>
+    </div>
+    <main>
+        <div class="container">
+            <h1 id="fach"></h1>
+            <div id="aufgabe" class="aufgabe">
+                <p>Aufgaben Text:</p>
+                <p id="text"></p>
+
+                <p>Abgabe:</p>
+                <p id="abgabe"></p>
+
+                <!--<button id="aufgabeBtn" type="button" onclick="upload()">Aufgabe laden</button>-->
+            </div>
+            <h1 id="solutionHead">Deine Lösungen:</h1>
+
+            <div id="form" class="file">
+                <input onkeypress="return AvoidSpace(event)" type="text" id="filename" placeholder="Datei Name (Optional)" class="accent">
+                <div id="fileDiv" class="fileDiv">
+                    <form id="upload" method="POST" action="/api/new/solution" enctype="multipart/form-data">
+                        <input title="Wähle eine oder mehrere Dateien aus" value="Wähle eine oder mehrere Dateien aus" type="file" id="select-button" name="data" id="files" multiple>
+                        <button id="submitBtn" type="button" title="Lösung Hochladen" onclick="upload()">Hochladen</button>
+                        <!--<p id="size"></p>-->
+                    </form>
+                </div>
+                <div id="loader"></div>
+                <div id="progressDiv" class="w3-light-grey" style="display: none;">
+                    <div id="progressBar" class="w3-green w3-center" style="width:20%">0%</div>
+                </div>
+                <center><pre id="status"></pre></center>
+            </div>
+            <p class="message" id="error"></p>
+        </div>
+    </main>
+    <script src="main.js"></script>
+</body>
+
+</html>

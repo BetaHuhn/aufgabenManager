@@ -2,7 +2,7 @@ const io = require('@pm2/io')
 io.init({
     transactions: true, // will enable the transaction tracing
     http: true // will enable metrics about the http server (optional)
-  })
+})
 
 const express = require('express');
 const bodyParser = require('body-parser')
@@ -15,6 +15,7 @@ require('./database/database')
 
 const authRouter = require('./router/auth')
 const appRouter = require('./router/app.js')
+const apiRouter = require('./router/api.js')
 const middleware = require("./middleware/middleware")
 
 app.listen(5500, () => console.log('listening on port 5500'));
@@ -28,6 +29,7 @@ app.use(helmet());
 app.use(middleware.log())
 app.use(authRouter)
 app.use(appRouter)
+app.use(apiRouter)
 app.set('trust proxy', 1);
 app.disable('x-powered-by')
 
