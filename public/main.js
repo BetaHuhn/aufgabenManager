@@ -28,7 +28,7 @@ async function auth() {
     const json = await response.json();
     if (json.status == 200) {
         console.log(json);
-        user_id = json.user.user_id;
+        user_id = json.user._id;
         console.log(user_id)
         role = json.user.role
         if (role == 'user') {
@@ -41,8 +41,8 @@ async function auth() {
             for (i in json.data) {
                 var aufgabe = json.data[i]
                     //console.log(aufgabe.files)
-                var abgabe = new Date(aufgabe.abgabe)
-                var row = createRow(aufgabe.aufgaben_id, aufgabe.fach, aufgabe.klasse, abgabe.toLocaleDateString(), aufgabe.text, aufgabe.downloads, aufgabe.files, aufgabe.user_id)
+                var abgabe = new Date(aufgabe.deadline)
+                var row = createRow(aufgabe._id, aufgabe.subject, aufgabe.class, abgabe.toLocaleDateString(), aufgabe.text, aufgabe.downloads, aufgabe.files, aufgabe.user_id)
                 last.parentElement.appendChild(row);
                 last = row;
             }
@@ -77,7 +77,7 @@ async function auth() {
 function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserId) {
     //console.log(file)
     var div = createElement('div', 'device parent', id)
-    div.onclick = function() { window.open("/aufgabe?id=" + id, "_blank"); }
+    div.onclick = function() { window.location.replace("/aufgabe?id=" + id); }
     div.style.cursor = "pointer";
     var pName = createElement('p', 'child text name', id, fach + ' (' + klasse + ')')
     pName.onclick = function(e) { e.stopPropagation(); }
@@ -169,7 +169,7 @@ async function remove(id) {
                 'Content-Type': 'application/json'
             },
         };
-        const response = await fetch('/api/delete/aufgabe?id=' + id, options);
+        const response = await fetch('/api/delete/exercise?id=' + id, options);
         const json = await response.json();
         if (json.status == 200) {
             numAufgaben = numAufgaben - 1;
@@ -198,10 +198,6 @@ function download(e) {
     if (link != undefined) {
         window.open(link, "_blank");
     }
-}
-
-function keys() {
-    alert("Show Keys")
 }
 
 setInterval(function() {

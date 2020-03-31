@@ -203,6 +203,7 @@ body {
     margin-top: 15px;
     margin-right: 5px;
     width: 380px;
+    overflow-wrap: break-word;
 }
 .name{
     width: 70px;
@@ -526,6 +527,7 @@ body {
     }
     .fourth{
         margin-left: 30px;
+        visibility: hidden;
     }
     .fith{
         margin-left: 20px;
@@ -553,6 +555,7 @@ body {
         margin-right: 5px;
         white-space: nowrap;
         width: 70px;
+        visibility: hidden;
     }
     .stack{
         margin-top: -50px;
@@ -680,11 +683,11 @@ body {
     }
 
     .buttons button{
-        margin-top: 1rem;
+        margin-top: 0rem;
         margin-left: -11rem;
-        font-size: 0.4rem;
-        padding: 8px 8px;
-        width: 50px;
+        font-size: 0.3rem;
+        padding: 8px 5px;
+        width: 60px;
     }
 
     .deleteButton{

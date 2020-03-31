@@ -1,17 +1,31 @@
 let mongoose = require('mongoose')
-const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto');
 const generate = require('nanoid/generate')
 
+var Schema = mongoose.Schema;
 var salt = require('../key.json').salt
 
 let userSchema = new mongoose.Schema({
-    user_id: {
-        type: String,
-        required: true,
-        unique: true
+    _id: Schema.Types.ObjectId,
+    classes: [{ 
+        type: Schema.Types.ObjectId, 
+        ref:'Class' 
+    }],
+    exercises: [{ 
+        type: Schema.Types.ObjectId, 
+        ref:'Exercise' 
+    }],
+    solutions: [{ 
+        type: Schema.Types.ObjectId, 
+        ref:'Solution' 
+    }],
+    invite:{
+        type:Schema.Types.ObjectId, ref:'Invite'
     },
+    school:{
+        type:Schema.Types.ObjectId, ref:'School'
+    }, 
     email: {
         type: String,
         required: true,
@@ -21,21 +35,6 @@ let userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    klasse: {
-        type: String
-    },
-    schule: {
-        type: String
-    },
-    klassen: [{
-        type: String
-    }],
-    aufgaben: [{
-        type: String
-    }],
-    solutions: [{
-        type: String
-    }],
     password: {
         type: String,
         required: true,
@@ -46,13 +45,7 @@ let userSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    token: {
-        type: String
-    },
     botKey: {
-        type: String
-    },
-    invite_id: {
         type: String
     },
     role: {
@@ -62,6 +55,7 @@ let userSchema = new mongoose.Schema({
 
 })
 
+/*
 userSchema.pre('save', async function(next) {
     const user = this
     if (user.isModified('password')) {
@@ -71,10 +65,18 @@ userSchema.pre('save', async function(next) {
         user.email = hashEmailAddress(user.email.toLowerCase(), salt)
     }
     next()
-})
+})*/
 
-userSchema.statics.changePassword = async function(user_id, password) {
-    var user = await User.findOne({ user_id })
+userSchema.pre('remove', async function(next) {
+    // Remove all the docs that refers
+    console.log("removing: " + this._id)
+    await this.model("Class").updateOne( { }, { $pull: { users: this._id } } )
+    await this.model("Exercises").deleteMany( { user: this._id} )
+    next()
+});
+
+userSchema.statics.changePassword = async function(_id, password) {
+    var user = await User.findOne({ _id })
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
@@ -87,8 +89,8 @@ userSchema.statics.changePassword = async function(user_id, password) {
     return user;
 }
 
-userSchema.statics.generateBotKey = async function(user_id) {
-    var user = await User.findOne({ user_id })
+userSchema.statics.generateBotKey = async function(_id) {
+    var user = await User.findOne({ _id })
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
@@ -116,38 +118,14 @@ userSchema.statics.checkLogin = async(email, password) => {
     return user
 }
 
-userSchema.statics.checkPassword = async(user_id, password) => {
-    const user = await User.findOne({ user_id })
+userSchema.statics.checkPassword = async(_id, password) => {
+    const user = await User.findOne({ _id })
     if (!user) {
         throw ({ error: 'User not found', code: 405 })
     }
     const isPasswordMatch = await bcrypt.compare(password, user.password)
     if (!isPasswordMatch) {
         throw ({ error: 'Wrong password', code: 406 })
-    }
-    return user
-}
-
-userSchema.statics.findById = async(user_id) => {
-    var user = await User.find({ user_id })
-    if (!user) {
-        throw ({ error: 'No user found', code: 405 })
-    }
-    return user
-}
-
-userSchema.statics.findByUserId = async(user_id) => {
-    var user = await User.find({ user_id })
-    if (!user) {
-        throw ({ error: 'No user found', code: 405 })
-    }
-    return user
-}
-
-userSchema.statics.findByOneUserId = async(user_id) => {
-    var user = await User.findOne({ user_id })
-    if (!user) {
-        throw ({ error: 'No user found', code: 405 })
     }
     return user
 }
@@ -168,36 +146,6 @@ userSchema.statics.findByEmail = async(email) => {
     var user = await User.find({ email: emailHash })
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
-    }
-    return user
-}
-
-userSchema.statics.findByKlasse = async(klasse) => {
-    console.log("By Klasse")
-    var user = await User.find({ klasse })
-    if (user == undefined || user.length < 1) {
-        console.log("By Klassen")
-        var user = await User.find({ klassen: klasse })
-        if (user == undefined || user.length < 1) {
-            throw ({ error: 'No user found', code: 405 })
-        }
-        return user
-    }
-    return user
-}
-
-userSchema.statics.findByRole = async(role) => {
-    var user = await User.find({ role })
-    if (!user) {
-        throw ({ error: 'No user found', code: 405 })
-    }
-    return user
-}
-
-userSchema.statics.findAll = async() => {
-    var user = await User.find({})
-    if (!user) {
-        throw ({ error: 'No aufgabe found', code: 405 })
     }
     return user
 }

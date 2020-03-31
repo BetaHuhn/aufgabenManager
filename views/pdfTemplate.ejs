@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+        body{
+            text-align: center;
+        }
+        h3{
+            text-align: center;
+        }
+        p{
+            text-align: left;
+            font-size: 12px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+        }
+        table, th, td {
+            border: 1px solid black;
+            font-size: 12px;
+            padding: 5px 5px;
+        }
+        </style>
+    </head>
+    <body>
+        <h3><%= fach %> (<%=klasse %>)</h3>
+        <div style="width: 100%; margin: 0 7.5%;">
+            <div style="text-align: center; margin: auto;">            
+                <p><b>Aufgaben Text:</b> <%= text %></p>
+                <p><b>Abgabe:</b> <%= abgabe %></p>
+                <table>
+                    <tr><td><b>Name</b></td><td><b>Datum</b></td><td><b>Download</b></td><td><b>Abgegeben</b></td></tr>
+                <% if (students.length > 0) { %>
+                    <% students.forEach(student => {%>
+                       <tr><td style="text-align: left;"><%= student.name %></td><td style="text-align: center;"><%= student.datum %></td><td  style="text-align: center;"> <% if (student.link == 0) { %>-<% }else {%><a href="<%= student.link %>">download</a><% }%></td><td  style="text-align: center;"><%= student.status %></td></tr>
+                    <%  });%>
+                <% }%>
+                </table>
+                <p>Stand: <%= createdAt %> Uhr</p>
+                <p>Aufgaben Link: <a href="<%= link %>"><%= link %></a></p>
+             </div>
+        </div>
+    </body>
+</html>

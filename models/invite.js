@@ -1,35 +1,21 @@
 let mongoose = require('mongoose')
-const validator = require('validator')
-const bcrypt = require('bcryptjs')
-const crypto = require('crypto');
-const generate = require('nanoid/generate')
+var Schema = mongoose.Schema;
 
 let inviteSchema = new mongoose.Schema({
-    invite_id: {
-        type: String,
-        required: true,
-        unique: true
+    _id: Schema.Types.ObjectId,
+    class:{
+        type:Schema.Types.ObjectId, ref:'Class'
+    }, 
+    school:{
+        type:Schema.Types.ObjectId, ref:'School'
     },
-    type: {
+    type: { // Not used (I think)
         type: String,
-        required: true
     },
     name: {
         type: String,
         required: false
-    },
-    klasse: {
-        id: {
-            type: String
-        },
-        name: {
-            type: String
-        }
-
-    },
-    schule: {
-        type: String
-    },
+    }, 
     role: {
         type: String,
         required: true
@@ -60,22 +46,6 @@ let inviteSchema = new mongoose.Schema({
 
 })
 
-inviteSchema.statics.findById = async(invite_id) => {
-    var invite = await Invite.find({ invite_id })
-    if (!invite) {
-        throw ({ error: 'No invite found', code: 405 })
-    }
-    return invite
-}
-
-inviteSchema.statics.findByUserId = async(user_id) => {
-    var invite = await Invite.find({ user_id })
-    if (!invite) {
-        throw ({ error: 'No invite found', code: 405 })
-    }
-    return invite
-}
-
 inviteSchema.statics.checkToken = async(token) => {
     var invite = await Invite.findOne({ token })
     if (!invite) {
@@ -96,46 +66,6 @@ inviteSchema.statics.checkToken = async(token) => {
     } else {
         throw ({ error: 'invite not active', code: 408 })
     }
-}
-
-inviteSchema.statics.findByToken = async(token) => {
-    var invite = await Invite.find({ token })
-    if (!invite) {
-        throw ({ error: 'No invite found', code: 405 })
-    }
-    return invite
-}
-
-inviteSchema.statics.findByKlasse = async(klasse) => {
-    var invite = await Invite.find({ klasse })
-    if (!invite) {
-        throw ({ error: 'No invite found', code: 405 })
-    }
-    return invite
-}
-
-inviteSchema.statics.findByRole = async(role) => {
-    var invite = await Invite.find({ role })
-    if (!invite) {
-        throw ({ error: 'No invite found', code: 405 })
-    }
-    return invite
-}
-
-inviteSchema.statics.findByType = async(type) => {
-    var invite = await Invite.find({ type })
-    if (!invite) {
-        throw ({ error: 'No invite found', code: 405 })
-    }
-    return invite
-}
-
-inviteSchema.statics.findAll = async() => {
-    var invite = await Invite.find({})
-    if (!invite) {
-        throw ({ error: 'No invite found', code: 405 })
-    }
-    return invite
 }
 
 inviteSchema.statics.increaseUsed = async function(invite_id) {

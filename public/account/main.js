@@ -45,6 +45,10 @@ async function authenticate(){
     if (json.status == 200) {
         console.log(json);
         role = json.data.role
+        if(role == "user"){
+            var newReiter = document.getElementById('new');
+            newReiter.style.display = 'none'
+        }
         var name = document.getElementById('name');
         name.appendChild(document.createTextNode(json.data.name))
         var botKey = document.getElementById('botKey');

@@ -139,7 +139,7 @@ async function upload() {
                 },
                 body: JSON.stringify({ text: document.getElementById('text').value, filename: document.getElementById('name').value, fach: document.getElementById('fach').value, abgabe: document.getElementById('abgabe').value, klasse: klasse })
             };
-            const response = await fetch('/api/new/aufgabe', options);
+            const response = await fetch('/api/new/exercise', options);
             const json = await response.json();
             if (json.status == 200) {
                 //(id, name, ip, send, receive, lastHandshake, createdAt, pub, priv){
@@ -216,7 +216,7 @@ async function authenticate() {
     if (json.status == 200) {
         console.log(json);
         role = json.data.role
-        if (json.data.klassen == null) {
+        if (json.data.classes == null) {
             var el = document.getElementById('klasse');
             var newEl = document.createElement('input');
             newEl.id = 'klasse';
@@ -225,12 +225,12 @@ async function authenticate() {
                 // replace el with newEL
             el.parentNode.replaceChild(newEl, el);
         } else {
-            for (i in json.data.klassen) {
-                console.log(json.data.klassen[i])
+            for (i in json.data.classes) {
+                console.log(json.data.classes[i])
                 var sel = document.getElementById('klasse');
                 var opt = document.createElement('option');
-                opt.appendChild(document.createTextNode(json.data.klassen[i]));
-                opt.value = json.data.klassen[i];
+                opt.appendChild(document.createTextNode(json.data.classes[i]));
+                opt.value = json.data.classes[i];
                 sel.appendChild(opt);
             }
         }

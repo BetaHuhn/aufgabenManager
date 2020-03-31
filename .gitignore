@@ -6,3 +6,5 @@ jwt-key.pub
 files/
 mongodump-zgk-db
 mongodump-zgkDev-db
+mongodump-zgkDev
+report.pdf

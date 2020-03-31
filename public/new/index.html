@@ -46,7 +46,7 @@
                     <input class="input" type="text" maxlength="25" onkeypress="return AvoidSpace(event)" id="name" />
 
                     <div class="file" id="fileDiv">
-                        <form title="Wähle eine oder mehrere Dateien aus" id="upload" method="POST" action="/api/new/aufgabe" enctype="multipart/form-data">
+                        <form title="Wähle eine oder mehrere Dateien aus" id="upload" method="POST" action="/api/new/exercise" enctype="multipart/form-data">
                             <input onchange="Filevalidation()" value="Wähle eine oder mehrere Dateien aus" type="file" id="select-button" name="data" id="files" multiple>
                             <p id="size"></p>
                             <button id="submitBtn" type="button" onclick="upload()">Erstellen</button>

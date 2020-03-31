@@ -118,7 +118,7 @@ body {
 
 .container {
     margin: auto;
-    width: 1200px;
+    width: 1000px;
     margin-bottom: 2rem;
 }
 
@@ -127,8 +127,12 @@ body {
     font-size: 1.5rem;
     margin-top: 1rem;
     margin-bottom: 1rem;
-    margin-left: 10px;
     color: var(--font-color)
+}
+
+.container a {
+    text-decoration: none;
+    color: var(--primary-color);
 }
 
 .message {
@@ -149,7 +153,8 @@ body {
 }
 
 .aufgabe {
-    width: 700px;
+    width: 100%;
+    box-sizing: border-box;
     border-radius: 12px;
     margin: auto;
     margin-top: 1rem;
@@ -232,6 +237,14 @@ body {
 .icon {
     color: var(--primary-color);
     font-size: 1.7rem;
+    margin-right: 30px;
+    float: right;
+    cursor: pointer;
+}
+
+.iconDown {
+    color: var(--primary-color);
+    font-size: 1.7rem;
     margin-bottom: 20px;
     margin-top: -50px;
     margin-right: 30px;
@@ -239,9 +252,117 @@ body {
     cursor: pointer;
 }
 
+.table span {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    margin-right: 30px;
+    float: right;
+    cursor: pointer;
+}
+
+.yes {
+    color: #5cc442;
+    font-size: 1.5rem;
+}
+
+.no {
+    color: #c44242;
+    font-size: 1.5rem;
+}
+
+.cloud {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    margin: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  th{
+    background-color: var(--primary-color);
+    color: #fff;
+    font-weight: normal;
+    margin-left: 20px;
+    padding: 16px 16px;
+  }
+
+  td{
+    background-color: #fff;
+    color: rgb(116, 116, 116);
+  }
+
+  th:nth-child(4){
+    text-align: center;
+    padding: 0px 0px;
+    padding-right: 16px;
+}
+
+td{
+    margin-left: 40px;
+    padding: 16px 16px;
+    text-align: center;
+}
+
+  tr:nth-child(1) {
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:not(:last-child) td{
+    border-bottom: 2px solid #ddd;
+  }
+
+  tr:last-child td{
+    border-top: 2px solid #ddd;
+}
+
+  th:nth-child(2){
+    text-align: right;
+  }
+
+  td:nth-child(1){
+    text-align: left;
+  }
+
+  td:nth-child(2){
+    text-align: right;
+  }
+
+  td:nth-child(3){
+    width: 60px;
+    text-align: right;
+    padding: 0px 0px;
+  }
+  td:nth-child(4){
+    width: 25px;
+    padding: 0px 0px;
+    padding-right: 16px;
+  }
+
+  th:first-of-type {
+    border-top-left-radius: 10px;
+  }
+  th:last-of-type {
+    border-top-right-radius: 10px;
+  }
+  tr:last-of-type td:first-of-type {
+    border-bottom-left-radius: 10px;
+  }
+  tr:last-of-type td:last-of-type {
+    border-bottom-right-radius: 10px;
+  }
+
 .solution {
-    width: 700px;
-    height: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 55px;
     border-radius: 12px;
     margin: auto;
     margin-top: 10px;
@@ -277,8 +398,9 @@ body {
 }
 
 .file {
-    width: 700px;
-    height: 63px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 75px;
     border-radius: 12px;
     margin: auto;
     margin-top: 10px;
@@ -320,6 +442,7 @@ body {
     color: var(--font-color-hover);
     font-size: 0.8rem;
     border-radius: 10px;
+    margin-top: 7px;
     border: 0;
     outline: 0;
     padding: 12px 14px;
@@ -362,21 +485,19 @@ body {
 
 @media screen and (max-width: 1300px) {
     .container {
-        width: 750px;
+        width: 850px;
     }
 }
 
 @media screen and (max-width: 1100px) {
     .container {
-        width: 850px;
+        width: 750px;
     }
     .menu {
         margin-left: 0.5rem;
         margin-right: 0.5rem;
     }
-    .aufgabe {
-        margin-top: 3rem;
-    }
+
 }
 
 @media screen and (max-width: 880px) {
@@ -409,42 +530,55 @@ body {
         float: none;
         display: block;
         text-align: left;
-        margin-top: 0.5rem;
-    }
-    .aufgabe {
-        width: 450px;
-        margin-top: 3rem;
-        padding: 10px 22px;
-    }
-    .aufgabe h1 {
-        font-size: 1.5rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    .aufgabe p {
-        margin-left: 10px;
-        font-size: 1.2rem;
-    }
-    .input {
-        width: 400px;
-        padding: 15px 16px;
-    }
-    #fach {
-        width: 250px;
-        float: left;
-        margin-left: 5px;
-    }
-    .aufgabe textarea {
-        width: 400px;
-        padding: 12px 14px;
-    }
-    .container h1 {
-        font-size: 1.2rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
+        margin-top: 1rem;
     }
     .container {
         width: 550px;
+    }
+
+    .container h1{
+        font-size: 1.2rem;
+    }
+
+    .iconDown{
+        font-size: 1.5rem;
+        margin-top: -40px;
+    }
+    .solution{
+        height: 50px;
+    }
+    .name{
+        font-size: 0.8rem;
+        padding: 10px 0px;
+    }
+    .abgabe{
+        font-size: 0.8rem;
+        padding: 10px 0px;
+    }
+
+    .file{
+        padding: 7px 12px;
+    }
+
+    .file input{
+        width: 153px;
+    }
+
+    .fileDiv button{
+        font-size: 0.8rem;
+        padding: 12px 12px;
+    }
+    table{
+        font-size: 0.8rem;
+    }
+    .no,
+    .yes,
+    .cloud{
+        font-size: 1.2rem;
+    }
+    td:nth-child(3) {
+        width: 40px;
+
     }
 }
 
@@ -462,44 +596,61 @@ body {
         background-color: var(--primary-color);
         color: #f2f2f2;
     }
-    .aufgabe {
-        width: 400px;
-        margin-top: 2rem;
-        padding: 10px 22px;
+    .container {
+        width: 450px;
     }
-    .aufgabe h1 {
+
+    .container h1{
         font-size: 1.2rem;
-        margin-top: 1.2rem;
-        margin-bottom: 1.2rem;
     }
-    .aufgabe p {
-        margin-left: 10px;
-        font-size: 1rem;
+
+    .iconDown{
+        font-size: 1.5rem;
+        margin-top: -40px;
     }
-    .input {
-        width: 350px;
-        padding: 15px 16px;
+    .solution{
+        height: 50px;
     }
-    .aufgabe textarea {
-        width: 350px;
-        padding: 12px 14px;
+    .name{
+        font-size: 0.7rem;
+        padding: 10px 0px;
     }
-    .aufgabe button {
-        margin-top: 1.5rem;
-        font-size: 1rem;
-        padding: 15px 38px;
+    .abgabe{
+        font-size: 0.7rem;
+        padding: 10px 0px;
     }
-    #fach {
-        width: 200px;
-        float: left;
-        margin-left: 5px;
+
+    .file{
+        padding: 7px 12px;
     }
-    .file input {
-        width: 320px;
+
+    .file input{
+        font-size: 0.7rem;
+        width: 145px;
+    }
+
+    .fileDiv input{
+        width: 130px;
+        padding: 12px 10px;
+    }
+
+    .fileDiv button{
+        font-size: 0.8rem;
+        padding: 12px 12px;
+    }
+    table{
         font-size: 0.8rem;
     }
-    .container {
-        width: 350px;
+    .no,
+    .yes,
+    .cloud{
+        font-size: 1.2rem;
+    }
+    td:nth-child(4) {
+        padding: 0px 0px;
+        padding-right: 0px;
+        width: 30px;
+
     }
 }
 
@@ -515,40 +666,75 @@ body {
         margin-left: -0.5rem;
         margin-right: 0.5rem;
     }
-    .aufgabe {
-        width: 300px;
-        margin-top: 1.8rem;
-        padding: 10px 22px;
+    .container {
+        width: 90%;
     }
-    .aufgabe h1 {
+
+    .container h1{
         font-size: 1rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
+        margin-top: 20px;
     }
-    .aufgabe p {
-        margin-left: 6px;
+    .aufgabe{
+        padding: 5px 5px;
+    }
+    .aufgabe p{
         font-size: 0.9rem;
     }
-    .input {
-        width: 280px;
+    #text{
+        font-size: 0.7rem;
+    }
+
+    .iconDown{
+        font-size: 1.2rem;
+        margin-top: -40px;
+    }
+    .solution{
+        height: 50px;
+    }
+    .name{
+        font-size: 0.5rem;
+        padding: 10px 0px;
+        width: 165px;
+    }
+    .abgabe{
+        font-size: 0.5rem;
+        padding: 10px 0px;
+    }
+
+    .file{
+        padding: 7px 12px;
+    }
+
+    .file input{
+        font-size: 0.5rem;
+        width: 100px;
+    }
+
+    .fileDiv input{
+        width: 200px;
+        padding: 12px 2px;
+    }
+
+    .fileDiv button{
+        font-size: 0.8rem;
         padding: 12px 12px;
     }
-    .aufgabe textarea {
-        width: 280px;
-        padding: 12px 14px;
+    table{
+        font-size: 0.6rem;
     }
-    .aufgabe button {
-        margin-top: 1.2rem;
-        font-size: 0.9rem;
-        padding: 13px 35px;
+    .no,
+    .yes,
+    .cloud{
+        font-size: 1.1rem;
     }
-    #fach {
-        width: 150px;
-        float: left;
-        margin-left: 5px;
+    td:nth-child(3),
+    td:nth-child(4) {
+        width: 20px;
     }
-    .file input {
-        width: 280px;
-        font-size: 0.8rem;
+    td{
+        padding: 16px 5px;
+    }
+    td:nth-child(1) {
+        padding-left: 10px;
     }
 }
