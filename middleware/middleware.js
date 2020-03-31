@@ -6,19 +6,21 @@ var routerCache = new cache.Cache();
 module.exports = {
     auth: (role) => {
         return async(req, res, next) => {
+            console.log(req.session)
             if (req.session && req.session.role) {
                 if (role != undefined) {
-                    console.log(role)
                     if (role.lehrer) {
-                        if (req.session.role == 'lehrer' || req.session.role == 'admin') {
+                        if (req.session.role == 'teacher' || req.session.role == 'admin') {
                             next();
                         } else {
+                            console.log("not authorized")
                             return res.json({ status: 405, response: "not authorized" })
                         }
                     } else if (role.user) {
                         if (req.session.role == 'user' || req.session.role == 'admin') {
                             next();
                         } else {
+                            console.log("not authorized")
                             return res.json({ status: 405, response: "not authorized" })
                         }
                     } else {
@@ -29,10 +31,10 @@ module.exports = {
                 }
             } else {
                 if (RegExp(/^\/api/).test(req.path)) {
-                    console.log("not authenticated")
+                    console.log("not authenticated: no session found")
                     return res.json({ status: 405, response: "not authorized" })
                 }
-                console.log("not authenticated")
+                console.log("not authenticated: no session found")
                 return res.redirect("/login");
             }
         }

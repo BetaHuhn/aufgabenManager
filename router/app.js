@@ -10,10 +10,13 @@ const zipFolder = require('zip-folder');
 const nodemailer = require('nodemailer');
 var ejs = require("ejs");
 const rateLimit = require("express-rate-limit");
-const Aufgabe = require('../models/aufgabe.js')
-const User = require('../models/user.js')
+
+let mongoose = require('mongoose')
+const Exercise = require('../models/exercise')
+const User = require('../models/user')
 const Invite = require("../models/invite")
-const Klasse = require("../models/klasse")
+const Class = require("../models/class")
+const School = require("../models/school")
 const Solution = require("../models/solution")
 
 const middleware = require("../middleware/middleware")
@@ -68,43 +71,39 @@ async function sendPush(name, klasse, fach, abgabe) {
 router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middleware.cache(900)
     console.log(req.session.name + " is getting home data")
     try {
-        var user = await Klasse.findByOneUserId(req.session.user_id)
-        console.log(user)
-        Aufgabe.find({
-            '_id': { $in: user.aufgaben }
-        }, function(err, docs) {
-            if (err) {
-                console.log(err)
-                res.json({ status: 500, response: "error" })
-            }
-            console.log(docs);
-            var data = []
-            for (i in docs) {
+        var classes = await Class.find({ '_id': { $in: req.session.classes } }).populate("exercises")
+        //console.log(classes)
+        var data = []
+        for(i in classes){
+            for (j in classes[i].exercises) {
                 data.push({
-                    aufgaben_id: docs[i].aufgaben_id,
-                    user_id: docs[i].user_id,
-                    text: docs[i].text,
-                    fach: docs[i].fach,
-                    klasse: docs[i].klasse,
-                    abgabe: docs[i].abgabe,
-                    createdAt: docs[i].createdAt,
-                    downloads: docs[i].downloads,
-                    files: docs[i].files
+                    _id: classes[i].exercises[j]._id,
+                    user_id: classes[i].exercises[j].user,
+                    text: classes[i].exercises[j].text,
+                    subject: classes[i].exercises[j].subject,
+                    class: classes[i].name,
+                    deadline: classes[i].exercises[j].deadline,
+                    createdAt: classes[i].exercises[j].createdAt,
+                    downloads: classes[i].exercises[j].downloads,
+                    files: classes[i].exercises[j].files
                 })
             }
-            res.json({
-                status: 200,
-                response: 'success',
-                type: 'data',
-                data: data,
-                user: {
-                    user_id: req.session.user_id,
-                    name: req.session.name,
-                    role: req.session.role,
-                    klassen: req.session.klassen
-                }
-            })
-        });
+        }
+       // console.log(data)
+        console.log("Sending " + data.length + " exercises")
+        res.json({
+            status: 200,
+            response: 'success',
+            type: 'data',
+            data: data,
+            user: {
+                user_id: req.session._id,
+                name: req.session.name,
+                role: req.session.role,
+                klassen: req.session.classNames
+            }
+        })
+            
     } catch (error) {
         if (error.code == 405) {
             console.log("user not found")
@@ -116,12 +115,17 @@ router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middlewa
     }
 });
 
-router.post('/api/new/aufgabe', middleware.auth({ lehrer: true }), async(req, res) => {
+router.post('/api/new/exercise', middleware.auth({ lehrer: true }), async(req, res) => {
     console.log(req.body)
     if (req.body != undefined) {
         if ((req.body.klasse != undefined || req.body.klasse != '' || req.body.klasse.length != 0) && req.body.fach != undefined && req.body.abgabe != undefined && req.body.text != undefined) {
-            if (req.session.klassen.includes(req.body.klasse) || req.session.role == "admin") {
-                var uid = generate('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 32)
+            if (req.session.classNames.includes(req.body.klasse) || req.session.role == "admin") {
+                var userID = req.session._id //'5e8356c961d55a53b0027fd1'
+                var sendClass = await Class.findOne({ name: req.body.klasse });
+                if(!sendClass){
+                    return res.json({status: 404, response: "class not found"})
+                }
+                var uid = new mongoose.Types.ObjectId();
                 if (!req.files || Object.keys(req.files).length === 0) {
                     var files = { count: 0 }
                 } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
@@ -169,27 +173,28 @@ router.post('/api/new/aufgabe', middleware.auth({ lehrer: true }), async(req, re
                     }
                 }
                 var query = {
-                    aufgaben_id: uid,
-                    user_id: req.session.user_id,
+                    _id: uid,
+                    user: userID,
                     text: req.body.text,
-                    fach: req.body.fach,
-                    abgabe: req.body.abgabe,
+                    subject: req.body.fach,
+                    deadline: req.body.abgabe,
                     files: files,
-                    klasse: req.body.klasse,
+                    class: sendClass._id,
+                    school: req.session.school,
                     createdAt: CurrentDate(),
                     downloads: 0
                 }
                 try {
-                    let aufgabe = new Aufgabe(query)
-                    aufgabe.save(async function(err, doc) {
+                    let exercise = new Exercise(query)
+                    exercise.save(async function(err, doc) {
                         if (err) {
                             console.log(err)
                             if (err.code == 11000) {
-                                console.log("Aufgabe already in use")
+                                console.log("Exercise already in use")
                                 console.log(err)
                                 res.json({
                                     status: '407',
-                                    response: "aufgabe already in use"
+                                    response: "exercise already in use"
                                 });
                             } else {
                                 console.error(err)
@@ -199,33 +204,49 @@ router.post('/api/new/aufgabe', middleware.auth({ lehrer: true }), async(req, re
                                 });
                             }
                         } else {
+
                             console.log(doc)
                             isNew = true;
-                            middleware.resetCache(doc.klasse)
-                            var user = await User.findOne({ user_id: req.session.user_id })
-                            user.aufgaben.push(doc._id)
+                            middleware.resetCache(doc.class)
+                            var user = await User.findOne({ _id: userID })
+                            if(user.exercises == undefined || user.exercises == null){
+                                user.exercises = [doc._id]
+                            }else{
+                                user.exercises.push(doc._id)
+                            }
                             user.save(function(err) {
                                 if (err) {
                                     console.error(err);
                                 }
                             });
-                            console.log("Aufgabe added as: " + uid)
+                            if(sendClass.exercises == undefined || sendClass.exercises == null){
+                                sendClass.exercises = [doc._id]
+                            }else{
+                                sendClass.exercises.push(doc._id)
+                            }
+                            sendClass.save(function(err) {
+                                if (err) {
+                                    console.error(err);
+                                }
+                            });
+                            console.log("Exercise added as: " + uid)
                             res.json({
                                 status: '200',
                                 response: "success",
                                 type: 'data',
                                 data: {
-                                    aufgaben_id: uid,
+                                    _id: doc._id,
                                     text: doc.text,
-                                    fach: doc.fach,
-                                    abgabe: doc.abgabe,
+                                    fach: doc.subject,
+                                    abgabe: doc.deadline,
                                     files: doc.files,
-                                    klasse: doc.klasse,
+                                    klasse: doc.class,
+                                    school: doc.school,
                                     createdAt: doc.createdAt,
                                     downloads: doc.downloads
                                 }
                             });
-                            sendPush(req.session.name, doc.klasse, doc.fach, doc.abgabe)
+                           // sendPush(req.session.name, doc.klasse, doc.fach, doc.abgabe)
                         }
                     })
                 } catch (error) {
@@ -256,37 +277,36 @@ router.post('/api/new/aufgabe', middleware.auth({ lehrer: true }), async(req, re
     }
 })
 
-router.get('/api/delete/aufgabe', middleware.auth({ lehrer: true }), async(req, res) => {
+router.get('/api/delete/exercise', middleware.auth({ lehrer: true }), async(req, res) => {
     try {
-        const aufgabe = await Aufgabe.findOne({ aufgaben_id: req.query.id })
-        if (!aufgabe) {
-            throw ({ error: 'aufgabe not found', code: 405 })
+        const exercise = await Exercise.findOne({ _id: req.query.id })
+        if (!exercise) {
+            throw ({ error: 'exercise not found', code: 405 })
         }
-        if (req.session.user_id == aufgabe.user_id || req.session.role == 'admin') {
-            await aufgabe.deleteOne({ aufgaben_id: aufgabe.aufgaben_id })
-                .then(doc => {
-                    console.log(doc)
-                    middleware.resetCache(doc.klasse)
-                    console.log("Aufgabe: " + aufgabe.aufgaben_id + " deleted by " + req.session.name)
-                    res.json({
-                        status: 200,
-                        response: 'success'
-                    })
-                })
-                .catch(err => {
+        if (req.session._id == exercise.user || req.session.role == 'admin') {
+            await exercise.remove(async function(err, doc) {
+                if(err){
                     console.error(err)
-                    res.json({ status: 500, response: "es ist ein fehler aufgetreten" })
+                    return res.json({ status: 500, response: "es ist ein fehler aufgetreten" })
+                }
+                console.log(doc)
+                middleware.resetCache(doc.class)
+                console.log("Exercise: " + exercise._id + " deleted by " + req.session.name)
+                res.json({
+                    status: 200,
+                    response: 'success'
                 })
+            })
         } else {
             res.json({
                 status: '401',
-                type: 'dir gehört die Aufgabe nicht'
+                type: 'dir gehört die Exercise nicht'
             });
         }
     } catch (error) {
         if (error.code == 405) {
-            console.log("aufgabe not found")
-            res.json({ status: 404, response: "aufgabe nicht gefunden" })
+            console.log("exercise not found")
+            res.json({ status: 404, response: "exercise nicht gefunden" })
         } else {
             console.log(error)
             res.json({ status: 500, response: "es ist ein fehler aufgetreten" })
@@ -325,22 +345,23 @@ router.get('/api/get/solutions', middleware.auth(), async(req, res) => { //{ use
     if (req.query != undefined) {
         if (req.query.id != undefined) {
             try {
-                var aufgabe = await Aufgabe.findOneById(req.query.id)
-                if (req.session.klassen.includes(aufgabe.klasse)) {
+                var exercise = await Exercise.findOne({ _id: req.query.id })
+                if (req.session.classes.includes(String(exercise.class))) {
                     try {
-                        var solutions = await Solution.findByUserAndAufgabe(req.session.user_id, aufgabe.aufgaben_id)
-                        if (solutions.length >= 1) {
+                        if(req.session.role == "teacher" || req.session.role == "admin"){
+                            if(exercise.user == req.session._id || req.session.role == "admin"){
+                                var solutions = await Solution.find({ exercise: exercise._id }).populate("user", "name")
+                            }else{
+                                console.log("Fehler: Die Aufgabe gehört " + req.session.name + " nicht")
+                                res.json({ status: 404, response: "keine lösungen gefunden" })
+                            }
+                        }else{
+                            var solutions = await Solution.findOne({ user: req.session._id, exercise: exercise._id })
+                        }
+                        if (solutions) {
                             var data = []
-                            for (i in solutions) {
-                                data.push({
-                                    solution_id: solutions[i].solution_id,
-                                    aufgaben_id: solutions[i].aufgaben_id,
-                                    fach: solutions[i].fach,
-                                    klasse: solutions[i].klasse,
-                                    access: solutions[i].access,
-                                    files: solutions[i].files,
-                                    createdAt: solutions[i].createdAt
-                                })
+                            for (i in solutions.versions) {
+                                data.push(solutions.versions[i])
                             }
                             res.json({
                                 status: 200,
@@ -349,7 +370,7 @@ router.get('/api/get/solutions', middleware.auth(), async(req, res) => { //{ use
                                 user: {
                                     name: req.session.name,
                                     role: req.session.role,
-                                    user_id: req.session.user_id,
+                                    _id: req.session._id,
                                 }
                             })
                         } else {
@@ -366,13 +387,13 @@ router.get('/api/get/solutions', middleware.auth(), async(req, res) => { //{ use
                         }
                     }
                 } else {
-                    console.log("Fehler: " + req.session.name + " ist gehört nicht der Klasse: " + aufgabe.klasse + " an")
+                    console.log("Fehler: " + req.session.name + " ist gehört nicht der Klasse: " + exercise.klasse + " an")
                     res.json({ status: 403, response: "nicht autorisiert" })
                 }
             } catch (error) {
                 if (error.code == 405) {
-                    console.log("aufgabe not found")
-                    res.json({ status: 404, response: "aufgabe nicht gefunden" })
+                    console.log("exercise not found")
+                    res.json({ status: 404, response: "exercise nicht gefunden" })
                 } else {
                     console.log(error)
                     res.json({ status: 400, response: "error" })
@@ -380,11 +401,106 @@ router.get('/api/get/solutions', middleware.auth(), async(req, res) => { //{ use
             }
         } else {
             console.log("Fehler: keine aufgaben id gesendet")
-            res.json({ status: 404, response: "aufgabe nicht gefunden" })
+            res.json({ status: 404, response: "exercise nicht gefunden" })
         }
     } else {
         console.log("Fehler: keine aufgaben id gesendet")
-        res.json({ status: 405, response: "aufgabe nicht gefunden" })
+        res.json({ status: 405, response: "exercise nicht gefunden" })
+    }
+})
+
+router.get('/api/get/table', middleware.auth({lehrer: true}), async(req, res) => { //{ user: true }
+    console.log(req.session.name + " is getting table data")
+    if (req.query != undefined) {
+        if (req.query.id != undefined) {
+            try {
+                var exercise = await Exercise.findOne({ _id: req.query.id })
+                if (req.session.classes.includes(String(exercise.class))) {
+                    try {
+                        if(exercise.user == req.session._id || req.session.role == "admin"){
+                            //var solutions = await Solution.find({ exercise: exercise._id }).populate("user")
+
+                            var klasse = await Class.find({ _id: exercise.class }).populate({
+                                path : 'users',
+                                select: 'name role solutions',
+                                populate : {
+                                  path : 'solutions',
+                                  match: { exercise: exercise._id },
+                                  select: 'exercise createdAt',
+                                }
+                              })
+                            console.log(klasse[0].users[1])
+                            var data = []
+                            for(i in klasse){
+                                for(j in klasse[i].users){
+                                    if(klasse[i].users[j].role == "user"){
+                                        if(klasse[i].users[j].solutions.length >= 1){
+                                            data.push({
+                                                _id: klasse[i].users[j]._id,
+                                                name: klasse[i].users[j].name,
+                                                solutions: klasse[i].users[j].solutions,
+                                                fileUrl: "https://dev1.mxis.ch/api/v1/solution/download?id=" + klasse[i].users[j].solutions[0]._id,
+                                                status: true,
+                                                createdAt: klasse[i].users[j].solutions[ klasse[i].users[j].solutions.length - 1 ].createdAt
+                                            })
+                                        }else{
+                                            data.push({
+                                                _id: klasse[i].users[j]._id,
+                                                name: klasse[i].users[j].name,
+                                                solutions: [],
+                                                fileUrl: null,
+                                                status: false,
+                                                createdAt: null
+                                            })
+                                        }
+                                    }
+                                }
+                            }
+                            res.json({
+                                status: 200,
+                                response: "success",
+                                data: data,
+                                exercise: exercise._id,
+                                user: {
+                                    name: req.session.name,
+                                    role: req.session.role,
+                                    _id: req.session._id,
+                                }
+                            })
+                        }else{
+                            console.log("Fehler: Die Aufgabe gehört " + req.session.name + " nicht")
+                            res.json({ status: 404, response: "keine lösungen gefunden" })
+                        }
+                        
+                    } catch (error) {
+                        if (error.code == 405) {
+                            console.log("Fehler: Keine Lösungen gefunden")
+                            res.json({ status: 404, response: "keine lösungen gefunden" })
+                        } else {
+                            console.log(error)
+                            res.json({ status: 400, response: "error" })
+                        }
+                    }
+                } else {
+                    console.log("Fehler: " + req.session.name + " ist gehört nicht der Klasse: " + exercise.klasse + " an")
+                    res.json({ status: 403, response: "nicht autorisiert" })
+                }
+            } catch (error) {
+                if (error.code == 405) {
+                    console.log("exercise not found")
+                    res.json({ status: 404, response: "exercise nicht gefunden" })
+                } else {
+                    console.log(error)
+                    res.json({ status: 400, response: "error" })
+                }
+            }
+        } else {
+            console.log("Fehler: keine aufgaben id gesendet")
+            res.json({ status: 404, response: "exercise nicht gefunden" })
+        }
+    } else {
+        console.log("Fehler: keine aufgaben id gesendet")
+        res.json({ status: 405, response: "exercise nicht gefunden" })
     }
 })
 
@@ -394,109 +510,233 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
     if (req.body != undefined) {
         if (req.body.id != undefined) {
             try {
-                var aufgabe = await Aufgabe.findOneById(req.body.id);
-                if (req.session.klassen.includes(aufgabe.klasse)) {
-                    var uid = generate('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 32)
-                    var today = new Date();
-                    var date = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate()
-                    if (!req.files || Object.keys(req.files).length === 0) {
-                        console.log("Fehler: Keine Datei hochgeladen")
-                        res.json({
-                            status: 400,
-                            response: "keine Datei hochgeladen"
-                        })
-                    } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
-                        console.log("One file uploaded")
-                        let photo = req.files.data;
-                        var type = photo.name.split('.').pop();
-                        var file_id = uid + "." + type;
-                        photo.mv('./files/' + file_id, function(err) {
-                            if (err) throw err;
-                            console.log("File " + file_id + " moved")
-                        })
-                        console.log(req.body.filename)
-                        var files = {
-                            count: 1,
-                            type: type,
-                            fileName: (req.body.filename == undefined || req.body.filename === "" || req.body.filename.length == 0 || req.body.filename == null) ? aufgabe.fach + "-" + req.session.name.replace(/\s/g, "") + "-" + date : req.body.filename,
-                            fileUrl: "https://zgk.mxis.ch/api/v1/solution/download/" + file_id
-                        }
-                    } else {
-                        var count = req.files.data.length;
-                        console.log(count + " files uploaded")
-                        var files = [];
-                        _.forEach(_.keysIn(req.files.data), (key) => {
-                            let file = req.files.data[key];
-
-                            //move photo to uploads directory
-                            file.mv('./files/uploads/' + uid + "/" + file.name, function(err) {
-                                if (err) throw err;
-                                console.log("File " + file.name + " moved")
+                var exercise = await Exercise.findOne({ _id: req.body.id }).populate("solutions");
+                if (req.session.classes.includes(String(exercise.class))) {
+                    console.log(exercise.solutions)
+                    var solution = await Solution.findOne({ exercise: exercise._id, user: req.session._id})
+                    if(solution){
+                        console.log(true)
+                        var uid = new mongoose.Types.ObjectId();
+                        var today = new Date();
+                        var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2)  + "-" + ("0" + today.getSeconds()).slice(-2) ;
+                        if (!req.files || Object.keys(req.files).length === 0) {
+                            console.log("Fehler: Keine Datei hochgeladen")
+                            res.json({
+                                status: 400,
+                                response: "keine Datei hochgeladen"
                             })
-                        });
-                        zipFolder('./files/uploads/' + uid + '/', './files/' + uid + ".zip", function(err) {
+                        } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
+                            console.log("One file uploaded")
+                            let photo = req.files.data;
+                            var type = photo.name.split('.').pop();
+                            var file_id = uid + "." + type;
+                            var files = {
+                                count: 1,
+                                type: type,
+                                fileName:  req.session.name.replace(/\s/g, "") + "-" + date
+                            }
+                            photo.mv('./files/solutions/' + solution._id + "/" + files.fileName + "." + type, function(err) {
+                                if (err) throw err;
+                                console.log("File " + file_id + " moved")
+                            })
+                            console.log(req.body.filename)
+                        } else {
+                            var count = req.files.data.length;
+                            console.log(count + " files uploaded")
+                            var files = [];
+                            _.forEach(_.keysIn(req.files.data), (key) => {
+                                let file = req.files.data[key];
+
+                                //move photo to uploads directory
+                                file.mv('./files/uploads/' + uid + "/" + file.name, function(err) {
+                                    if (err) throw err;
+                                    console.log("File " + file.name + " moved")
+                                })
+                            });
+                            var files = {
+                                count: count,
+                                type: 'zip',
+                                fileName:  req.session.name.replace(/\s/g, "") + "-" + date
+                            }
+                            zipFolder('./files/uploads/' + uid + '/', './files/solutions/' + solution._id + "/" + files.fileName + ".zip", function(err) {
+                                if (err) {
+                                    console.log('oh no!', err);
+                                } else {
+                                    console.log('All files Zipped up: ' + uid + '.zip');
+                                }
+                            });
+                        }
+                        zipFolder('./files/solutions/' + solution._id + '/', './files/solutions/' + solution._id + ".zip", function(err) {
                             if (err) {
                                 console.log('oh no!', err);
                             } else {
                                 console.log('All files Zipped up: ' + uid + '.zip');
+                                solution.file.multiple = true;
+                                solution.file.type = "zip"
+                                solution.versions.push({
+                                    _id: uid,
+                                    createdAt: CurrentDate(),
+                                    files: files
+                                })
+                                solution.save(function(err) {
+                                    if (err) {
+                                        console.error(err);
+                                    }
+                                    res.json({
+                                        status: '200',
+                                        response: "success",
+                                        type: 'data',
+                                        data: {
+                                            _id: solution._id,
+                                            user: solution.user,
+                                            exercise: solution.exercise,
+                                            subject: solution.subject,
+                                            class: solution.class,
+                                            school: solution.school,
+                                            file: solution.file,
+                                            versions: solution.versions,
+                                            access: solution.access,
+                                            createdAt: solution.createdAt
+                                        }
+                                    });
+                                });
                             }
                         });
-                        var files = {
-                            count: count,
-                            type: 'zip',
-                            fileName: (req.body.filename == undefined || req.body.filename === "" || req.body.filename.length == 0 || req.body.filename == null) ? aufgabe.fach + "-" + req.session.name.replace(/\s/g, "") + "-" + date : req.body.filename,
-                            fileUrl: "https://zgk.mxis.ch/api/v1/solution/download/" + uid + '.zip'
+
+                    }else{
+                        console.log(false)
+                        var uid = new mongoose.Types.ObjectId();
+                        var today = new Date();
+                        var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2)  + "-" + ("0" + today.getSeconds()).slice(-2) ;
+                        if (!req.files || Object.keys(req.files).length === 0) {
+                            console.log("Fehler: Keine Datei hochgeladen")
+                            res.json({
+                                status: 400,
+                                response: "keine Datei hochgeladen"
+                            })
+                        } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
+                            console.log("One file uploaded")
+                            let photo = req.files.data;
+                            var type = photo.name.split('.').pop();
+                            var file_id = uid + "." + type;
+                            var files = {
+                                count: 1,
+                                type: type,
+                                fileName:  req.session.name.replace(/\s/g, "") + "-" + date
+                            }
+                            photo.mv('./files/solutions/' + uid + "/" + files.fileName + "." + type, function(err) {
+                                if (err) throw err;
+                                console.log("File " + file_id + " moved")
+                            })
+                            console.log(req.body.filename)
+                        } else {
+                            var count = req.files.data.length;
+                            console.log(count + " files uploaded")
+                            var files = [];
+                            _.forEach(_.keysIn(req.files.data), (key) => {
+                                let file = req.files.data[key];
+
+                                //move photo to uploads directory
+                                file.mv('./files/uploads/' + uid + "/" + file.name, function(err) {
+                                    if (err) throw err;
+                                    console.log("File " + file.name + " moved")
+                                })
+                            });
+                            var files = {
+                                count: count,
+                                type: 'zip',
+                                fileName: req.session.name.replace(/\s/g, "") + "-" + date
+                            }
+                            zipFolder('./files/uploads/' + uid + '/', './files/solutions/' + uid + "/" + files.fileName + ".zip", function(err) {
+                                if (err) {
+                                    console.log('oh no!', err);
+                                } else {
+                                    console.log('All files Zipped up: ' + uid + '.zip');
+                                }
+                            });
+                        }
+                        var query = {
+                            _id: uid,
+                            user: req.session._id,
+                            exercise: exercise._id,
+                            subject: exercise.subject,
+                            class: exercise.class,
+                            school: exercise.school,
+                            file: {
+                                type: files.type,
+                                multiple: false
+                            },
+                            versions:[{
+                                _id: new mongoose.Types.ObjectId(),
+                                createdAt: CurrentDate(),
+                                files: files
+                            }],
+                            access: [exercise._id, req.session._id],
+                            createdAt: CurrentDate()
+                        }
+                        try {
+                            let solution = new Solution(query)
+                            solution.save(async function(err, doc) {
+                                if (err) {
+                                    console.log(err)
+                                    res.json({
+                                        status: '400',
+                                        type: 'error'
+                                    });
+
+                                } else {
+                                    var user = await User.findOne({ _id: req.session._id })
+                                    if(user.solutions == undefined || user.solutions == null){
+                                        user.solutions = [doc._id]
+                                    }else{
+                                        user.solutions.push(doc._id)
+                                    }
+                                    user.save(function(err) {
+                                        if (err) {
+                                            console.error(err);
+                                        }
+                                    });
+                                    if(exercise.solutions == undefined || exercise.solutions == null){
+                                        exercise.solutions = [doc._id]
+                                    }else{
+                                        exercise.solutions.push(doc._id)
+                                    }
+                                    exercise.save(function(err) {
+                                        if (err) {
+                                            console.error(err);
+                                        }
+                                    });
+                                    console.log(doc)
+                                    console.log("Lösung hinzugefügt als: " + uid)
+                                    res.json({
+                                        status: '200',
+                                        response: "success",
+                                        type: 'data',
+                                        data: {
+                                            _id: doc._id,
+                                            user: doc.user,
+                                            exercise: doc.exercise,
+                                            subject: doc.subject,
+                                            class: doc.class,
+                                            school: doc.school,
+                                            file: doc.file,
+                                            versions: doc.versions,
+                                            access: doc.access,
+                                            createdAt: doc.createdAt
+                                        }
+                                    });
+                                }
+                            })
+                        } catch (error) {
+                            console.log(error)
+                            res.json({
+                                status: '400',
+                                type: 'error'
+                            });
                         }
                     }
-                    var query = {
-                        solution_id: uid,
-                        user_id: req.session.user_id,
-                        aufgaben_id: aufgabe.aufgaben_id,
-                        fach: aufgabe.fach,
-                        klasse: aufgabe.klasse,
-                        files: files,
-                        access: [aufgabe.user_id, req.session.user_id],
-                        createdAt: CurrentDate()
-                    }
-                    try {
-                        let solution = new Solution(query)
-                        solution.save(async function(err, doc) {
-                            if (err) {
-                                console.log(err)
-                                res.json({
-                                    status: '400',
-                                    type: 'error'
-                                });
-
-                            } else {
-                                console.log(doc)
-                                console.log("Lösung hinzugefügt als: " + uid)
-                                res.json({
-                                    status: '200',
-                                    response: "success",
-                                    type: 'data',
-                                    data: {
-                                        solution_id: doc.aufgaben_id,
-                                        user_id: doc.user_id,
-                                        aufgaben_id: doc.aufgaben_id,
-                                        fach: doc.fach,
-                                        klasse: doc.klasse,
-                                        files: doc.files,
-                                        access: doc.access,
-                                        createdAt: doc.createdAt
-                                    }
-                                });
-                            }
-                        })
-                    } catch (error) {
-                        console.log(error)
-                        res.json({
-                            status: '400',
-                            type: 'error'
-                        });
-                    }
                 } else {
-                    console.log("Fehler: " + req.session.name + " gehört nicht der Klasse: " + aufgabe.klasse + " an")
+                    console.log("Fehler: " + req.session.name + " gehört nicht der Klasse: " + exercise.class + " an")
                     res.json({
                         status: '400',
                         type: 'error'
@@ -504,8 +744,8 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
                 }
             } catch (error) {
                 if (error.code == 405) {
-                    console.log("Fehler: Aufgabe not found")
-                    res.json({ status: 404, response: "aufgabe nicht gefunden" })
+                    console.log("Fehler: Exercise not found")
+                    res.json({ status: 404, response: "exercise nicht gefunden" })
                 } else {
                     console.log(error)
                     res.json({ status: 500, response: "es ist ein fehler aufgetreten" })
@@ -515,14 +755,14 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
             console.log("Fehler: Keine Aufgaben ID gesendet")
             res.json({
                 status: '400',
-                type: 'keine aufgabe angegeben'
+                type: 'keine exercise angegeben'
             });
         }
     } else {
         console.log("Fehler: Keine Aufgaben ID gesendet")
         res.json({
             status: '400',
-            type: 'keine aufgabe angegeben'
+            type: 'keine exercise angegeben'
         });
     }
 })
