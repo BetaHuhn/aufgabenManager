@@ -55,7 +55,7 @@ let userSchema = new mongoose.Schema({
 
 })
 
-/*
+
 userSchema.pre('save', async function(next) {
     const user = this
     if (user.isModified('password')) {
@@ -65,7 +65,7 @@ userSchema.pre('save', async function(next) {
         user.email = hashEmailAddress(user.email.toLowerCase(), salt)
     }
     next()
-})*/
+})
 
 userSchema.pre('remove', async function(next) {
     // Remove all the docs that refers

@@ -446,6 +446,7 @@ td{
     border: 0;
     outline: 0;
     padding: 12px 14px;
+    width: 400px;
 }
 
 #loader {
@@ -560,10 +561,6 @@ td{
         padding: 7px 12px;
     }
 
-    .file input{
-        width: 153px;
-    }
-
     .fileDiv button{
         font-size: 0.8rem;
         padding: 12px 12px;
@@ -624,13 +621,8 @@ td{
         padding: 7px 12px;
     }
 
-    .file input{
-        font-size: 0.7rem;
-        width: 145px;
-    }
-
     .fileDiv input{
-        width: 130px;
+        width: 300px;
         padding: 12px 10px;
     }
 
