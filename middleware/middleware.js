@@ -6,7 +6,7 @@ var routerCache = new cache.Cache();
 module.exports = {
     auth: (role) => {
         return async(req, res, next) => {
-            console.log(req.session)
+            //console.log(req.session)
             if (req.session && req.session.role) {
                 if (role != undefined) {
                     if (role.lehrer) {

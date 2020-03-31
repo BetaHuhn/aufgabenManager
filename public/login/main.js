@@ -28,9 +28,9 @@ async function login() {
     if (json.status == 408) {
         var error = document.getElementById('error');
         error.innerHTML = "Falsches Passwort"
-    } else if (json.status == 402) {
+    } else if (json.status == 405) {
         var error = document.getElementById('error');
-        error.innerHTML = "Sorry, den Benutzer gibt's nicht"
+        error.innerHTML = "Diesen Benutzer gibt es nicht"
     } else if (json.status == 200) {
         console.log(json);
         var error = document.getElementById('error');

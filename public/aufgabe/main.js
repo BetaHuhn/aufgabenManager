@@ -303,7 +303,8 @@ async function renderTeacher() {
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 404) {
         console.log(json);
-        document.getElementById('solutionHead').innerHTML = "Lösung Hochladen:"
+        document.getElementById('solutionHead').style.display = "none"
+        //document.getElementById('solutionHead').innerHTML = "Lösung Hochladen:"
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)

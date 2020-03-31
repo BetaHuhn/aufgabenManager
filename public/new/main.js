@@ -242,12 +242,12 @@ async function authenticate() {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-        window.location.replace('/login')
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
-        window.location.replace('/login')
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
 

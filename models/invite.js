@@ -47,7 +47,7 @@ let inviteSchema = new mongoose.Schema({
 })
 
 inviteSchema.statics.checkToken = async(token) => {
-    var invite = await Invite.findOne({ token })
+    var invite = await Invite.findOne({ token }).populate('class', 'name')
     if (!invite) {
         throw ({ error: 'No invite found', code: 405 })
     }

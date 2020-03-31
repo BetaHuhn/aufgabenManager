@@ -33,9 +33,9 @@ router.post('/auth/login', async(req, res) => {
     try {
         var user = await User.checkLogin(req.body.email, req.body.password)
         console.log("Login: " + user.name + " success")
-        console.log(user.classes)
+        //console.log(user.classes)
         var user = await User.findOne({_id: user._id}).populate("classes", "name")
-        console.log(user)
+        //console.log(user)
         req.session.role = user.role;
         req.session.name = user.name;
         req.session.user_id = user._id;
@@ -158,7 +158,7 @@ router.post('/auth/register', async(req, res) => {
                                     req.session.user_id = user._id;
                                     req.session._id = user._id;
                                     req.session.classes = sendClass._id;
-                                    req.session.classNames = sendClass.name;
+                                    req.session.classNames = [sendClass.name];
                                     req.session.school = user.school;
                                     console.log("Invite: " + invite._id + " " + count + "/" + invite.used.max + " times used")
                                     res.json({
@@ -435,8 +435,8 @@ router.get('/api/auth/exercise', middleware.auth(), async(req, res) => {
                     console.log("Fehler: Aufgabe existiert nicht")
                     return res.send(404)
                 }
-                console.log(exercise.class)
-                console.log(req.session.classes)
+                //console.log(exercise.class)
+                //console.log(req.session.classes)
                 if (req.session.classes.includes(String(exercise.class._id))) {
                     res.json({
                         status: 200,

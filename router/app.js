@@ -116,6 +116,7 @@ router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middlewa
 });
 
 router.post('/api/new/exercise', middleware.auth({ lehrer: true }), async(req, res) => {
+    console.log(req.session.name + " is creating a new exercise")
     console.log(req.body)
     if (req.body != undefined) {
         if ((req.body.klasse != undefined || req.body.klasse != '' || req.body.klasse.length != 0) && req.body.fach != undefined && req.body.abgabe != undefined && req.body.text != undefined) {
@@ -127,6 +128,7 @@ router.post('/api/new/exercise', middleware.auth({ lehrer: true }), async(req, r
                 }
                 var uid = new mongoose.Types.ObjectId();
                 if (!req.files || Object.keys(req.files).length === 0) {
+                    console.log("No files uploaded")
                     var files = { count: 0 }
                 } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
                     console.log("One file uploaded")
@@ -204,7 +206,6 @@ router.post('/api/new/exercise', middleware.auth({ lehrer: true }), async(req, r
                                 });
                             }
                         } else {
-
                             console.log(doc)
                             isNew = true;
                             middleware.resetCache(doc.class)
@@ -321,7 +322,19 @@ router.get('/register', async(req, res) => {
     } else if (req.query.token != undefined) {
         try {
             var invite = await Invite.checkToken(req.query.token)
-            res.render('register.ejs', { inviteUrl: invite.inviteUrl, token: invite.token, used: invite.used.count, max: invite.used.max, klasse: invite.klasse, name: invite.name, role: invite.role, roleString: invite.roleString, type: invite.type })
+            //console.log(invite)
+            switch(invite.role){
+                case 'admin':
+                    var roleString = 'Admin';
+                    break;
+                case 'teacher':
+                case 'lehrer':
+                    var roleString = 'Lehrer';
+                    break;
+                default:
+                    var roleString = 'Schüler';                
+            }
+            res.render('register.ejs', { inviteUrl: invite.inviteUrl, token: invite.token, used: invite.used.count, max: invite.used.max, klasse: invite.class.name, name: invite.name, role: invite.role, roleString: roleString, type: invite.type })
         } catch (error) {
             if (error.code == 408) {
                 console.log("invite already used")
@@ -419,7 +432,6 @@ router.get('/api/get/table', middleware.auth({lehrer: true}), async(req, res) =>
                     try {
                         if(exercise.user == req.session._id || req.session.role == "admin"){
                             //var solutions = await Solution.find({ exercise: exercise._id }).populate("user")
-
                             var klasse = await Class.find({ _id: exercise.class }).populate({
                                 path : 'users',
                                 select: 'name role solutions',
@@ -428,8 +440,7 @@ router.get('/api/get/table', middleware.auth({lehrer: true}), async(req, res) =>
                                   match: { exercise: exercise._id },
                                   select: 'exercise createdAt',
                                 }
-                              })
-                            console.log(klasse[0].users[1])
+                            })
                             var data = []
                             for(i in klasse){
                                 for(j in klasse[i].users){
@@ -506,16 +517,13 @@ router.get('/api/get/table', middleware.auth({lehrer: true}), async(req, res) =>
 
 router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res) => {
     console.log(req.session.name + " lädt eine Lösung hoch")
-    console.log(req.body)
     if (req.body != undefined) {
         if (req.body.id != undefined) {
             try {
                 var exercise = await Exercise.findOne({ _id: req.body.id }).populate("solutions");
                 if (req.session.classes.includes(String(exercise.class))) {
-                    console.log(exercise.solutions)
                     var solution = await Solution.findOne({ exercise: exercise._id, user: req.session._id})
                     if(solution){
-                        console.log(true)
                         var uid = new mongoose.Types.ObjectId();
                         var today = new Date();
                         var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2)  + "-" + ("0" + today.getSeconds()).slice(-2) ;
@@ -539,7 +547,7 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
                                 if (err) throw err;
                                 console.log("File " + file_id + " moved")
                             })
-                            console.log(req.body.filename)
+                            //console.log(req.body.filename)
                         } else {
                             var count = req.files.data.length;
                             console.log(count + " files uploaded")
@@ -578,10 +586,11 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
                                     createdAt: CurrentDate(),
                                     files: files
                                 })
-                                solution.save(function(err) {
+                                solution.save(function(err, doc) {
                                     if (err) {
                                         console.error(err);
                                     }
+                                    console.log("Lösung hinzugefügt als: " + doc._id)
                                     res.json({
                                         status: '200',
                                         response: "success",
@@ -604,7 +613,7 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
                         });
 
                     }else{
-                        console.log(false)
+                        //console.log(false)
                         var uid = new mongoose.Types.ObjectId();
                         var today = new Date();
                         var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2)  + "-" + ("0" + today.getSeconds()).slice(-2) ;
@@ -628,7 +637,7 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
                                 if (err) throw err;
                                 console.log("File " + file_id + " moved")
                             })
-                            console.log(req.body.filename)
+                            //console.log(req.body.filename)
                         } else {
                             var count = req.files.data.length;
                             console.log(count + " files uploaded")
@@ -706,8 +715,8 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
                                             console.error(err);
                                         }
                                     });
-                                    console.log(doc)
-                                    console.log("Lösung hinzugefügt als: " + uid)
+                                    //console.log(doc)
+                                    console.log("Lösung hinzugefügt als: " + doc._id)
                                     res.json({
                                         status: '200',
                                         response: "success",

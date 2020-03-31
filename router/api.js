@@ -253,7 +253,6 @@ router.post('/api/v1/create/invite', limitApi, async(req, res) => {
                 class: sendClass._id,
                 school: sendClass.school, //OR sendClass.school._id dunno yet
                 role: role,
-                roleString: roleString,
                 token: token,
                 inviteUrl: inviteUrl,
                 createdAt: CurrentDate(),
@@ -403,7 +402,6 @@ router.get('/api/v1/download/:code', limitApi, async(req, res) => {
 
 router.get('/api/v1/solution/download', limitApi, middleware.auth(), async(req, res) => {
     try {
-
         console.log(req.session.name + " is getting solutions: " + req.query.id)
         var solution = await Solution.findOne({_id: req.query.id}).populate('user', 'name')
         if(!solution){

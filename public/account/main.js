@@ -14,8 +14,6 @@ function myFunction() {
 
 var last = document.getElementById('fileDiv')
 
-document.getElementById("loader").style.display = "none"; 
-
 var role;
 
 function validateForm() {
@@ -73,10 +71,10 @@ async function authenticate(){
     } else if (json.status == 405) {
         console.log(json);
         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-        window.location.replace('/login')
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }else {
         document.getElementById('error').innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
-        window.location.replace('/login')
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
 
@@ -96,7 +94,7 @@ async function change(){
         console.log(json);
         var error = document.getElementById('error');
         error.innerHTML = "Passwort wurde geändert"
-        window.location.replace('/');
+        //window.location.replace('/account');
     } else if (json.status == 408){
         var error = document.getElementById('error');
         error.innerHTML = "Falsches Passwort"
