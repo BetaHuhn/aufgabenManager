@@ -18,7 +18,7 @@ const appRouter = require('./router/app.js')
 const apiRouter = require('./router/api.js')
 const middleware = require("./middleware/middleware")
 
-app.listen(5600, () => console.log('listening on port 5600'));
+app.listen(5500, () => console.log('listening on port 5500'));
 app.use(express.static('public'));
 app.use(express.json({ limit: '2mb' }));
 app.set("view engine", "ejs");

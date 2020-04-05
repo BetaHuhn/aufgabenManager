@@ -10,10 +10,16 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/register/main.css">
+    <script src="https://kit.fontawesome.com/ca8ffbc206.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <div class="topnav" id="myTopnav">
+    <div class="modeSwitcher">
+      <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
+        <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light" aria-hidden="true"></span></input>
+      </label>
+    </div>
     <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
     <a id="logout" href="/logout" class="menu" style="display: none;">Logout</a>
     <a href="/settings" class="menu" style="display: none;">Settings</a>

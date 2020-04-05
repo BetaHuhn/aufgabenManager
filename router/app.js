@@ -450,7 +450,7 @@ router.get('/api/get/table', middleware.auth({lehrer: true}), async(req, res) =>
                                                 _id: klasse[i].users[j]._id,
                                                 name: klasse[i].users[j].name,
                                                 solutions: klasse[i].users[j].solutions,
-                                                fileUrl: "https://dev1.mxis.ch/api/v1/solution/download?id=" + klasse[i].users[j].solutions[0]._id,
+                                                fileUrl: "https://zgk.mxis.ch/api/v1/solution/download?id=" + klasse[i].users[j].solutions[0]._id,
                                                 status: true,
                                                 createdAt: klasse[i].users[j].solutions[ klasse[i].users[j].solutions.length - 1 ].createdAt
                                             })
