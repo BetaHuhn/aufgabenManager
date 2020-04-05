@@ -1,5 +1,4 @@
 /* main.css - Maximilian Schiller 2020 */
-
 :root {
     --primary-color: rgb(78, 121, 216);
     --primary-color-hover: rgb(82, 128, 226);
@@ -12,9 +11,33 @@
     --font-color-hover: #7a7a7a;
     --bg-color: #f5f6fa;
     --white: #fff;
-    --input-color: rgb(235, 235, 235);
+    --nav: rgb(78, 121, 216);
+    --input-color: rgb(230, 230, 230);
     --table-color: #ffffff;
     --table-color-nd: rgb(248, 248, 248);
+    --red: #ff4d4d;
+    --red-hover: #ff4343;
+    --green: #5dd64d;
+    --green-hover: #60e642;
+    --bg-code: rgba(0, 0, 0, .05);
+}
+
+[data-theme="dark"] {
+    --primary-color: #356fca;
+    --primary-color-hover: rgb(82, 128, 226);
+    --secondary-color: rgb(68, 68, 68);
+    --secondary-color-hover: rgb(80, 80, 80);
+    --active: rgb(59, 107, 219);
+    --active-hover: rgb(55, 93, 173);
+    --accent: rgb(107, 138, 206);
+    --font-color: #d9d9d9;
+    --font-color-hover: #7a7a7a;
+    --bg-color: #1c1c1c;
+    --white: #292929;
+    --nav: #292929;
+    --input-color: #1c1c1c;
+    --table-color: #1c1c1c;
+    --table-color-nd: #292929;
     --red: #ff4d4d;
     --red-hover: #ff4343;
     --green: #5dd64d;
@@ -35,11 +58,11 @@ body {
 
 .topnav {
     overflow: hidden;
-    background-color: var(--primary-color);
+    background-color: var(--nav);
     box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
 }
 
-.logo {
+.logo{
     float: left;
     display: block;
     color: #f2f2f2;
@@ -47,31 +70,31 @@ body {
     padding: 11px 18px;
     text-decoration: none;
     font-size: 20px;
-    margin-left: 2rem;
+    margin-left: 20px;
     margin-right: 2rem;
 }
 
-.logo span #id {
+.logo span #id{
     margin-left: 1rem;
 }
 
-.green {
+.green{
     color: var(--green);
 }
 
-.red {
+.red{
     color: var(--red);
 }
 
-.blink {
-    color: var(--primary-color);
+.blink{
+    color: var(--nav);
 }
 
 .topnav a:hover .blink {
-    color: var(--primary-color-hover);
+    color: var(--secondary-color-hover);
 }
 
-.menu {
+.menu{
     float: right;
     display: block;
     color: #f2f2f2;
@@ -86,24 +109,23 @@ body {
     background-color: var(--secondary-color);
 }
 
-.menu #logout {
+.menu #logout{ 
     margin-right: 1.5rem;
 }
 
-.topnav {
+.topnav{
     padding: 13px 16px;
 }
 
 .topnav a:hover {
     background-color: var(--secondary-color-hover);
-    color: #f2f2f2;
+    color:#f2f2f2;
 }
 
 .topnav a.active {
     background-color: var(--active);
     color: white;
 }
-
 .topnav a.active:hover {
     background-color: var(--active-hover);
 }
@@ -112,8 +134,39 @@ body {
     display: none;
 }
 
-.burger {
+.burger{
     color: #f2f2f2;
+}
+
+.modeSwitcher{
+    float: left;
+    margin-top: -10px;
+    margin-left: 10px;
+}
+
+.light{
+    color: rgb(38, 57, 110);
+    cursor: pointer;
+}
+
+.light:hover{
+    color: rgb(51, 74, 136);
+}
+
+.dark{
+    color: rgb(228, 186, 72);
+    cursor: pointer;
+}
+
+.dark:hover{
+    color: rgb(235, 194, 84);
+}
+
+#checkbox{
+    display:block;
+    opacity:0;
+    width: 10px;
+    height: 10px;
 }
 
 .container {
@@ -184,7 +237,7 @@ body {
     margin: auto;
     width: 440px;
     background: var(--input-color);
-    color: var(--font-color-hover);
+    color: var(--font-color);
     font-size: 1rem;
     border-radius: 10px;
     border: 0;
@@ -197,7 +250,7 @@ body {
     display: block;
     margin: auto;
     width: 600px;
-    color: var(--font-color-hover);
+    color: var(--font-color);
     font-size: 0.8rem;
     margin-left: 30px;
     margin-top: 10px;
@@ -207,7 +260,7 @@ body {
     display: block;
     margin: auto;
     width: 100px;
-    color: var(--font-color-hover);
+    color: var(--font-color);
     font-size: 0.8rem;
     margin-left: 30px;
     margin-top: 10px;
@@ -286,7 +339,7 @@ table {
   }
 
   th{
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
     color: #fff;
     font-weight: normal;
     margin-left: 20px;
@@ -294,8 +347,8 @@ table {
   }
 
   td{
-    background-color: #fff;
-    color: rgb(116, 116, 116);
+    background-color: var(--table-color-nd);
+    color: var(--font-color);
   }
 
   th:nth-child(4){
@@ -502,9 +555,7 @@ td{
 }
 
 @media screen and (max-width: 880px) {
-    .topnav a:not(:first-child) {
-        display: none;
-    }
+    .topnav a:not(:nth-child(2)) {display: none;}
     .topnav a.icon {
         float: right;
         display: block;
@@ -516,12 +567,7 @@ td{
         box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
         background-color: var(--secondary-color);
     }
-}
-
-@media screen and (max-width: 880px) {
-    .topnav.responsive {
-        position: relative;
-    }
+    .topnav.responsive {position: relative;}
     .topnav.responsive .icon {
         position: absolute;
         right: 0;
@@ -531,7 +577,15 @@ td{
         float: none;
         display: block;
         text-align: left;
-        margin-top: 1rem;
+        margin-top: 0.5rem;
+    }
+    .topnav a:hover {
+        background-color: var(--secondary-color-hover);
+        color:#f2f2f2;
+    }
+
+    #checkboxIcon{
+        margin-right: 20px;
     }
     .container {
         width: 550px;
@@ -590,8 +644,8 @@ td{
         margin-left: 0.5rem;
     }
     .topnav a:hover {
-        background-color: var(--primary-color);
-        color: #f2f2f2;
+        background-color: var(--secondary-color-hover);
+        color:#f2f2f2;
     }
     .container {
         width: 450px;

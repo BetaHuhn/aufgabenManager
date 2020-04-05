@@ -384,6 +384,10 @@ router.get('/api/v1/download/:code', limitApi, async(req, res) => {
         var code = req.params.code.split(".")[0];
         //console.log(code)
         var aufgabe = await Exercise.findOne({ _id: code })
+        if(!aufgabe){
+            console.log("File not found")
+            res.sendStatus(404);
+        }
         var count = await Exercise.increaseDownloads(aufgabe._id)
             //console.log(aufgabe)
         console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
@@ -391,10 +395,10 @@ router.get('/api/v1/download/:code', limitApi, async(req, res) => {
     } catch (error) {
         if (error.code == 405) {
             console.log("File not found")
-            res.json({ status: 404, response: "file not found" })
+            res.sendStatus(404);
         } else {
             console.log(error)
-            res.json({ status: 404, response: "file not found" })
+            res.sendStatus(404);
         }
     }
     //res.sendFile(path.join(__dirname, '../files/', req.params.code));
@@ -899,32 +903,35 @@ router.get("/api/v1/generate/pdf", middleware.auth({ lehrer: true }), async(req,
         select: 'name users',
         populate : {
           path : 'users',
-          select: 'name solutions',
+          select: 'name role solutions',
           populate:{
               path: 'solutions',
-              select: 'file createdAt'
+              select: 'file createdAt',
+              match: { exercise: id }
           }
         }
     })
-    console.log(exercise.class)
+    //console.log(exercise.class)
     var students = []
     for(i in exercise.class.users){
-        if(exercise.class.users[i].solutions.length >= 1){
-            var datum = new Date(exercise.class.users[i].solutions[0].createdAt)
-            datum = ("0" + datum.getDate()).slice(-2) + "." + ("0" + (datum.getMonth() + 1)).slice(-2) + "." +  datum.getFullYear() + ", " + ("0" + datum.getHours()).slice(-2) + ":" + ("0" + datum.getMinutes()).slice(-2) ;
-            students.push({
-                name: exercise.class.users[i].name,
-                datum: datum,
-                link: "https://dev1.mxis.ch/api/v1/solution/download?id=" + exercise.class.users[i].solutions[0]._id,
-                status: "ja"
-            })
-        }else{
-            students.push({
-                name: exercise.class.users[i].name,
-                datum: "-",
-                link: 0,
-                status: "nein"
-            })
+        if(exercise.class.users[i].role == "user"){
+            if(exercise.class.users[i].solutions.length >= 1){
+                var datum = new Date(exercise.class.users[i].solutions[0].createdAt)
+                datum = ("0" + datum.getDate()).slice(-2) + "." + ("0" + (datum.getMonth() + 1)).slice(-2) + "." +  datum.getFullYear() + ", " + ("0" + datum.getHours()).slice(-2) + ":" + ("0" + datum.getMinutes()).slice(-2) ;
+                students.push({
+                    name: exercise.class.users[i].name,
+                    datum: datum,
+                    link: "https://zgk.mxis.ch/api/v1/solution/download?id=" + exercise.class.users[i].solutions[0]._id,
+                    status: "ja"
+                })
+            }else{
+                students.push({
+                    name: exercise.class.users[i].name,
+                    datum: "-",
+                    link: 0,
+                    status: "nein"
+                })
+            }
         }
     }
     var abgabe = new Date(exercise.deadline)
@@ -932,7 +939,7 @@ router.get("/api/v1/generate/pdf", middleware.auth({ lehrer: true }), async(req,
     var today = new Date()
     today = ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." +  today.getFullYear() + ", " + ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) ;
             
-    ejs.renderFile(path.join(__dirname, '../views/', "pdfTemplate.ejs"), { link: "https://dev1.mxis.ch/aufgabe?id=" + exercise._id, createdAt: today, fach: exercise.subject, text: exercise.text, abgabe: abgabe, klasse: String(exercise.class.name), students: students}, (err, data) => {
+    ejs.renderFile(path.join(__dirname, '../views/', "pdfTemplate.ejs"), { link: "https://zgk.mxis.ch/aufgabe?id=" + exercise._id, createdAt: today, fach: exercise.subject, text: exercise.text, abgabe: abgabe, klasse: String(exercise.class.name), students: students}, (err, data) => {
     if (err) {
           console.log(err);
           res.send("error")
