@@ -433,7 +433,7 @@ router.get('/api/auth/exercise', middleware.auth(), async(req, res) => {
                 var exercise = await Exercise.findOne({ _id: req.query.id }).populate("class", "name")
                 if(!exercise){
                     console.log("Fehler: Aufgabe existiert nicht")
-                    return res.send(404)
+                    return res.json({ status: 404, response: "aufgabe nicht gefunden" })
                 }
                 //console.log(exercise.class)
                 //console.log(req.session.classes)
@@ -463,7 +463,10 @@ router.get('/api/auth/exercise', middleware.auth(), async(req, res) => {
                 if (error.code == 405) {
                     console.log("exercise not found")
                     res.json({ status: 404, response: "aufgabe nicht gefunden" })
-                } else {
+                } else if (error.name == "CastError") {
+                    console.log("exercise not found")
+                    res.json({ status: 404, response: "aufgabe nicht gefunden" })
+                }else {
                     console.log(error)
                     res.json({ status: 400, response: "error" })
                 }
