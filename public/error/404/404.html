@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="de" >
+<head>
+  <meta charset="UTF-8">
+  <title>Seite nicht gefunden - Fehler 404</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="./style.css">
+
+  <meta name="title" content="Diese Seite existiert nicht">
+    <meta name="description" content="Ups...Wir haben überall gesucht, aber haben die Seite leider nicht gefunden">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://zgk.mxis.ch/error/404/index.html">
+    <meta property="og:title" content="Diese Seite existiert nicht">
+    <meta property="og:description" content="Ups...Wir haben überall gesucht, aber haben die Seite leider nicht gefunden">
+    <meta property="og:image" content="https://zgk.mxis.ch/static/banner.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://zgk.mxis.ch/error/404/index.html">
+    <meta property="twitter:title" content="Diese Seite existiert nicht">
+    <meta property="twitter:description" content="Ups...Wir haben überall gesucht, aber haben die Seite leider nicht gefunden">
+    <meta property="twitter:image" content="https://zgk.mxis.ch/static/banner.png">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/static/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/static/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/static/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+</head>
+<body>
+
+<div id="wrapper">
+
+<div class="grid">
+  <span class="server"></span>
+  <span class="server"></span>
+  <span class="server"></span>
+  <span class="server"></span>
+  <span class="server"></span>
+</div>
+
+<div class="content">          
+  <h1>Fehler 404</h1>
+  <p>Wir haben wirklich überall gesucht, aber die Seite leider nirgends gefunden</p>
+</div>
+
+</div>
+<style>
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400);
+html {font-size: 18px;}
+body { 
+  font-family: 'Source Sans Pro', sans-serif;
+  line-height: 1.6;
+  font-size: 1em;
+  padding: 0 20px;
+}
+
+#wrapper {
+  width: 410px;
+  height: 350px;
+  margin: 0 auto;
+  
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -175px;
+  margin-left: -205px;
+}
+
+.center {
+  display: block;
+  margin-left: 0rem;
+  margin-top: 2rem;
+}
+
+.content {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+h1 {
+  font-weight: 300;
+  font-size: 1.5em;
+  color: #000;
+}
+
+p {
+  font-family: 'Source Sans Pro', sans-serif;
+  line-height: 1em;
+  font-weight: 300;
+  color: #333;
+}
+
+/* 
+Server by @chrisburton
+*/
+
+.grid {
+  max-width: 175px;
+  height: 200px;
+  background: #222;
+  margin: 0 auto;
+  padding: 1em 0;
+  border-radius: 3px;
+}
+
+
+.grid .server {
+  display: block;
+  max-width: 68%;
+  height: 20px;
+  background: rgba(255,255,255,.15);
+  box-shadow: 0 0 0 1px black inset;
+  margin: 10px 0 20px 30px;
+}
+
+.grid .server:before {
+  content: "";
+  position: relative;
+  top: 7px;
+  left: -18px;
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: green;
+  border: 1px solid black;
+  border-radius: 6px;
+  margin-top: 7px;
+}
+
+/* Animation */
+
+@-webkit-keyframes pulse {
+  0% {background: rgba(255,255,255,.15);}
+  100% {background: #ae1508;}
+}
+
+.grid .server:nth-child(3):before {
+  background: rgba(255,255,255,.15);
+  -webkit-animation: pulse .5s infinite alternate;
+}
+
+@-webkit-keyframes pulse_three {
+  0% {background: rgba(255,255,255,.15);}
+  100% {background: #d2710a;}
+}
+
+.grid .server:nth-child(5):before {
+  background: rgba(255,255,255,.15);
+  -webkit-animation: pulse_three .7s infinite alternate;
+}
+
+@-webkit-keyframes pulse_two {
+  0% {background: rgba(255,255,255,.15);}
+  100% {background: #9da506;}
+}
+.grid .server:nth-child(1):before {
+  background: rgba(255,255,255,.15);
+  -webkit-animation: pulse_two .1s infinite alternate;
+}
+.grid .server:nth-child(2):before {
+  background: rgba(255,255,255,.15);
+  -webkit-animation: pulse_two .175s infinite alternate;
+}
+.grid .server:nth-child(4):before {
+  background: rgba(255,255,255,.15);
+  -webkit-animation: pulse_two .1s infinite alternate;
+}
+
+
+@media only screen 
+  and (min-device-width: 320px) 
+  and (max-device-width: 480px)
+  and (-webkit-min-device-pixel-ratio: 2) {
+    html {font-size: 12px;}
+}
+@media only screen 
+  and (min-device-width: 320px) 
+  and (max-device-width: 568px)
+  and (-webkit-min-device-pixel-ratio: 2) {
+    html {font-size: 14px;}
+}
+</style>
+</body>
+</html>
