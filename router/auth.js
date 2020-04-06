@@ -25,7 +25,7 @@ router.use(session({
     saveUninitialized: true,
     cookie: {
         secure: false,
-        maxAge: 15 * 60 * 60 * 1000
+        maxAge: 15 * 60 * 60 * 1000 //15 Stunden
     }
 }));
 
