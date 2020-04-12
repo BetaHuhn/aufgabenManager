@@ -1,3 +1,4 @@
+# /.gitignore
 node_modules/
 key.json
 jwt-key.pub
@@ -7,4 +8,6 @@ files/
 mongodump-zgk-db
 mongodump-zgkDev-db
 mongodump-zgkDev
-report.pdf
+public/google85aa94ed649fd149.html
+public/sitemap.xml
+public/robots.txt
