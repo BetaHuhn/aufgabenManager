@@ -1,4 +1,27 @@
-# ZGK Aufgaben Planer
+# Aufgaben Manager
+> Ein auf Node.js basierender Aufgaben Manager für Schulen
+
+## Features
+- Unterstützt mehrere Schulen/Klassen
+- Rollenverteilung nach Lehrern und Schülern
+- Jeder User hat eigenen eigenen Account mit dem er nur auf bestimmte Aufgaben zugriff hat
+- Lehrer können Aufgaben für ihr Fach und eine bestimmte Klasse erstellen (mit Abgabetermin)
+- Aufgaben unterstützen sowohl Text als auch Dateien
+- Schüler sehen in einem übersichtlichem Dashboard alle Aufgaben ihrer Klasse
+- Schüler können ihre Lösung für eine Aufgabe direkt über die Platform hochladen (Auch mehrere Lösungen)
+- Lehrer sehen in einer übersichtlichen Tabelle welcher Schüler eine Lösung abgegeben hat und wer nicht und kann diese dann herunterladen
+- Schüler können sich über einen Klassen-Invite-Link registrieren, es müssen also lediglich Klassen und Lehrer Accounts angelegt werden
+- Zusätzlich kann ein Discord und Telegram Bot eingerichtet werden welcher die Schüler bei neuen Aufgaben benachrichtigt
+- Umfassende REST API für Anbindung an andere Dienste
+
+## Geplannt
+- Übersichtliches Admin Panel für die Verwaltung von Klassen und Usern
+- Erstellen von Schüler Accounts im vorraus mit temporären Passwörtern
+
+## Anforderungen
+- Node.js (v12.13.0 oder neuer)
+- MongoDB
+
 ## API
 ### Alle aktuellen Aufgaben holen
 ```
