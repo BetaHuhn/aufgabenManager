@@ -80,7 +80,7 @@ async function auth() {
 function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserId) {
     //console.log(file)
     var div = createElement('div', 'device parent', id)
-    div.onclick = function() { window.location.replace("/aufgabe?id=" + id); }
+    div.onclick = function() { window.location.href = "/aufgabe?id=" + id; }
     div.style.cursor = "pointer";
     var pName = createElement('p', 'child text name', id, fach + ' (' + klasse + ')')
     pName.onclick = function(e) { e.stopPropagation(); }
