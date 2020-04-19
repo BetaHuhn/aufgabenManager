@@ -680,7 +680,7 @@ router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res
                                 createdAt: CurrentDate(),
                                 files: files
                             }],
-                            access: [exercise._id, req.session._id],
+                            access: [exercise.user, req.session._id],
                             createdAt: CurrentDate()
                         }
                         try {

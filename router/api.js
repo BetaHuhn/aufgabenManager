@@ -420,7 +420,7 @@ router.get('/api/v1/solution/download', limitApi, middleware.auth(), async(req, 
                 res.download(path.join(__dirname, '../files/solutions/' + solution._id + "/" + solution.versions[0].files.fileName + "." + solution.file.type), solution.user.name.replace(/\s+/g, '') + '.' + solution.file.type);
             }
         }else{
-            console.log("Fehler: " + req.session.name + " nicht der Inhaber von: " + exercise._id)
+            console.log("Fehler: " + req.session.name + " nicht der Inhaber von: " + solution._id)
             return res.sendStatus(404);
         }
     } catch (error) {

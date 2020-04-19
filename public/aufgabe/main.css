@@ -412,6 +412,22 @@ td{
     border-bottom-right-radius: 10px;
   }
 
+.pdfDiv{
+    margin: auto;
+    margin-top: 1rem;
+    text-align: center;
+}
+.pdfDiv a{
+    margin-left: 1.2rem;
+    margin-right: 1.2rem;
+    color: var(--font-color);
+    display: inline-block;
+}
+
+.pdfDiv a:hover {
+    color: var(--primary-color-hover);
+}
+
 .solution {
     width: 100%;
     box-sizing: border-box;

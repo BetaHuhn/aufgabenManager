@@ -227,7 +227,7 @@ async function renderTeacher() {
     const json = await response.json();
     if (json.status == 200) {
         console.log(json);
-        document.getElementById('solutionHead').innerHTML = `Lösungen (<a href="/api/v1/generate/pdf?id=${json.exercise}">PDF</a>)`
+        document.getElementById('solutionHead').innerHTML = `Lösungen` //<a href="/api/v1/generate/pdf?id=${json.exercise}"><span class="fas fa-file-pdf cloud" title="Als PDF exportieren" aria-hidden="true"></span></a>
         var customers = new Array();
 
         customers.push(["Name", "Abgegeben am", "", "Status"]);
@@ -267,7 +267,7 @@ async function renderTeacher() {
                     if(customers[i][2] != null){
                         var btn = document.createElement('span');
                         btn.id = customers[i][j];
-                        btn.className = "fas fa-cloud-download-alt cloud";
+                        btn.className = "fas fa-file-download cloud";
                         btn.title = "Lösung Herunterladen";
                         btn.onclick = downloadFile;
                         cell.appendChild(btn);
@@ -293,6 +293,11 @@ async function renderTeacher() {
         var dvTable = document.getElementById("dvTable");
         dvTable.innerHTML = "";
         dvTable.appendChild(table);
+        var div = document.createElement('div')
+        div.className = "pdfDiv"
+        div.innerHTML = `<a href="/api/v1/generate/pdf?id=${json.exercise}">Tabelle als PDF herunterladen</a><a href="/api/v1/generate/pdf?id=${json.exercise}">Alle Lösungen herunterladen</a>`
+        dvTable.appendChild(div)
+        
     } else if (json.status == 403) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
