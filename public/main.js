@@ -65,10 +65,10 @@ async function auth() {
         }
     } else if (json.status == 405) {
         console.log(json);
+        window.location.replace('/login')
         var message = createElement('div', 'message', 'message')
-        last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
+        last.parentElement.appendChild(message)
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
@@ -82,14 +82,15 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
     var div = createElement('div', 'device parent', id)
     div.onclick = function() { window.location.href = "/aufgabe?id=" + id; }
     div.style.cursor = "pointer";
+    div.title = "Klicke um zu den Lösugen zu gelangen"
     var pName = createElement('p', 'child text name', id, fach + ' (' + klasse + ')')
-    pName.onclick = function(e) { e.stopPropagation(); }
-    pName.style.cursor = "text";
+    //pName.onclick = function(e) { e.stopPropagation(); }
+    //pName.style.cursor = "text";
     div.appendChild(pName)
 
     var abgabe = createElement('p', 'child text', id, abgabe)
-    abgabe.onclick = function(e) { e.stopPropagation(); }
-    abgabe.style.cursor = "text";
+    //abgabe.onclick = function(e) { e.stopPropagation(); }
+    //abgabe.style.cursor = "text";
     pName.parentElement.appendChild(abgabe)
 
     var text = createElement('p', 'child aufgabe', id, text)
@@ -98,13 +99,13 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
     abgabe.parentElement.appendChild(text)
 
     var downloads = createElement('span', 'child downloads', id, downloads + " Downloads")
-    downloads.onclick = function(e) { e.stopPropagation(); }
-    downloads.style.cursor = "text";
+    //downloads.onclick = function(e) { e.stopPropagation(); }
+    //downloads.style.cursor = "text";
     text.parentElement.appendChild(downloads)
 
     var files = createElement('div', 'child stack', id)
-    files.onclick = function(e) { e.stopPropagation(); }
-    files.style.cursor = "text";
+    //files.onclick = function(e) { e.stopPropagation(); }
+    //files.style.cursor = "text";
     downloads.parentElement.appendChild(files)
     if (file.count == 1) {
         var count = file.count + " Datei:";

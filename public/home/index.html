@@ -1,0 +1,155 @@
+<!-- index.html - Maximilian Schiller 2020 -->
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <title>Aktuelle Aufgaben</title>
+    <meta name="viewport" content="widp=device-widp,initial-scale=1">
+
+    <meta name="title" content="Aufgaben Manager">
+    <meta name="description" content="Alle aktuellen Aufgaben im Überblick">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://zgk.mxis.ch">
+    <meta property="og:title" content="Aufgaben Manager">
+    <meta property="og:description" content="Alle aktuellen Aufgaben im Überblick">
+    <meta property="og:image" content="https://zgk.mxis.ch/static/banner.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://zgk.mxis.ch">
+    <meta property="twitter:title" content="Aufgaben Manager">
+    <meta property="twitter:description" content="Alle aktuellen Aufgaben im Überblick">
+    <meta property="twitter:image" content="https://zgk.mxis.ch/static/banner.png">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/static/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/static/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/static/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="main.css">
+    <script async src="https://stats.mxis.ch/statistik.js" data-ackee-server="https://stats.mxis.ch" data-ackee-domain-id="0c19f821-94e9-40dd-860b-339a1c57c332" data-ackee-opts='{ "detailed": true }'></script>
+    <script src="https://kit.fontawesome.com/ca8ffbc206.js" crossorigin="anonymous"></script>
+</head>
+
+<body onload="auth()">
+  <div class="topnav" id="myTopnav">
+    <div class="modeSwitcher">
+      <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
+        <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light" aria-hidden="true"></span></input>
+      </label>
+    </div>
+    <a id="about" href="/about" class="menu">About</a>
+    <a id="docs" href="/dokumentation" class="menu">Dokumentation</a>
+    <a id="login" href="/login" class="menu">Login</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="burger fa fa-bars"></i>
+    </a>
+  </div>
+
+  <main id="main">
+    <div id="home">
+      <div class="full">
+        <div class="card">
+          <h1>Aufgaben Manager</h1>
+          <p class="description">Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+          <div class="hero">
+            <a class="hero__button" href="/login" style="--x:285px; --y:57px;">
+              <span>Zum Login</span>
+            </a>
+            <div class="hero__line"></div>
+            <p class="p4">oder <a class="link" href="mailto:zgk@mxis.ch?subject=ZGK Zugang" target="_blank">sende ein Anfrage</a></p>
+          </div>
+        </div>
+      </div>
+      <div id="previewBig"></div>
+      <p class="footer">Im Dashboard siehst du alle Aufgaben deiner Klasse</p>
+      <hr class="separator">
+      <div class="half">
+        <div class="card">
+          <div class="card__inner">
+            <div class="sideNote">
+              <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
+            </div>
+          </div>
+        </div>
+        <div id="previewRight"></div>
+      </div>
+      <hr class="separator">
+      <div class="half">
+        <div class="split">
+          <div class="leftSmall">
+            <div id="previewSmall"></div>
+            <p>Lehrer Ansicht</p>
+          </div>
+          <div class="rightSmall">
+            <div id="previewSmall2"></div>
+            <p>Schüler Ansicht</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__inner">
+            <div class="sideNote">
+              <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="separator" style="margin-top: 6rem;">
+      <div class="tripple">
+        <div class="card">
+          <div class="card__innerPadding">
+            <h1>Aufgaben Manager</h1>
+            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__innerPadding">
+            <h1>Aufgaben Manager</h1>
+            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__innerPadding">
+            <h1>Aufgaben Manager</h1>
+            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+          </div>
+        </div>
+      </div>
+      <hr class="separator">
+      <div class="half">
+        <div class="card">
+          <div class="card__inner">
+            <h1>Aufgaben Manager</h1>
+            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__inner">
+            <h1>Aufgaben Manager</h1>
+            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="main.js"></script>
+</body>
+
+</html>
