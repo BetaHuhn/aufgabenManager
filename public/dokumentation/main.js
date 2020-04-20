@@ -55,6 +55,25 @@ function onScroll(event){
     });
 }
 
+function copy(e){
+    console.log(e)
+    var resp = "https://zgk.mxis.ch/dokumentation#" + e.id
+    var $body = document.getElementsByTagName('body')[0]
+    var $tempInput = document.createElement('INPUT');
+    $body.appendChild($tempInput);
+    $tempInput.setAttribute('value', resp)
+    $tempInput.select();
+    document.execCommand('copy');
+    $body.removeChild($tempInput);
+    var span = document.createElement('span')
+    span.className = "tooltiptext"
+    span.innerHTML = "Link kopiert"
+    e.appendChild(span)
+    setTimeout(function() {
+        e.removeChild(span);
+    }, 1000);
+}
+
 /* Darkmode Support */
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 detectDarkMode()

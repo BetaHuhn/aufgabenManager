@@ -505,27 +505,27 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
                 }
                 if (run) {
                     if (req.query.id != undefined) {
-                        var exercises = await Exercise.find({ _id: req.query.id })
+                        var exercises = await Exercise.find({ _id: req.query.id }).populate('class', 'name')
                     } else if (req.query.user != undefined) {
-                        var exercises = await Exercise.find({ user: req.query.user })
+                        var exercises = await Exercise.find({ user: req.query.user }).populate('class', 'name')
                     } else if (req.query.klasse != undefined) {
-                        var exercises = await Exercise.find({ class: req.query.class })
+                        var exercises = await Exercise.find({ class: req.query.class }).populate('class', 'name')
                     } else if (req.query.abgabe != undefined) {
-                        var exercises = await Exercise.find({ deadline: req.query.deadline })
+                        var exercises = await Exercise.find({ deadline: req.query.deadline }).populate('class', 'name')
                     } else {
-                        var exercises = await Exercise.find()
+                        var exercises = await Exercise.find().populate('class', 'name')
                     }
                     console.log("API is getting data")
                     console.log(req.query)
                     var data = []
                     for (i in exercises) {
                         data.push({
-                            aufgaben_id: exercises[i]._id, //Update Bot API to use new key names
-                            user_id: exercises[i].user,
+                            _id: exercises[i]._id, //Update Bot API to use new key names
+                            user: exercises[i].user,
                             text: exercises[i].text,
-                            fach: exercises[i].subject,
-                            klasse: exercises[i].class,
-                            abgabe: exercises[i].deadline,
+                            subject: exercises[i].subject,
+                            class: exercises[i].class,
+                            deadline: exercises[i].deadline,
                             createdAt: exercises[i].createdAt,
                             downloads: exercises[i].downloads,
                             files: exercises[i].files
@@ -573,15 +573,15 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
         if (req.query.apiKey == apiKey) {
             try {
                 if (req.query.id != undefined) {
-                    var user = await User.find({ _id: req.query.id })
+                    var user = await User.find({ _id: req.query.id }).populate('classes', 'name')
                 } else if (req.query.klasse != undefined) {
-                    var user = await User.find({ class: req.query.class })
+                    var user = await User.find({ class: req.query.class }).populate('classes', 'name')
                 } else if (req.query.email != undefined) {
                     var user = await User.findByEmail(req.query.email)
                 } else if (req.query.role != undefined) {
-                    var user = await User.find({ role: req.query.role })
+                    var user = await User.find({ role: req.query.role }).populate('classes', 'name')
                 } else {
-                    var user = await User.find()
+                    var user = await User.find().populate('classes', 'name')
                 }
                 //console.log(user)
                 var data = []
@@ -650,7 +650,7 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
                         var botKey = user.botKey
                     }*/
                 try {
-                    var botKey = await User.generateBotKey(user.user_id)
+                    var botKey = await User.generateBotKey(user._id)
                 } catch (error) {
                     if (error.code == 405) {
                         console.log("User not found - botkey")
@@ -667,7 +667,7 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
                     type: 'data',
                     data: {
                         code: botKey,
-                        user_id: user.user_id
+                        user: user._id
                     }
                 })
             } catch (error) {

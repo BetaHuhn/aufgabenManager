@@ -42,7 +42,7 @@ function validateForm() {
     var c = document.getElementById('text').value;
     var d = document.getElementById('abgabe').value;
     console.log("a: " + a + " b: " + b + " c: " + c + " d: " + d)
-    if (a == null || a == "", b == null || b == "", c == null || c == "", d == null || d == "" || b == "Klasse") {
+    if ((a == null || a == "") || (b == null || b == "") || (c == null || c == "") || (d == null || d == "") || b == "Klasse") {
         //console.log(false)
         return false;
     } else {
@@ -115,7 +115,10 @@ async function upload() {
                         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
                         window.location.replace('/login')
                     } else if (json.status == 421) {
-                        document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
+                        document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt.</p>`
+                        document.getElementById('form').style.display = "block";
+                    } else if (json.status == 404) {
+                        document.getElementById('error').innerHTML = `<p class="message" id="message">Diese Klasse gibt es nicht.</p>`
                         document.getElementById('form').style.display = "block";
                     } else {
                         document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
@@ -156,13 +159,21 @@ async function upload() {
             } else if (json.status == 421) {
                 document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
                 document.getElementById('form').style.display = "block";
-            } else {
+            } else if (json.status == 404) {
+                document.getElementById('error').innerHTML = `<p class="message" id="message">Diese Klasse gibt es nicht.</p>`
+                document.getElementById('form').style.display = "block";
+            }else {
                 document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
             }
         }
     } else {
         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
-        alert("Bitte Fülle alle Felder aus (Datei und Datei Name Optional)");
+        var a = document.getElementById('fach').value;
+        var b = document.getElementById('klasse').value;
+        var c = document.getElementById('text').value;
+        var d = document.getElementById('abgabe').value;
+        var e = document.getElementById('name').value;
+        alert("Bitte Fülle alle Felder aus (Datei und Datei Name Optional): Fach: " + a + " Klasse: " + (b == "Klasse") ? undefined : b + " Text: " + c + " Abgabe: " + d + " Dateiname: " + e);
     }
 
 }
@@ -229,13 +240,21 @@ async function authenticate() {
                 // replace el with newEL
             el.parentNode.replaceChild(newEl, el);
         } else {
-            for (i in json.data.classes) {
-                console.log(json.data.classes[i])
-                var sel = document.getElementById('klasse');
-                var opt = document.createElement('option');
-                opt.appendChild(document.createTextNode(json.data.classes[i]));
-                opt.value = json.data.classes[i];
-                sel.appendChild(opt);
+            if(json.data.classes.length >= 1){
+                for (i in json.data.classes) {
+                    console.log(json.data.classes[i])
+                    var sel = document.getElementById('klasse');
+                    var opt = document.createElement('option');
+                    opt.appendChild(document.createTextNode(json.data.classes[i]));
+                    opt.value = json.data.classes[i];
+                    sel.appendChild(opt);
+                }
+            }else{
+                alert("Fehler: Du bist nicht Mitglied einer Klasse. Bitte melde dich erneut an")
+                var message = createElement('div', 'message', 'message')
+                last.parentElement.appendChild(message)
+                message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+                window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
             }
         }
         //   var text = createElement('p', 'message', 'message', "Hallo!")
