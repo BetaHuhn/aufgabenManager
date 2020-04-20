@@ -65,7 +65,7 @@ async function auth() {
         }
     } else if (json.status == 405) {
         console.log(json);
-        window.location.replace('/login')
+        window.location.replace('/home')
         var message = createElement('div', 'message', 'message')
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
         last.parentElement.appendChild(message)

@@ -32,10 +32,12 @@ $(document).ready(function () {
 
 function onHash(){
     var hash = $(location).attr('hash');
-    $('a').each(function () {
-        $(this).removeClass('active');
-    })
-    $('a[href="' + hash + '"]').addClass('active');
+    if(hash){
+        $('a').each(function () {
+            $(this).removeClass('active');
+        })
+        $('a[href="' + hash + '"]').addClass('active');
+    }
 }
 
 function onScroll(event){
