@@ -390,12 +390,12 @@ img {
 }
 
 .stackedit__html {
-    margin-bottom: 180px;
+    margin-bottom: 100px;
     margin-left: auto;
     margin-right: auto;
     padding-left: 30px;
     padding-right: 30px;
-    max-width: 750px
+    max-width: 900px
 }
 
 .stackedit__toc ul {

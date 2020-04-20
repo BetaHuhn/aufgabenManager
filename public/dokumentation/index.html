@@ -41,6 +41,7 @@
               <li><a href="#anmeldung">Anmeldung</a></li>
               <li><a href="#benutzung">Benutzung</a></li>
               <li><a href="#account-verwalten">Account verwalten</a></li>
+              <li><a href="#telegram-discord-bot">Telegram/Discord Bot</a></li>
               <li><a href="#sonstiges">Sonstiges</a></li>
             </ul>
           </li>
@@ -112,10 +113,45 @@
         <p>Dein Passwort kann auf der Account Seite geändert werden. Klicke dazu entweder auf “Account” im
           Navigationsmenü oder gehe auf diesen Link: <a
             href="https://zgk.mxis.ch/account">https://zgk.mxis.ch/account</a>.</p>
-        <h3 id="telegram-discord-bot-hinzufügen" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Telegram/Discord Bot hinzufügen</h3>
+
+        <h2 id="telegram-discord-bot" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Telegram/Discord Bot</h2>
         <p>Um den Telegram/Discord Bot hinzuzfügen brauchst du einen Bot Key. Diesen findest du auf der Account Seite.
           Klicke dazu entweder auf “Account” im Navigationsmenü oder gehe auf diesen Link: <a
             href="https://zgk.mxis.ch/account">https://zgk.mxis.ch/account</a>.</p>
+        <h3 id="telegram-bot" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Telegram:</h3>
+        <h4 id="telegram-bot-add" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Hinzufügen:</h4>
+        <p>Um den Bot einer Gruppe oder Channel hinzuzufügen, geht man in den Gruppeneinstellung auf das "Mitglied hinzufügen" Symbol und sucht nach @zgkmsgbot, danach ist der Bot mit in der Gruppe oder dem Channel und kann eingerichtet werden.</p>
+        <h4 id="telegram-bot-setup" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Setup:</h4>
+        <p>Um mit dem Notification Setup zu beginnen, wird der Command</p>
+        <blockquote>
+          <p>/notification@zgkmsgbot</p>
+        </blockquote>
+        <p>verwendet. Um eine Auflistung der Commands zu erhalten, kann auch einfach "/" geschrieben werden. Um auf die Nachfolgenden Fragen wie E-Mail, Klassen und Zertifizierungcode zu antworten, ist es notwendig </p>
+        <blockquote>
+          <p>/notification@zgkmsgbot</p>
+        </blockquote>
+        <p>vor die Antwort zu schreiben, da der Bot sonst nicht berechtigt ist, die Nachrichten des Channels zu lesen.</p>
+        <h4 id="telegram-bot-remove" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Entfernen:</h4>
+        <p>Um den Bot von der Gruppe zu entfernen, muss man in den Gruppeneinstellungen die Option "Von Gruppe entfernen" verwenden.</p>
+        <h3 id="discord-bot" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Discord:</h3>
+        <h4 id="discord-bot-add-guild" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Einem Guild hinzufügen:</h4>
+        <p>Um den Discord bot einem Guild hinzuzufügen, benötigt man Adminrechte auf dem jeweiligen Guild. Mit dem Folgenden Link, kann der Bot dem Guild hinzugefügt werden. </p>
+        <blockquote style="line-height: 1.5em;">
+          <a style="color: var(--font-color-hover)" href="https://discordapp.com/api/oauth2/authorize?client_id=692839823269953587&permissions=8&scope=bot">https://discordapp.com/api/oauth2/authorize?client_id=692839823269953587&permissions=8&scope=bot</a>
+        </blockquote>
+        <h4 id="discord-bot-add-channel" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Einem Text-Channel hinzufügen:</h4>
+        <p>Um den Bot einem Channel zuzuweisen, wird der Command </p> 
+        <blockquote>
+          <p>-notification add</p>
+        </blockquote>
+        <p>in den jeweiligen Channel verwendet um mit dem Setup zu beginnen. Anschließend wird nach der E-Mail gefragt, danach die Klassen, die dem Channel hinzugefügt werden sollen und zuletzt wird der persönliche Bot Zertifizierungscode verlangt.</p>
+        <h4 id="discord-bot-remove" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Entfernen:</h4>
+        <p>Um den Bot von einem Channel zu entfernen, wird der Command </p> 
+        <blockquote>
+          <p>-notification remove</p>
+        </blockquote>
+        <p>verwendet. Dieser Channel wird dann im System gelöscht und erhält keine Nachrichten mehr vom Bot.</p>
+
         <h2 id="sonstiges" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Sonstiges</h2>
         <h3 id="fehler-melden" onclick="copy(this)" title="Klicke hier um einen Link zu dieser Sektion zu kopieren"><i class="fas fa-hashtag icon"></i>Fehler melden</h3>
         <p>Wenn du einen Fehler gefunden hast schicke am besten eine Mail an <a

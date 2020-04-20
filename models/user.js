@@ -51,6 +51,9 @@ let userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true
+    },
+    resetPasswordToken: {
+        type: String
     }
 
 })
@@ -102,6 +105,22 @@ userSchema.statics.generateBotKey = async function(_id) {
         }
     });
     return botKey;
+}
+
+userSchema.statics.generateResetToken = async function(_id) {
+    var user = await User.findOne({ _id })
+    if (!user) {
+        throw ({ error: 'No user found', code: 405 })
+    }
+    var token = generate('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ', 16)
+    user.resetPasswordToken = token;
+    user.save(function(err) {
+        if (err) {
+            console.error(err);
+            throw ({ error: err, code: 400 })
+        }
+    });
+    return token;
 }
 
 userSchema.statics.checkLogin = async(email, password) => {

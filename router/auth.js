@@ -5,6 +5,8 @@ const crypto = require('crypto')
 const md5 = require('md5');
 const generate = require('nanoid/generate')
 const bcrypt = require('bcryptjs')
+const nodemailer = require('nodemailer')
+var ejs = require("ejs");
 
 const router = express.Router()
 const middleware = require("../middleware/middleware")
@@ -18,6 +20,17 @@ const School = require("../models/school")
 const Solution = require("../models/solution")
 
 var salt = require('../key.json').salt
+
+const privateemailKey = require('../key.json').privateEmail
+let transporter = nodemailer.createTransport({
+    host: 'mail.privateemail.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'schiller@mxis.ch',
+        pass: privateemailKey
+    }
+});
 
 router.use(session({
     secret: crypto.randomBytes(64).toString("base64"),
@@ -236,7 +249,7 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                     });
                 } else if (req.body.newPassword.length >= 0) {
                     try {
-                        var user = await User.changePassword(req.session.user_id, req.body.newPassword)
+                        var user = await User.changePassword(req.session._id, req.body.newPassword)
                         if (!user) {
                             console.log(user)
                             return res.json({
@@ -285,6 +298,190 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                         status: '408',
                         response: "wrong password"
                     });
+                } else {
+                    console.log(error)
+                    res.json({
+                        status: '400',
+                        response: "Error"
+                    });
+                }
+            }
+        } else {
+            res.json({
+                status: '407',
+                response: "no password sent"
+            });
+        }
+    } else {
+        res.json({
+            status: '407',
+            response: "no password sent"
+        });
+    }
+})
+
+/* If token valid render reset page */
+router.get('/reset', async(req, res) => {
+    console.log(req.query.token)
+    if (req.query != undefined) {
+        if (req.query.token != undefined) {
+            try {
+                var user = await User.findOne({ resetPasswordToken: req.query.token })
+                if(!user){
+                    console.log("user not found")
+                    return res.sendStatus(404)
+                }
+                console.log(user.name + " is using token to reset their password")
+                res.render('resetPassword.ejs', { token: req.query.token })
+            } catch (error) {
+                console.log(error)
+                res.json({
+                    status: '400',
+                    response: "Error"
+                });
+            }
+        } else {
+            res.sendStatus(404)
+        }
+    } else {
+        res.sendStatus(404)
+    }
+})
+
+/* Send Password reset email */
+router.post('/api/auth/reset/password/request', async(req, res) => {
+    if (req.body != undefined) {
+        if (req.body.email != undefined) {
+            try {
+                var user = await User.findByOneEmail(req.body.email)
+                console.log(user.name + " is requesting to reset their password")
+                var token = await User.generateResetToken(user._id)
+                var vorname = user.name.split(' ')[0]
+                var data = await ejs.renderFile('./views/verifyMail.ejs', { name: vorname, token: token });
+                const mailOptions = {
+                    from: `"ZGK Mailer" zgk@mxis.ch`,
+                    replyTo: 'zgk@mxis.ch',
+                    to: req.body.email,
+                    subject: 'Passwort zurücksetzen',
+                    html: data,
+                    text: `Moin, ${vorname}!\n Um dein Passwort zurückzusetzen musst du nur noch auf diesen Link klicken: \n https://zgk.mxis.ch/reset?token=${token}\n Falls du dein Passwort nicht zurückzusetzen willst, ignoriere diese Email einfach`
+                };
+                transporter.sendMail(mailOptions, function(err, info) {
+                    if (err) {
+                        console.log(err)
+                        res.json({
+                            status: 400,
+                            error: err
+                        })
+                    } else {
+                        console.log("Password Reset Mail sent to " + req.body.email)
+                        res.json({
+                            status: 200,
+                            response: "email sent",
+                            data: {
+                                email: req.body.email
+                            }
+                        })
+                    }
+                });
+            } catch (error) {
+                if (error.code == 405) {
+                    console.log(error.error)
+                    res.json({
+                        status: '404',
+                        response: "user not found"
+                    });
+
+                } else {
+                    console.log(error)
+                    res.json({
+                        status: '400',
+                        response: "Error"
+                    });
+                }
+            }
+        } else {
+            res.json({
+                status: '407',
+                response: "no email sent"
+            });
+        }
+    } else {
+        res.json({
+            status: '407',
+            response: "no email sent"
+        });
+    }
+})
+
+/* Create new Password with token */
+router.post('/api/auth/reset/password', async(req, res) => {
+    console.log(req.body)
+    if (req.body != undefined) {
+        if (req.body.token != undefined && req.body.password != undefined) {
+            try {
+                var user = await User.findOne({ resetPasswordToken: req.body.token })
+                console.log(user.name + " is trying to reset their password")
+                if (/\s/.test(req.body.password)) {
+                    console.log("Password has whitespace");
+                    res.json({
+                        status: '402'
+                    });
+                } else if (req.body.password.length > 20) {
+                    console.log("Password is too long");
+                    res.json({
+                        status: '405'
+                    });
+                } else if (req.body.password.length < 8) {
+                    console.log("Password is too short");
+                    res.json({
+                        status: '406'
+                    });
+                } else if (req.body.password.length >= 0) {
+                    try {
+                        var user = await User.changePassword(user._id, req.body.password)
+                        if (!user) {
+                            console.log(user)
+                            return res.json({
+                                status: '400',
+                                response: "Error"
+                            });
+                        }
+                        console.log(user.name + " changed their password")
+                        res.json({
+                            status: 200,
+                            response: "changed"
+                        })
+                    } catch (error) {
+                        if (error.code == 405) {
+                            console.log(error.error)
+                            res.json({
+                                status: '404',
+                                response: "user doesn't exist"
+                            });
+
+                        } else {
+                            console.log(error)
+                            res.json({
+                                status: '400',
+                                response: "Error"
+                            });
+                        }
+                    }
+                } else {
+                    console.log(req.body.password + " is not valid");
+                    res.json({
+                        status: '401'
+                    });
+                }
+            } catch (error) {
+                if (error.code == 405) {
+                    console.log(error.error)
+                    res.json({
+                        status: '404',
+                        response: "token not found"
+                    });
+
                 } else {
                     console.log(error)
                     res.json({
