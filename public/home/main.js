@@ -47,6 +47,23 @@ async function auth() {
     }
 }
 
+function switchPreview(e){
+    if(e.id == "teacher"){
+        e.id = "student";
+        document.getElementById('buttonText').innerHTML = "Zur Lehrer Ansicht";
+        document.getElementById('previewText').innerHTML = "Schüler können ganz einfach Lösungen für eine Aufgabe hochladen.";
+        document.getElementById('AufgabeLehrer').src = toggleSwitch.checked ? "/static/previews/AufgabeDark.png" : "/static/previews/AufgabeLight.png"
+        document.getElementById('AufgabeLehrer').id = "Aufgabe"
+
+    }else{
+        e.id = "teacher";
+        document.getElementById('buttonText').innerHTML = "Zur Schüler Ansicht";
+        document.getElementById('previewText').innerHTML = "Lehrer sehen in einer übersichtlichen Tabelle wer bereits eine Lösung abgegeben hat. Mit einem Klick ist diese dann heruntergeladen.";
+        document.getElementById('Aufgabe').src = toggleSwitch.checked ? "/static/previews/AufgabeLehrerDark.png" : "/static/previews/AufgabeLehrerLight.png"
+        document.getElementById('Aufgabe').id = "AufgabeLehrer"
+    }
+}
+
 /* Dark Mode switch logic */
 
 //Gets a cookie by key
@@ -66,37 +83,47 @@ function getCookie(cname) {
     return undefined;
 }
 
+function swichToLight(){
+    var pictures = ['AufgabenView', 'Aufgabe', 'AufgabeLehrer', 'AufgabenMobile', 'AufgabeLehrerMobile']
+    console.log("Switching to the light side")
+    for(i in pictures){
+        var image = document.getElementById(pictures[i])
+        if(image) { image.src = "/static/previews/" + pictures[i] + "Light.png" }
+    }
+    document.documentElement.setAttribute('data-theme', 'light');
+    toggleSwitch.checked = false;
+    document.getElementById('checkboxIcon').className = "fas fa-adjust light"
+    document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
+}
+
+function swichToDark(){
+    var pictures = ['AufgabenView', 'Aufgabe', 'AufgabeLehrer', 'AufgabenMobile', 'AufgabeLehrerMobile']
+    console.log("Switching to the dark side")
+    for(i in pictures){
+        var image = document.getElementById(pictures[i])
+        if(image) { image.src = "/static/previews/" + pictures[i] + "Dark.png" }
+    }
+    document.documentElement.setAttribute('data-theme', 'dark');
+    toggleSwitch.checked = true;
+    document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
+    document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
+}
+
 //Switch theme when slider changes
 function switchThemeSlider() {
     if (toggleSwitch.checked) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        //switchText.innerHTML = "Dark Mode"
-        document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
+        swichToDark()
     } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        //switchText.innerHTML = "Light Mode"
-        document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
+        swichToLight()
     }
 }
 
 //Switch between light and dark theme
 function switchTheme() {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        //switchText.innerHTML = "Dark Mode"
-        toggleSwitch.checked = true;
-        document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
-        console.log("Cookie: " + getCookie('darkmode'))
+        swichToDark()
     } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        //switchText.innerHTML = "Light Mode"
-        toggleSwitch.checked = false;
-        document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
-        console.log("Cookie: " + getCookie('darkmode'))
+        swichToLight()
     }
 }
 
@@ -104,33 +131,13 @@ function switchTheme() {
 function detectDarkMode() {
     console.log("Cookie: " + getCookie('darkmode'))
     if (getCookie('darkmode') == 'false') {
-        console.log("Switching to the light side")
-        document.documentElement.setAttribute('data-theme', 'light');
-        //switchText.innerHTML = "Light Mode";
-        toggleSwitch.checked = false;
-        document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
+        swichToLight()
     } else if (getCookie('darkmode') == 'true') {
-        console.log("Switching to the dark side")
-        document.documentElement.setAttribute('data-theme', 'dark');
-        //switchText.innerHTML = "Dark Mode";
-        toggleSwitch.checked = true;
-        document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
+        swichToDark()
     } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        console.log("Switching to the dark side")
-        document.documentElement.setAttribute('data-theme', 'dark');
-        //switchText.innerHTML = "Dark Mode";
-        toggleSwitch.checked = true;
-        document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
+        swichToDark()
     } else {
-        console.log("Switching to the light side")
-        document.documentElement.setAttribute('data-theme', 'light');
-        //switchText.innerHTML = "Light Mode";
-        toggleSwitch.checked = false;
-        document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
+        swichToLight()
     }
     window.matchMedia("(prefers-color-scheme: dark)").addListener(e => e.matches && switchTheme())
     window.matchMedia("(prefers-color-scheme: light)").addListener(e => e.matches && switchTheme())

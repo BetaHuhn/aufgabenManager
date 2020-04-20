@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Aktuelle Aufgaben</title>
+    <title>Aufgaben Manager</title>
     <meta name="viewport" content="widp=device-widp,initial-scale=1">
 
     <meta name="title" content="Aufgaben Manager">
@@ -58,9 +58,6 @@
     <a id="about" href="/about" class="menu">About</a>
     <a id="docs" href="/dokumentation" class="menu">Dokumentation</a>
     <a id="login" href="/login" class="menu">Login</a>
-    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-      <i class="burger fa fa-bars"></i>
-    </a>
   </div>
 
   <main id="main">
@@ -68,45 +65,49 @@
       <div class="full">
         <div class="card">
           <h1>Aufgaben Manager</h1>
-          <p class="description">Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+          <p class="description">Aktuell ist die Platform nur mit einem Invite-Link nutzbar. Wenn du bereits registriert bis melde dich einfach an. Für einen Invite-Link schicke bitte eine Mail.</p>
           <div class="hero">
             <a class="hero__button" href="/login" style="--x:285px; --y:57px;">
               <span>Zum Login</span>
             </a>
             <div class="hero__line"></div>
-            <p class="p4">oder <a class="link" href="mailto:zgk@mxis.ch?subject=ZGK Zugang" target="_blank">sende ein Anfrage</a></p>
+            <p class="p4">oder <a class="link" href="mailto:zgk@mxis.ch?subject=ZGK Zugang" target="_blank">Mail senden</a></p>
           </div>
         </div>
       </div>
-      <div id="previewBig"></div>
-      <p class="footer">Im Dashboard siehst du alle Aufgaben deiner Klasse</p>
+      <!-- <div id="previewBig"></div> -->
+      <div class="previewBig"><img id="AufgabenView" src="/static/previews/AufgabenViewDark.png"></div>
+      <p class="subText">Im Dashboard siehst du alle Aufgaben deiner Klasse</p>
       <hr class="separator">
       <div class="half">
         <div class="card">
           <div class="card__inner">
             <div class="sideNote">
-              <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
+              <p id="previewText">Schüler können ganz einfach Lösungen für eine Aufgabe hochladen. </p>
+              <a class="hero__button" onclick="switchPreview(this)" id="student" style="--x:285px; --y:57px;">
+                <span id="buttonText">zur Lehrer Ansicht</span>
+              </a>
             </div>
           </div>
         </div>
-        <div id="previewRight"></div>
+        <div class="previewRight"><img id="Aufgabe" src="/static/previews/AufgabeDark.png"></div>
       </div>
       <hr class="separator">
       <div class="half">
         <div class="split">
           <div class="leftSmall">
-            <div id="previewSmall"></div>
-            <p>Lehrer Ansicht</p>
+            <div class="previewSmall"><img id="AufgabenMobile" src="/static/previews/AufgabenMobileDark.png"></div>
+            <p>Home Seite</p>
           </div>
           <div class="rightSmall">
-            <div id="previewSmall2"></div>
-            <p>Schüler Ansicht</p>
+            <div class="previewSmall"><img id="AufgabeLehrerMobile" src="/static/previews/AufgabeLehrerMobileDark.png"></div>
+            <p>Aufgabe Seite</p>
           </div>
         </div>
         <div class="card">
           <div class="card__inner">
             <div class="sideNote">
-              <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et</p>
+              <p>Die Platform ist auch als Mobile Version nutzbar. Egal ob iPhone, Android oder iPad. Du kannst jederzeit deine aktuellen Aufgaben einsehen und Lösugen hochladen.</p>
             </div>
           </div>
         </div>
@@ -115,38 +116,41 @@
       <div class="tripple">
         <div class="card">
           <div class="card__innerPadding">
-            <h1>Aufgaben Manager</h1>
-            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+            <h1>Card 1</h1>
+            <p>Comming soon...</p>
           </div>
         </div>
         <div class="card">
           <div class="card__innerPadding">
-            <h1>Aufgaben Manager</h1>
-            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+            <h1>Card 2</h1>
+            <p>Comming soon...</p>
           </div>
         </div>
         <div class="card">
           <div class="card__innerPadding">
-            <h1>Aufgaben Manager</h1>
-            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+            <h1>Card 3</h1>
+            <p>Comming soon...</p>
           </div>
         </div>
       </div>
       <hr class="separator">
       <div class="half">
         <div class="card">
-          <div class="card__inner">
+          <div class="card__inner footer" style="justify-content: end;">
             <h1>Aufgaben Manager</h1>
-            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+            <p>© Maximilian Schiller 2020</p>
           </div>
         </div>
         <div class="card">
-          <div class="card__inner">
-            <h1>Aufgaben Manager</h1>
-            <p>Der Aufgaben Manager für Schulen. Erstelle Aufgaben für einzelne Klassen oder seh dir alle deine Aufgaben im Dashboard an</p>
+          <div class="card__inner footer" style="justify-content: start;">
+            <a href="/dokumentation">Dokumentation</a>
+            <a href="/impressum">Impressum</a>
+            <a href="/datenschutz">Datenschutz</a>
+            <a href="mailto:zgk@mxis.ch">Kontakt</a>
           </div>
         </div>
       </div>
+      <hr class="separator" style="margin-top: 9rem; margin-bottom: 0px;">
     </div>
   </main>
   <script src="main.js"></script>
