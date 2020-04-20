@@ -1,56 +1,62 @@
-//main.js
+/*  main.js - Maximilian Schiller 2020 */
+var copyBtn = document.getElementById('copyBtn');
+var copyOut = document.getElementById('copyOut');
+var $body = document.getElementsByTagName('body')[0];
+
 /* Darkmode Support */
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 detectDarkMode()
 
-var url_string = window.location.href; //window.location.href
-var url = new URL(url_string);
-var ref = url.searchParams.get("ref")
-console.log("Ref: " + ref)
+var last = document.getElementById('fileDiv')
 
-async function login() {
-    var password = document.getElementById('password').value;
+var role;
+
+async function change(){
     var email = document.getElementById('email').value;
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ password: password, email: email })
-    };
-    const response = await fetch('/auth/login', options);
-    const json = await response.json();
-    if (json.status == 408) {
+    if(email){
         var error = document.getElementById('error');
-        error.innerHTML = "Falsches Passwort"
-    } else if (json.status == 405) {
-        var error = document.getElementById('error');
-        error.innerHTML = "Diesen Benutzer gibt es nicht"
-    } else if (json.status == 200) {
-        console.log(json);
-        var error = document.getElementById('error');
-        error.innerHTML = "Login erfolgreich"
-        if (ref != undefined) {
-            console.log(ref)
-            window.location.replace(ref)
-        } else {
-            window.location.replace('/')
+        error.innerHTML = "prüfen..."
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: email})
+        };
+        const response = await fetch('/api/auth/reset/password/request', options);
+        const json = await response.json();
+        if (json.status == 200) {
+            console.log(json);
+            var error = document.getElementById('error');
+            error.innerHTML = "Wir haben dir eine Email geschickt"
+            document.getElementById('form').style.display = "none"
+        }else if (json.status == 407){
+            var error = document.getElementById('error');
+            error.innerHTML = "Bitte fülle alle Felder aus"
+            console.log(json)
+        }else if (json.status == 404){
+            var error = document.getElementById('error');
+            error.innerHTML = "Diese Email gibt es nicht"
+            console.log(json)
+        }else {
+            var error = document.getElementById('error');
+            error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
+            console.log(json)
         }
-    } else {
+    }else{
         var error = document.getElementById('error');
-        error.innerHTML = "Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal."
+        error.innerHTML = "Bitte fülle alle Felder aus"
+        console.log("Email field not filled out")
     }
+    
 }
 
-var input = document.getElementById("password");
-input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        document.getElementById("loginBtn").click();
-    }
-});
+function AvoidSpace(event) {
+    var k = event ? event.which : window.event.keyCode;
+    if (k == 32) return false;
+}
 
-setInterval(function() {
+setInterval(function(){ 
     var dot = document.getElementById("dot")
     dot.className = (dot.className == 'green') ? 'blink' : 'green';
 }, 1000);
