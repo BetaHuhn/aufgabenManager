@@ -265,12 +265,16 @@ router.post('/api/new/exercise', middleware.auth({ lehrer: true }), async(req, r
                 });
             }
         } else {
+            console.log("not all fields filled out")
+            console.log(req.body)
             res.json({
                 status: '421',
                 type: 'nicht alle Felder ausgefuellt'
             });
         }
     } else {
+        console.log("not all fields filled out")
+        console.log(req.body)
         res.json({
             status: '421',
             type: 'nicht alle Felder ausgefuellt'
