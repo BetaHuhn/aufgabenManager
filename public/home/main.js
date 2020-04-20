@@ -21,6 +21,7 @@ var role;
 var user_id;
 
 async function auth() {
+    return
     const options = {
         method: 'GET',
         headers: {
@@ -31,7 +32,7 @@ async function auth() {
     const json = await response.json();
     if (json.status == 200) {
         console.log(json);
-        window.location.replace('/')
+        //window.location.replace('/')
     } else if (json.status == 405) {
         console.log(json);
     

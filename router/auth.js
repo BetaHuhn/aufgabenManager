@@ -21,14 +21,14 @@ const Solution = require("../models/solution")
 
 var salt = require('../key.json').salt
 
-const privateemailKey = require('../key.json').privateEmail
+const {privateEmailUser, privateEmailPassword} = require('../key.json')
 let transporter = nodemailer.createTransport({
     host: 'mail.privateemail.com',
     port: 465,
     secure: true,
     auth: {
-        user: 'schiller@mxis.ch',
-        pass: privateemailKey
+        user: privateEmailUser,
+        pass: privateEmailPassword
     }
 });
 

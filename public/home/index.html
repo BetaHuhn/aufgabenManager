@@ -55,7 +55,6 @@
         <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light" aria-hidden="true"></span></input>
       </label>
     </div>
-    <a id="about" href="/about" class="menu">About</a>
     <a id="docs" href="/dokumentation" class="menu">Dokumentation</a>
     <a id="login" href="/login" class="menu">Login</a>
   </div>
@@ -78,6 +77,27 @@
       <!-- <div id="previewBig"></div> -->
       <div class="previewBig"><img id="AufgabenView" src="/static/previews/AufgabenViewDark.png"></div>
       <p class="subText">Im Dashboard siehst du alle Aufgaben deiner Klasse</p>
+      <hr class="separator">
+      <div class="tripple">
+        <div class="card flex">
+          <div class="card__innerPadding">
+            <h1><i class="fas fa-th-list"></i> Übersichtlich</h1>
+            <p>Benutzungsfreundlichkeit war uns bei der Entwicklung sehr wichtig. Es gibt nur die Funktionen die man wirklich braucht.</p>
+          </div>
+        </div>
+        <div class="card flex">
+          <div class="card__innerPadding">
+            <h1><i class="fas fa-tachometer-alt"></i> Schnell</h1>
+            <p>Die Platform wurde mit den neusten Web-Technologien gebaut und ist sowohl schnell als auch skalierbar.</p>
+          </div>
+        </div>
+        <div class="card flex">
+          <div class="card__innerPadding">
+            <h1><i class="fas fa-shield-alt"></i> Sicher</h1>
+            <p>Sicherheit und Privatsphäre haben erste Priorität. Email Adressen und Passwörter werden verschlüsselt und durch das Access-Management wird der Zugriff auf Dateien und Aufgaben streng kontrolliert</p>
+          </div>
+        </div>
+      </div>
       <hr class="separator">
       <div class="half">
         <div class="card">
@@ -113,28 +133,18 @@
         </div>
       </div>
       <hr class="separator" style="margin-top: 6rem;">
-      <div class="tripple">
+      <div class="full">
         <div class="card">
-          <div class="card__innerPadding">
-            <h1>Card 1</h1>
-            <p>Comming soon...</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card__innerPadding">
-            <h1>Card 2</h1>
-            <p>Comming soon...</p>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card__innerPadding">
-            <h1>Card 3</h1>
-            <p>Comming soon...</p>
+          <p class="description">Bei Interesse oder weiteren Fragen schicke uns einfach eine Email</p>
+          <div class="hero">
+            <a class="hero__button" href="mailto:zgk@mxis.ch" style="--x:285px; --y:57px;">
+              <span>Mail senden</span>
+            </a>
           </div>
         </div>
       </div>
-      <hr class="separator">
-      <div class="half">
+      <hr class="separator" style="margin-top: 2rem;">
+      <div class="half footerHalf">
         <div class="card">
           <div class="card__inner footer" style="justify-content: end;">
             <h1>Aufgaben Manager</h1>
@@ -150,7 +160,7 @@
           </div>
         </div>
       </div>
-      <hr class="separator" style="margin-top: 9rem; margin-bottom: 0px;">
+      <hr class="separator bottom">
     </div>
   </main>
   <script src="main.js"></script>

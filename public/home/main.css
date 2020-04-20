@@ -7,7 +7,7 @@
     --active: rgb(51, 86, 161);
     --active-hover: rgb(55, 93, 173);
     --accent: rgb(107, 138, 206);
-    --font-color: #8a8a8a;
+    --font-color: #575757;
     --font-color-hover: #7a7a7a;
     --bg-color: #f5f6fa;
     --white: #fff;
@@ -194,7 +194,6 @@ body {
 
 .full{
     margin: 0 auto;
-    padding: 10px 10px;
     width: 100%;
     max-width: 1200px;
     text-align: left;
@@ -224,7 +223,7 @@ body {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 1rem;
     margin: 0 auto;
-    width: 80%;
+    width: 90%;
     text-align: left;
     margin-top: 6rem;
 }
@@ -237,15 +236,16 @@ body {
 }
 
 .card__innerPadding{
-    padding: 1.6rem 1.5rem 1.5rem;
+    padding: 1rem 1rem;
     overflow: hidden;
-    background-color: var(--primary-color);
+    /* background-color: var(--primary-color); */
     border-radius: 10px;
-    color: #fff
+    color: var(--font-color)
 }
 
 .card__innerPadding h1{
     font-size: 30px;
+    margin-top: 10px;
 }
 
 .card__innerPadding p{
@@ -253,13 +253,17 @@ body {
 }
 
 .card__inner{
-    overflow: hidden;
     position: absolute;
     top: 50%; 
     left: 50%;
     transform: translate(-50%,-50%);
     width: 80%;
     display: grid;
+}
+
+.flex{
+    display: flex;
+    width: 90%;
 }
 
 .hero {
@@ -416,7 +420,7 @@ button{
     margin: auto;
     vertical-align: middle;
     text-align: center;
-    width: 500px;
+    max-width: 500px;
 }
 
 .separator {
@@ -427,6 +431,11 @@ button{
     box-shadow: 0 1px 0 hsla(0,0%,100%,.05);
     margin-top: 4rem;
     margin-bottom: 4rem;
+}
+
+.bottom{
+    margin-top: 6rem;
+    margin-bottom: 0;
 }
 
 .previewBig{
@@ -445,10 +454,6 @@ button{
     display: block;
     padding: 0;
     box-shadow: 0 2px 74px 0 rgba(0,0,0,.4);
-}
-
-.previewRight{
-    /* margin-right: -100px; */
 }
 
 .previewRight img{
@@ -486,6 +491,11 @@ button{
     box-shadow: 0 2px 74px 0 rgba(0,0,0,.4);
 }
 
+.footer {
+    justify-content: end;
+    width: 90%;
+}
+
 .footer a{
     text-decoration: none;
     color: var(--font-color);
@@ -505,89 +515,45 @@ button{
     margin: 5px;
 }
 
-@media screen and (max-width: 1300px) {
-    .dashboard{
-        width: 1000px;
-    }
-    .legend{
-        height: 25px;
-        font-size: 0.8rem;
-    }
-    .device{
-        margin-top: 0.6rem;
-        font-size: 0.8rem;
-        padding: 10px 20px;
-    }
-
-    .deleteButton{
-        height: 100%;
-        width: 55px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    .text{
-        margin-right: 0px;
-        margin-left: 2px;
-        width: 100px;
-    }
-    .name{
-        width: 90px;
-        margin-left: -5px;
-    }
-    .aufgabe{
-        width: 320px;
-        margin-right: 0px;
-    }
-    .downloads{
-        margin-left: -60px;
-        margin-right: -5px;
-        width: 120px;
-    }
-    .stack{
-        width: 130px;
-        margin-left: -5px;
-    }
-
-    .stack p{
-        font-size: 15px;
-    }
-    .blue{
-        margin-top: 20px;
-    }
-    .grey{
-        margin-top: 20px;
-        margin-bottom: 0px;
-    }
-    .leftest{
-        margin-left: 10px;
-    }
-    .fourth{
-        margin-left: -95px;
-    }
-    .buttons button{
-        margin-left: 0px;
-    }
-
-    .menu{
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
-    }
-    .login{
-        margin-top: 3rem;
-    }
-}
-
 @media screen and (max-width: 1100px) {
-    .tripple{ 
-        display: none;
+    .half{
+        display:flex;
+        flex-direction:column-reverse;
+        justify-content: space-around;
+        align-self:stretch;
+        margin-left: 0px;
+        gap:.5rem;
+        margin-top: 1rem;
+    }
+    .card__inner{
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+        margin: auto;
     }
     .split{
-        display: none;
+        width: 70%;
+        margin: auto;
     }
-    .previewRight{
-        display: none;
+    .previewRight img{
+        max-width: 90%;
     }
+    .leftSmall{
+        margin: auto;
+    }
+    .rightSmall{
+        margin: auto;
+    }
+
+    .footer{
+        justify-content: center !important;
+    }
+
+    .footerHalf{
+        flex-direction: row;
+    }
+
     body{
         font-size: 1rem;
     }
@@ -597,303 +563,115 @@ button{
     .full{
         padding: 0px 0px;
     }
+    .flex{
+        width: 100%;
+    }
+    .card__innerPadding p{
+        font-size: 15px;
+    }
+}
 
-    .dashboard{
-        width: 850px;
+@media screen and (max-width: 950px) {
+    .card__innerPadding h1{
+        font-size: 25px;
     }
-    .legend{
-        height: 20px;
-        font-size: 0.7rem;
-    }
-    .device{
-        margin-top: 0.6rem;
-        font-size: 0.7rem;
-        padding: 10px 15px;
-    }
-    
-    .fith{
-        margin-left: -60px;
-    }
-    .text{
-        margin-top: 10px;
-        margin-left: 10px;
-        margin-right: 20px;
-        width: 80px;
-    }
-    .aufgabe{
-        margin-top: 10px;
-        margin-right: 0px;
-        width: 250px;
-    }
-    .name{
-        width: 70px;
-        margin-top: 10px;
-        margin-left: 10px;
-        margin-right: -10px;
-    }
-    .downloads{
-        margin-top: -5px;
-        margin-left: 2px;
-        margin-right: 7px;
-        white-space: nowrap;
-        width: 100px;
-    }
-    .stack{
-        margin-top: -25px;
-        margin-left: 2px;
-        margin-right: 2px;
-        margin-bottom: 5px;
-        width: 120px;
-    }
-    .stack p{
-        font-size: 14px;
-        margin-bottom: -18px;
-    }
-
-
-    .buttons button{
-        margin-left: 0px;
-        font-size: 0.6rem;
-        padding: 10px 10px;
-        width: 80px;
-    }
-
-    .addButton{
-        margin-top: 1rem;
-        font-size: 1rem;
-        padding: 12px 25px;
+    .card__innerPadding p{
+        font-size: 12px;
     }
 }
 
 @media screen and (max-width: 880px) {
-    .topnav a{
-        font-size: 20px;
+    .card__innerPadding h1{
+        font-size: 30px;
     }
-
+    .card__innerPadding p{
+        font-size: 16px;
+    }
+    .tripple{
+        grid-template-columns: 1fr;
+        margin: auto;
+    }
+    .flex{
+        display: inline-block;
+        width: 70%;
+        margin: auto;
+    }
+    .topnav a{
+        font-size: 18px;
+    }
     .menu{
         padding: 10px 10px;
-    }
-
-    #checkboxIcon{
-        margin-right: 20px;
-    }
-    
-    .dashboard h1{
-        font-size: 1.2rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .dashboard{
-        width: 550px;
-    }
-    .legend{
-        height: 20px;
-        font-size: 0.7rem;
-    }
-    .device{
-        margin-top: 0.6rem;
-        font-size: 0.5rem;
-        padding: 10px 15px;
-    }
-    .leftest{
-        margin-left: -5px;
-        margin-right: 10px;
-    }
-    .second{
-        margin-right: 10px;
-    }
-    .third{
-        margin-left: 5px;
-        margin-right: 120px;
-    }
-    .fourth{
-        margin-left: 30px;
-        visibility: hidden;
-    }
-    .fith{
-        margin-left: 20px;
-    }
-    .text{
-        margin-top: 10px;
-        margin-left: 0px;
-        margin-right: 5px;
-        width: 60px;
-    }
-    .aufgabe{
-        margin-top: 10px;
-        margin-right: 0px;
-        width: 220px;
-    }
-    .name{
-        width: 60px;
-        margin-top: 10px;
-        margin-left: 0px;
-        margin-right: 2px;
-    }
-    .downloads{
-        margin-top: -10px;
-        margin-left: 0px;
-        margin-right: 5px;
-        white-space: nowrap;
-        width: 70px;
-        visibility: hidden;
-    }
-    .stack{
-        margin-top: -50px;
-        margin-left: 20px;
-        margin-right: 20px;
-        visibility: hidden;
-    }
-    .stack p{
-        font-size: 18px;
-        margin-bottom: -18px;
-    }
-
-    .buttons button{
-        margin-top: 0rem;
-        margin-left: -8.5rem;
-        font-size: 0.6rem;
-        padding: 12px 12px;
-        width: 80px;
-    }
-
-    .deleteButton{
-        height: 100%;
-        margin-left: -4rem;
-        width: 30px;
-        padding: 10.5px 0px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    .deleteButton span{
-        font-size: 15px;
-    }
-
-    .addButton{
-        margin-top: 1rem;
-        font-size: 0.8rem;
-        padding: 12px 20px;
-    }
-
-}
-
-@media screen and (max-width: 600px) {
-    .description{
-        width: 85%;
-    }
-    .logo{
-        padding: 11px 18px;
-        font-size: 17px;
         margin-left: 0.5rem;
         margin-right: 0.5rem;
     }
+    #checkboxIcon{
+        margin-right: 20px;
+    }
+    .footer h1{
+        font-size: 23px;
+    }
+    .footer p {
+        font-size: 14px;
+    }
+    .footer a {
+        font-size: 16px;
+    }
+    .hero__button{
+        padding: 1rem 1.5rem;
+        font-size: 18px;
+    }
+    .card__innerPadding{
+        padding: 10px 10px;
+    }
+    .card__innerPadding h1{
+        font-size: 20px;
+    }
+    .card__innerPadding p{
+        font-size: 15px;
+    }
     
-    .logo span{
-        margin-left: 0.5rem;
+}
+
+@media screen and (max-width: 850px) {
+    .split{
+        width: 90%;
     }
-    .topnav a:hover {
-        background-color: var(--secondary-color-hover);
-        color:#f2f2f2;
+    .flex{
+        width: 80%;
     }
-    .dashboard h1{
-        font-size: 1rem;
-        margin-top: 1rem;
+}
+
+@media screen and (max-width: 750px) {
+    .flex{
+        width: 90%;
+    }
+    .rightSmall{
+        display: none;
+    }
+    .split{
+        grid-template-columns: 1fr;
+    }
+    .separator{
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    .tripple{
+        margin-top: 4rem;
+        padding: 5px 5px;
+    }
+    .description{
+        width: 85%;
+    }
+    .footer{
         margin-bottom: 1rem;
     }
-    
-    .dashboard{
-        width: 350px;
+    .footerHalf{
+        flex-direction: column-reverse;
     }
-    .legend{
-        height: 20px;
-        font-size: 0.7rem;
+    .bottom{
+        margin-top: 4rem;
+        margin-bottom: 0;
     }
-    .device{
-        margin-top: 0.6rem;
-        font-size: 0.5rem;
-        padding: 10px 15px;
-    }
-    .leftest{
-        margin-left: -10px;
-    }
-    .second{
-        margin-right: 10px;
-    }
-    .third{
-        margin-right: 10px;
-    }
-    .fourth{
-        margin-left: 30px;
-        visibility: hidden;
-    }
-    .fith{
-        margin-left: -20px;
-    }
-    .text{
-        margin-top: 4px;
-        margin-left: 2px;
-        margin-right: 2px;
-        width: 55px;
-    }
-    .aufgabe{
-        margin-top: 2px;
-        margin-right: 0px;
-        width: 150px;
-    }
-    .name{
-        width: 55px;
-        margin-top: 4px;
-        margin-left: -5px;
-        margin-right: -10px;
-    }
-    .downloads{
-        margin-top: -25px;
-        margin-left: 5px;
-        margin-right: 5px;
-        white-space: nowrap;
-        width: 60px;
-    }
-    .stack{
-        margin-top: -50px;
-        margin-left: 20px;
-        margin-right: 20px;
-        visibility: hidden;
-    }
-    .stack p{
-        font-size: 18px;
-        margin-bottom: -18px;
-    }
-
-    .buttons button{
-        margin-top: 0rem;
-        margin-left: -11rem;
-        font-size: 0.3rem;
-        padding: 8px 5px;
-        width: 60px;
-    }
-
-    .deleteButton{
-        margin-left: -8rem;
-        width: 25px;
-        padding: 10px 0px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        visibility: hidden;
-    }
-    .deleteButton span{
-        font-size: 12px;
-    }
-
-    .addButton{
-        margin-top: 1rem;
-        font-size: 0.8rem;
-        padding: 10px 18px;
-    }
-    
-    
 }
 
 @media screen and (max-width: 500px) {
@@ -908,32 +686,5 @@ button{
         margin-left: -0.5rem;
         margin-right: 0.5rem;
     }
-    .login{
-        width: 350px;
-        height: 370px;
-        margin-top: 1.8rem;
-        padding: 10px 22px;
-    }
     
-    .login h1{
-        font-size: 1rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-    }
-    
-    .login p{
-        margin-left: 10px;
-        font-size: 0.9rem;
-    }
-    
-    .login input {
-        width: 320px;
-        padding: 15px 16px;
-    }
-    
-    .login button{
-        margin-top: 1.2rem;
-        font-size: 0.9rem;
-        padding: 13px 35px;
-    }
 }
