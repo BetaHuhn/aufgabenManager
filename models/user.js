@@ -125,7 +125,7 @@ userSchema.statics.generateResetToken = async function(_id) {
 
 userSchema.statics.checkLogin = async(email, password) => {
     var emailHash = hashEmailAddress(email.toLowerCase(), salt)
-    console.log("Hash: " + emailHash)
+    console.log("Email: " + email + " Hash: " + emailHash)
     const user = await User.findOne({ email: emailHash })
     if (!user) {
         throw ({ error: 'User not found', code: 405 })
