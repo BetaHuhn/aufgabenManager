@@ -93,7 +93,7 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
     //abgabe.style.cursor = "text";
     pName.parentElement.appendChild(abgabe)
 
-    var text = createElement('p', 'child aufgabe', id, text)
+    var text = createElement('p', 'child aufgabe block-with-text', id, text)
     text.onclick = function(e) { e.stopPropagation(); }
     text.style.cursor = "text";
     abgabe.parentElement.appendChild(text)
