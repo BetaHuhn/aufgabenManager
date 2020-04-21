@@ -61,13 +61,34 @@ async function authenticate(){
             opt.appendChild(document.createTextNode("Admin"));
             sel.appendChild(opt);
         }else{
-            for(i in json.data.classes){
+            var a = document.getElementById("telegram-link");
+            /* var data = {
+                token: json.data.botKey,
+                classes: [json.data.classes[0]._id]
+            }
+            console.log(data)
+            var base64 = window.btoa(JSON.stringify(data))
+            console.log(base64) */
+            a.className = "link"
+            a.href = "https://zgk.mxis.ch/t/" + json.data.botKey //https://t.me/zgkmsgbot?startgroup=" + base64
+            a.innerHTML = "https://zgk.mxis.ch/t/" + json.data.botKey
+            /* for(i in json.data.classes){
                 console.log(json.data.classes[i])
                 var sel = document.getElementById('klassen');
                 var opt = document.createElement('li');
-                opt.appendChild( document.createTextNode(json.data.classes[i]) );
+                var checkbox = document.createElement('input')
+                checkbox.type = "checkbox"
+                checkbox.id = json.data.classes[i]
+                checkbox.value = json.data.classes[i]
+                checkbox.className = "checkbox"
+                var label = document.createElement("label")
+                label.innerHTML = "zu " + json.data.classes[i] + " hinzufügen"
+                label.for = json.data.classes[i]
+                label.className = "label"
+                opt.appendChild(checkbox);
+                opt.appendChild(label)
                 sel.appendChild(opt);
-            }
+            } */
         }
         //   var text = createElement('p', 'message', 'message', "Hallo!")
         //   text.id = 'message'

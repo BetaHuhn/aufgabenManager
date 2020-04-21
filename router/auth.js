@@ -594,7 +594,7 @@ router.get('/api/auth/new', middleware.auth({ lehrer: true }), async(req, res) =
 router.get('/api/auth/account', middleware.auth(), async(req, res) => {
     console.log(req.session.name + " visited /account")
     try {
-        var user = await User.findOne({ _id: req.session._id })
+        var user = await User.findOne({ _id: req.session._id }).populate('classes', 'name')
         if (user.botKey == undefined) {
             var botKey = await User.generateBotKey(req.session._id);
         } else {
@@ -607,7 +607,7 @@ router.get('/api/auth/account', middleware.auth(), async(req, res) => {
                 name: req.session.name,
                 role: req.session.role,
                 botKey: botKey,
-                classes: (req.session.role == 'admin') ? null : req.session.classNames
+                classes: user.classes
             }
         })
     } catch (error) {
