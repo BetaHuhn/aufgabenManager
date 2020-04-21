@@ -165,7 +165,7 @@ router.post('/auth/register', async(req, res) => {
                                     });
                                 } else {
                                     console.log(user.name + " has been registered as " + user._id)
-                                    var count = await Invite.increaseUsed(invite.invite_id)
+                                    var count = await Invite.increaseUsed(invite._id)
                                     req.session.role = user.role;
                                     req.session.name = user.name;
                                     req.session.user_id = user._id;

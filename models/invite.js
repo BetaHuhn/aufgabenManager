@@ -68,8 +68,8 @@ inviteSchema.statics.checkToken = async(token) => {
     }
 }
 
-inviteSchema.statics.increaseUsed = async function(invite_id) {
-    var invite = await Invite.findOne({ invite_id })
+inviteSchema.statics.increaseUsed = async function(_id) {
+    var invite = await Invite.findOne({ _id })
     invite.used.count = invite.used.count + 1;
     invite.save(function(err) {
         if (err) {
