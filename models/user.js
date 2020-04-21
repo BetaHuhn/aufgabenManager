@@ -153,7 +153,7 @@ userSchema.statics.findByOneEmail = async(email) => {
     console.log("Email: " + email)
     var emailHash = hashEmailAddress(email.toLowerCase(), salt)
     console.log(emailHash)
-    var user = await User.findOne({ email: emailHash }).populate('classes', 'name')
+    var user = await User.findOne({ email: emailHash }).populate('classes school', 'name')
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
@@ -162,7 +162,7 @@ userSchema.statics.findByOneEmail = async(email) => {
 
 userSchema.statics.findByEmail = async(email) => {
     var emailHash = hashEmailAddress(email.toLowerCase(), salt)
-    var user = await User.find({ email: emailHash }).populate('classes', 'name')
+    var user = await User.find({ email: emailHash }).populate('classes school', 'name')
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }

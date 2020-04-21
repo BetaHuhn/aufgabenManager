@@ -206,9 +206,20 @@ body {
     color: var(--font-color)
 }
 
+.link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 1rem;
+    overflow-wrap: break-word;
+}
+
+h2{
+    font-size: 1.8rem;
+}
+
 .login p{
     margin-left: 10px;
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 .input {
@@ -227,7 +238,16 @@ body {
 
 .klassen {
     font-size: 20px;
+    list-style-type: none;
 }
+.label{
+    margin-left: 10px;
+    color: var(--font-color-hover);
+}
+
+.checkbox:checked + .label {
+    color: var(--font-color);
+  }
 
 .result{
     display: block;
@@ -333,6 +353,10 @@ body {
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
     }
+
+    h2{
+        font-size: 1.5rem;
+    }
     
     .login p{
         margin-left: 10px;
@@ -387,6 +411,10 @@ body {
         font-size: 1.2rem;
         margin-top: 1.2rem;
         margin-bottom: 1.2rem;
+    }
+
+    h2{
+        font-size: 1.2rem;
     }
     
     .login p{
@@ -443,6 +471,10 @@ body {
         font-size: 1rem;
         margin-top: 1rem;
         margin-bottom: 1rem;
+    }
+
+    h2{
+        font-size: 1rem;
     }
     
     .login p{

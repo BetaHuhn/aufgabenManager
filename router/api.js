@@ -519,15 +519,15 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
                 }
                 if (run) {
                     if (req.query.id != undefined) {
-                        var exercises = await Exercise.find({ _id: req.query.id }).populate('class', 'name')
+                        var exercises = await Exercise.find({ _id: req.query.id }).populate('class school', 'name')
                     } else if (req.query.user != undefined) {
-                        var exercises = await Exercise.find({ user: req.query.user }).populate('class', 'name')
+                        var exercises = await Exercise.find({ user: req.query.user }).populate('class school', 'name')
                     } else if (req.query.klasse != undefined) {
-                        var exercises = await Exercise.find({ class: req.query.class }).populate('class', 'name')
+                        var exercises = await Exercise.find({ class: req.query.class }).populate('class school', 'name')
                     } else if (req.query.abgabe != undefined) {
-                        var exercises = await Exercise.find({ deadline: req.query.deadline }).populate('class', 'name')
+                        var exercises = await Exercise.find({ deadline: req.query.deadline }).populate('class school', 'name')
                     } else {
-                        var exercises = await Exercise.find().populate('class', 'name')
+                        var exercises = await Exercise.find().populate('class school', 'name')
                     }
                     console.log("API is getting data")
                     console.log(req.query)
@@ -539,6 +539,7 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
                             text: exercises[i].text,
                             subject: exercises[i].subject,
                             class: exercises[i].class,
+                            school: exercises[i].school,
                             deadline: exercises[i].deadline,
                             createdAt: exercises[i].createdAt,
                             downloads: exercises[i].downloads,
@@ -587,15 +588,15 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
         if (req.query.apiKey == apiKey) {
             try {
                 if (req.query.id != undefined) {
-                    var user = await User.find({ _id: req.query.id }).populate('classes', 'name')
+                    var user = await User.find({ _id: req.query.id }).populate('classes school', 'name')
                 } else if (req.query.klasse != undefined) {
-                    var user = await User.find({ class: req.query.class }).populate('classes', 'name')
+                    var user = await User.find({ class: req.query.class }).populate('classes school', 'name')
                 } else if (req.query.email != undefined) {
                     var user = await User.findByEmail(req.query.email)
                 } else if (req.query.role != undefined) {
-                    var user = await User.find({ role: req.query.role }).populate('classes', 'name')
+                    var user = await User.find({ role: req.query.role }).populate('classes school', 'name')
                 } else {
-                    var user = await User.find().populate('classes', 'name')
+                    var user = await User.find().populate('classes school', 'name')
                 }
                 //console.log(user)
                 var data = []
@@ -605,6 +606,7 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
                         name: user[i].name,
                         email: user[i].email,
                         classes: user[i].classes,
+                        school: user[i].school,
                         role: user[i].role,
                         registeredAt: user[i].registeredAt
                     })
@@ -642,56 +644,92 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
     }
 });
 
+router.get('/t/:token', async(req, res) => {
+    try {
+        var user = await User.findOne({ botKey: req.params.token })
+        if(!user){
+            console.log("no user with botkey: " + req.params.token)
+            return res.sendStatus(404)
+        }
+        console.log("User: " + user.name + " is redirected to t.me with code: " + user.botKey)
+        res.redirect("https://t.me/zgkmsgbot?startgroup=" + user.botKey)
+    } catch (error) {
+        console.log(error)
+        res.json({ status: 500, response: "internal error, bitte kontaktiere support" })
+    }
+})
+
 router.get('/api/v1/verify', limitApi, async(req, res) => {
     if (req.query != undefined) {
         if (req.query.apiKey == apiKey) {
-            try {
-                var user = await User.findByOneEmail(req.query.email)
-                    //console.log(user)
-                    /*if(user.botKey == undefined){
-                        try{
-                            var botKey = await User.generateBotKey(user.user_id)
-                        }catch(error){
-                            if (error.code == 405) {
-                                console.log("User not found - botkey")
-                                res.json({status: 404, response:"user nicht gefunden"})
-                            } else {
-                                console.log(error)
-                                res.json({status: 500, response:"internal error, bitte kontaktiere support"})
-                            }
-                        }
-                    }else{
-                        var botKey = user.botKey
-                    }*/
+            if(req.query.email){
                 try {
-                    var botKey = await User.generateBotKey(user._id)
+                    var user = await User.findByOneEmail(req.query.email)
+                    try {
+                        var botKey = await User.generateBotKey(user._id)
+                    } catch (error) {
+                        if (error.code == 405) {
+                            console.log("User not found - botkey")
+                            res.json({ status: 404, response: "user nicht gefunden" })
+                        } else {
+                            console.log(error)
+                            res.json({ status: 500, response: "internal error, bitte kontaktiere support" })
+                        }
+                    }
+                    console.log("Verifying User: " + user.name + " with code: " + botKey)
+                    res.json({
+                        status: 200,
+                        response: 'success',
+                        type: 'data',
+                        data: {
+                            code: botKey,
+                            user: user._id
+                        }
+                    })
                 } catch (error) {
                     if (error.code == 405) {
-                        console.log("User not found - botkey")
+                        console.log("User not found")
                         res.json({ status: 404, response: "user nicht gefunden" })
                     } else {
                         console.log(error)
                         res.json({ status: 500, response: "internal error, bitte kontaktiere support" })
                     }
                 }
-                console.log("Verifying User: " + user.name + " with code: " + botKey)
-                res.json({
-                    status: 200,
-                    response: 'success',
-                    type: 'data',
-                    data: {
-                        code: botKey,
-                        user: user._id
+            }else if(req.query.token){
+                try {
+                    var user = await User.findOne({ botKey: req.query.token }).populate('classes school', 'name')
+                    if(!user){
+                        console.log("no user with botkey: " + req.query.token)
+                        return res.json({
+                            status: 404,
+                            response: "botkey existiert nicht"
+                        })
                     }
-                })
-            } catch (error) {
-                if (error.code == 405) {
-                    console.log("User not found")
-                    res.json({ status: 404, response: "user nicht gefunden" })
-                } else {
+                    console.log("User: " + user.name + " used t.me link to add bot with code: " + user.botKey)
+                    res.json({
+                        status: 200,
+                        response: 'success',
+                        type: 'data',
+                        data: {
+                            _id: user._id,
+                            name: user.name,
+                            email: user.email,
+                            classes: user.classes,
+                            school: user.school,
+                            role: user.role,
+                            botKey: user.botKey,
+                            registeredAt: user.registeredAt
+                        }
+                    })
+                } catch (error) {
                     console.log(error)
                     res.json({ status: 500, response: "internal error, bitte kontaktiere support" })
                 }
+            }else{
+                res.json({
+                    status: '405',
+                    response: 'kein parameter gesendet'
+                });
             }
         } else {
             res.json({

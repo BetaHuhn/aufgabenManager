@@ -63,8 +63,16 @@ async function checkStatus() {
                 }
                 var name = json.data.incidents[0].name;
                 div2.innerHTML = `<p>Meldung: ${name}</p><p>Updates:</p>` + updates
+            }else if(json.data.components.filter(function(e) { return e.status != 'operational'; }).length > 0){
+                console.log("found")
+                if(json.data.components[i].name == 'DigitalOcean FRA1'){
+                    var name = json.data.components[i].status;
+                    div2.innerHTML = "<p>vor " + dateDifference((new Date(json.data.components[i].updated_at)), new Date()) + " - " + ` ${name}, unser hosing provider hat zurzeit probleme. Dadurch kann es auch bei uns zu Fehlern kommen.</p>`
+                }else{
+                    div2.innerHTML = `<p>Derzeit keine weiteren Informationen verfügbar</p>`
+                }
             }else{
-                div2.innerHTML = `<p>${description[json.data.status.description]}</p>`
+                div2.innerHTML = `<p>Derzeit keine weiteren Informationen verfügbar</p>`
             }
         }
         
