@@ -68,6 +68,20 @@ async function sendPush(name, klasse, fach, abgabe) {
     */
 }
 
+router.get('/api/v1/status', async(req, res) => {
+    var url = "https://zgk.statuspage.io/api/v2/summary.json"
+    request(url, (err, response, body) => {
+        if(err){
+            console.log(err)
+        }
+        res.json({
+            status: 200,
+            response: "success",
+            data: JSON.parse(body)
+        })
+    });
+})
+
 router.post('/api/v1/create/school', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == 'Start$') {
