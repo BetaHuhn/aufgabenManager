@@ -5,7 +5,7 @@ async function checkStatus() {
             'Content-Type': 'application/json'
         },
     };
-    const response = await fetch('/api/v1/status', options);
+    const response = await fetch('/api/v1/status?page=' + window.location.pathname + window.location.search, options);
     const json = await response.json();
     if (json.status == 200) {
         console.log(json);

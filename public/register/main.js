@@ -57,6 +57,10 @@ async function createUser(){
             var error = document.getElementById('error');
             error.innerHTML = "Bitte gib eine echte Email Adresse ein"
             console.log(json)
+        }else if (json.status == 410){
+            var error = document.getElementById('error');
+            error.innerHTML = '<p>Diese Email wird bereits verwendet. Wenn das deine ist, setze <a href="https://zgk.mxis.ch/account/reset/">hier</a> dein Passwort zurück</p>'
+            console.log(json)
         }else if (json.status == 406){
             var error = document.getElementById('error');
             error.innerHTML = "Das Passwort ist zu kurz (min 8)"

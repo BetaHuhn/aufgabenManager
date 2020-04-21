@@ -142,11 +142,10 @@ router.post('/auth/register', async(req, res) => {
                     let user = new User(query)
                     user.save(async function(err, doc) {
                         if (err) {
-                            console.log(err)
                             if (err.code == 11000) {
                                 console.log("Email already in use")
                                 res.json({
-                                    status: '407',
+                                    status: '410',
                                     response: "Email already in use"
                                 });
                             } else {

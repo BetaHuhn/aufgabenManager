@@ -1,5 +1,7 @@
 const md5 = require('md5');
 const cache = require('../cache');
+const { getClientIp } = require('request-ip')
+
 
 var routerCache = new cache.Cache();
 
@@ -71,7 +73,7 @@ module.exports = {
     },
     log: (duration) => {
         return (req, res, next) => {
-            var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+            const ip = getClientIp(req)
             let date_ob = new Date();
             let date = ("0" + date_ob.getDate()).slice(-2);
             let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
