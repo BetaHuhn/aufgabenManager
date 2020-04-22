@@ -49,8 +49,6 @@ const limitApi = rateLimit({
     headers: true
 });
 
-var isNew = true;
-
 async function sendPush(name, klasse, fach, abgabe) {
     /*
     var url = "https://maker.ifttt.com/trigger/aufgabenBotAufgabe/with/key/eRyGmfJa6ti49eJB84D5xSEGfvYYmasLmNkrhOPPXlp"
@@ -207,7 +205,7 @@ router.post('/api/new/exercise', middleware.auth({ lehrer: true }), async(req, r
                             }
                         } else {
                             console.log(doc)
-                            isNew = true;
+                            middleware.setIsNew(true)
                             middleware.resetCache(doc.class)
                             var user = await User.findOne({ _id: userID })
                             if(user.exercises == undefined || user.exercises == null){

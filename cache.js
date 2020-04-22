@@ -1,11 +1,44 @@
 'use strict';
 
+/* var IsNew = module.exports = {
+  state: false,
+  get: function() {
+    return IsNew.state;
+  },
+  update: function(value) {
+    IsNew.state = value;
+    return IsNew.state;
+  }
+} */
+
+/* function IsNew () {
+
+  var isNew = false;
+
+  return{
+    get: function() {
+      return isNew;
+    },
+  
+    setFalse: function() {
+      isNew = false;
+      return isNew;
+    },
+  
+    setTrue: function() {
+      isNew = true;
+      return isNew;
+    }
+  }
+} */
+
 function Cache () {
   var _cache = Object.create(null);
   var _hitCount = 0;
   var _missCount = 0;
   var _size = 0;
   var _debug = false;
+  var isNew = false
 
   /* 
     cache:{
@@ -15,6 +48,15 @@ function Cache () {
         }
     }
   */
+
+  this.getIsNew = function() {
+    return isNew;
+  }
+
+  this.setIsNew = function(value) {
+    isNew = value;
+    return value;
+  }
 
   this.put = function(klasse, key, value, time, timeoutCallback) {
     if (_debug) {
@@ -150,3 +192,5 @@ function Cache () {
 
 module.exports = new Cache();
 module.exports.Cache = Cache;
+
+//module.exports.isNew = false;
