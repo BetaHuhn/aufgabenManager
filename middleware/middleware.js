@@ -71,6 +71,12 @@ module.exports = {
         console.log("Resetting Cache for Klasse: " + klasse)
         routerCache.clear(klasse)
     },
+    getIsNew: (value) => {
+        return routerCache.getIsNew()
+    },
+    setIsNew: (value) => {
+        return routerCache.setIsNew(value)
+    },
     log: (duration) => {
         return (req, res, next) => {
             const ip = getClientIp(req)

@@ -48,7 +48,8 @@ const limitApi = rateLimit({
     headers: true
 });
 
-var isNew = true;
+console.log(middleware.getIsNew())
+
 var apiKey = require('../key.json').key
 
 async function sendPush(name, klasse, fach, abgabe) {
@@ -504,10 +505,11 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
         if (req.query.apiKey == apiKey) {
             try {
                 if (req.query.new != undefined) {
-                    //console.log(req.query.new)
-                    if (req.query.new == 'true') {
-                        if (isNew == true) {
+                    if (req.query.new.toLowerCase() === "true") {
+                        console.log("isNew: " + middleware.getIsNew())
+                        if (middleware.getIsNew() == true) {
                             var run = true;
+                            console.log("test")
                         } else {
                             var run = false;
                         }
@@ -546,7 +548,7 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
                             files: exercises[i].files
                         })
                     }
-                    isNew = false;
+                    middleware.setIsNew(false)
                     res.json({
                         status: 200,
                         response: 'success',
