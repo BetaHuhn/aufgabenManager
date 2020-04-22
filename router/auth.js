@@ -330,8 +330,15 @@ router.get('/reset', async(req, res) => {
                     console.log("user not found")
                     return res.sendStatus(404)
                 }
-                console.log(user.name + " is using token to reset their password")
-                res.render('resetPassword.ejs', { token: req.query.token })
+                console.log("time: " + new Date().getTime())
+                console.log("expires: " + user.resetPasswordExpires)
+                if(user.resetPasswordExpires >= (new Date().getTime())){
+                    console.log(user.name + " is using token to reset their password")
+                    res.render('resetPassword.ejs', { token: req.query.token })
+                }else{
+                    console.log("token expired")
+                    return res.send("Der Link ist abgelaufen")
+                }
             } catch (error) {
                 console.log(error)
                 res.json({
@@ -363,7 +370,7 @@ router.post('/api/auth/reset/password/request', async(req, res) => {
                     to: req.body.email,
                     subject: 'Passwort zurücksetzen',
                     html: data,
-                    text: `Moin, ${vorname}!\n Um dein Passwort zurückzusetzen musst du nur noch auf diesen Link klicken: \n https://zgk.mxis.ch/reset?token=${token}\n Falls du dein Passwort nicht zurückzusetzen willst, ignoriere diese Email einfach`
+                    text: `Moin, ${vorname}!\n Um dein Passwort zurückzusetzen musst du nur noch auf diesen Link klicken (nur 30 min gültig): \n https://zgk.mxis.ch/reset?token=${token}\n Falls du dein Passwort nicht zurückzusetzen willst, ignoriere diese Email einfach`
                 };
                 transporter.sendMail(mailOptions, function(err, info) {
                     if (err) {
@@ -420,6 +427,13 @@ router.post('/api/auth/reset/password', async(req, res) => {
         if (req.body.token != undefined && req.body.password != undefined) {
             try {
                 var user = await User.findOne({ resetPasswordToken: req.body.token })
+                if(user.resetPasswordExpires < (new Date().getTime())){
+                    console.log("token expired")
+                    return res.json({
+                        status: 410,
+                        response: "token expired"
+                    })
+                }
                 console.log(user.name + " is trying to reset their password")
                 if (/\s/.test(req.body.password)) {
                     console.log("Password has whitespace");

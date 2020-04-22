@@ -54,6 +54,9 @@ let userSchema = new mongoose.Schema({
     },
     resetPasswordToken: {
         type: String
+    },
+    resetPasswordExpires: {
+        type: Number
     }
 
 })
@@ -84,6 +87,7 @@ userSchema.statics.changePassword = async function(_id, password) {
         throw ({ error: 'No user found', code: 405 })
     }
     user.password = password;
+    user.resetPasswordToken = undefined;
     user.save(function(err) {
         if (err) {
             console.error(err);
@@ -114,6 +118,8 @@ userSchema.statics.generateResetToken = async function(_id) {
     }
     var token = generate('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ', 16)
     user.resetPasswordToken = token;
+    user.resetPasswordExpires = new Date().getTime() + (30 * 60 * 1000)
+    console.log(user.resetPasswordExpires)
     user.save(function(err) {
         if (err) {
             console.error(err);
