@@ -1,6 +1,5 @@
 const express = require('express')
 const generate = require('nanoid/generate')
-const fs = require('fs');
 const fileUpload = require('express-fileupload');
 const request = require('request');
 const _ = require('lodash');
@@ -9,7 +8,6 @@ const zipFolder = require('zip-folder');
 var ejs = require("ejs");
 let pdf = require("html-pdf");
 const rateLimit = require("express-rate-limit");
-var mv = require('mv');
 const middleware = require("../middleware/middleware")
 const router = express.Router()
 
@@ -47,8 +45,6 @@ const limitApi = rateLimit({
     draft_polli_ratelimit_headers: true,
     headers: true
 });
-
-console.log(middleware.getIsNew())
 
 var apiKey = require('../key.json').key
 
