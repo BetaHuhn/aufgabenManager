@@ -10,6 +10,7 @@ const app = express();
 const cors = require('cors')
 const compression = require('compression');
 const helmet = require('helmet');
+const hpp = require('hpp');
 const authRouter = require('./router/auth')
 const appRouter = require('./router/app.js')
 const apiRouter = require('./router/api.js')
@@ -45,13 +46,14 @@ app.use(express.json({ limit: '2mb' }));
 app.set("view engine", "ejs");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(hpp());
 app.use(compression());
 app.use(helmet());
 app.use(helmet.hidePoweredBy({setTo: 'Nokia 3310'}));
 app.use((req, res, next) => {
     res.append('marco', 'polo');
     res.append('answer', '42');
-    res.append('x-hacker', 'if you read this, contact me: webmaster@mxis.ch');
+    res.append('x-han', 'Shot first!');
     next();
 });
 app.use(middleware.log())
