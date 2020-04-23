@@ -7,16 +7,36 @@ io.init({
 const express = require('express');
 const bodyParser = require('body-parser')
 const app = express();
-const cookieParser = require('cookie-parser')
 const cors = require('cors')
-var compression = require('compression');
-var helmet = require('helmet');
-require('./database/database')
-
+const compression = require('compression');
+const helmet = require('helmet');
 const authRouter = require('./router/auth')
 const appRouter = require('./router/app.js')
 const apiRouter = require('./router/api.js')
 const middleware = require("./middleware/middleware")
+
+const secret = require('./key.json').key
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session);
+let mongoose = require('mongoose');
+require('./database/database').connect()
+
+var mongoStore = new MongoStore({
+    mongooseConnection: mongoose.connection,
+    collection: 'sessions'
+});
+
+app.use(session({
+    secret: secret,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        maxAge: 48 * 60 * 60 * 1000,
+        sameSite: "lax"
+    },
+    store: mongoStore
+}));
 
 app.listen(5500, () => console.log('listening on port 5500'));
 app.use(express.static('public'));

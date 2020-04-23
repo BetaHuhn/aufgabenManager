@@ -11,16 +11,22 @@ const options = {
     useNewUrlParser: true,
     useUnifiedTopology: true
 };
+var url = `mongodb://${server}/${database}?authSource=zgkDev`
 
-mongoose.connect(`mongodb://${server}/${database}?authSource=zgkDev`, options, )
-    .then(() => {
-        console.log('Database connection successfull: ' + database)
-    })
-    .catch(err => {
-        console.error('Fucked up while connecting to the database: ' + err)
-        process.exit();
-    })
+module.exports.connect = function() {
 
-mongoose.connection.on('error', err => {
-    console.error(err);
-});
+    mongoose.connect(url, options, )
+        .then(() => {
+            console.log('Database connection successfull: ' + database)
+            return mongoose
+        })
+        .catch(err => {
+            console.error('Fucked up while connecting to the database: ' + err)
+            process.exit();
+        })
+
+    mongoose.connection.on('error', err => {
+        console.error(err);
+    });
+
+}

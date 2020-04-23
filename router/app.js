@@ -1,14 +1,8 @@
 const express = require('express')
-const generate = require('nanoid/generate')
-const jwt = require('jsonwebtoken');
-const fs = require('fs');
 const fileUpload = require('express-fileupload');
 const request = require('request');
 const _ = require('lodash');
-var path = require('path');
 const zipFolder = require('zip-folder');
-const nodemailer = require('nodemailer');
-var ejs = require("ejs");
 const rateLimit = require("express-rate-limit");
 
 let mongoose = require('mongoose')

@@ -1,10 +1,6 @@
 const express = require('express')
-const fs = require('fs');
-const session = require('express-session')
 const crypto = require('crypto')
-const md5 = require('md5');
 const generate = require('nanoid/generate')
-const bcrypt = require('bcryptjs')
 const nodemailer = require('nodemailer')
 var ejs = require("ejs");
 
@@ -19,8 +15,6 @@ const Class = require("../models/class")
 const School = require("../models/school")
 const Solution = require("../models/solution")
 
-var salt = require('../key.json').salt
-
 const {privateEmailUser, privateEmailPassword} = require('../key.json')
 let transporter = nodemailer.createTransport({
     host: 'mail.privateemail.com',
@@ -31,15 +25,6 @@ let transporter = nodemailer.createTransport({
         pass: privateEmailPassword
     }
 });
-router.use(session({
-    secret: crypto.randomBytes(64).toString("base64"),
-    resave: true,
-    saveUninitialized: false,
-    cookie: {
-        secure: false,
-        maxAge: 48 * 60 * 60 * 1000 //15 Stunden
-    }
-}));
 
 router.post('/auth/login', async(req, res) => {
     try {
