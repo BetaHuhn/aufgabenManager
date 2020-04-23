@@ -31,14 +31,13 @@ let transporter = nodemailer.createTransport({
         pass: privateEmailPassword
     }
 });
-
 router.use(session({
     secret: crypto.randomBytes(64).toString("base64"),
     resave: true,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         secure: false,
-        maxAge: 15 * 60 * 60 * 1000 //15 Stunden
+        maxAge: 48 * 60 * 60 * 1000 //15 Stunden
     }
 }));
 

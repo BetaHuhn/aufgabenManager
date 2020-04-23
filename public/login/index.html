@@ -49,6 +49,7 @@
     <script async src="https://stats.mxis.ch/statistik.js" data-ackee-server="https://stats.mxis.ch" data-ackee-domain-id="0c19f821-94e9-40dd-860b-339a1c57c332" data-ackee-opts='{ "detailed": true }'></script>
     <link rel="stylesheet" href="/statuspage/style.css">
     <script src="/statuspage/main.js"></script>
+    <noscript>Dein Browser unterstützt JavaScript nicht!</noscript> 
 </head>
 
 <body>
@@ -67,11 +68,13 @@
       
       <div class="login">
         <h1>Login</h1>
-        <p>Email:</p>
-        <input type="text" id="email" autofocus/>
-        <p>Passwort:</p>
-        <input type="password" id="password" />
-        <button id="loginBtn" type="button" onclick="login()">Login</button>
+        <div id="login">
+          <p>Email:</p>
+          <input type="text" id="email" autofocus/>
+          <p>Passwort:</p>
+          <input type="password" id="password" />
+          <button id="loginBtn" type="button" onclick="login()">Login</button>
+        </div>
         <p class="message" id="error">Passwort vergessen? Setze es <a href="/account/reset">hier</a> zurück.</p>
       </div>
     <main>

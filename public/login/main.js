@@ -1,4 +1,27 @@
 //main.js
+
+function checkCookie(){
+    // Quick test if browser has cookieEnabled host property
+    if (navigator.cookieEnabled) return true;
+    // Create cookie
+    document.cookie = "cookietest=1";
+    var ret = document.cookie.indexOf("cookietest=") != -1;
+    // Delete cookie
+    document.cookie = "cookietest=1; expires=Thu, 01-Jan-1970 00:00:01 GMT";
+    return ret;
+}
+
+var check = checkCookie();
+console.log(check)
+if(!check){
+    console.log("Cookies not enabled")
+    document.getElementById('login').style.display = "none"
+    var error = document.getElementById('error');
+    error.innerHTML = '<p>Fehler, Cookies sind blockiert. <a href="https://enablecookies.info/de/">Hier</a> ist eine Anleitung wie du sie aktivierst</p>'
+    alert("Hinweis: Damit wir dich anmelden können musst du Cookies erlauben.")
+}
+
+
 /* Darkmode Support */
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 detectDarkMode()
