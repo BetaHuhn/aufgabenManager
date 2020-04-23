@@ -28,6 +28,7 @@ var mongoStore = new MongoStore({
 
 app.use(session({
     secret: secret,
+    name: "msuid",
     resave: true,
     saveUninitialized: false,
     cookie: {
@@ -46,12 +47,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(compression());
 app.use(helmet());
+app.use(helmet.hidePoweredBy({setTo: 'Nokia 3310'}));
+app.use((req, res, next) => {
+    res.append('marco', 'polo');
+    res.append('answer', '42');
+    res.append('x-hacker', 'if you read this, contact me: webmaster@mxis.ch');
+    next();
+});
 app.use(middleware.log())
 app.use(authRouter)
 app.use(appRouter)
 app.use(apiRouter)
 app.set('trust proxy', 1);
-app.disable('x-powered-by')
+//app.disable('x-powered-by')
 
 var corsOptions = {
     origin: 'https://zgk.mxis.ch',
