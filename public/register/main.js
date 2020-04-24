@@ -1,6 +1,6 @@
 /* main.js - Maximilian Schiller 2020 */
 
-function checkCookie(){
+function checkCookie() {
     // Quick test if browser has cookieEnabled host property
     if (navigator.cookieEnabled) return true;
     // Create cookie
@@ -13,7 +13,7 @@ function checkCookie(){
 
 var check = checkCookie();
 console.log(check)
-if(!check){
+if (!check) {
     console.log("Cookies not enabled")
     document.getElementById('login').style.display = "none"
     var error = document.getElementById('error');
@@ -24,9 +24,9 @@ if(!check){
 function myFunction() {
     var x = document.getElementById("myTopnav");
     if (x.className === "topnav") {
-      x.className += " responsive";
+        x.className += " responsive";
     } else {
-      x.className = "topnav";
+        x.className = "topnav";
     }
 }
 
@@ -38,11 +38,11 @@ var url_string = window.location.href;
 var url = new URL(url_string);
 var token = url.searchParams.get("token")
 console.log("token: " + token)
-if(token == undefined || token == null){
+if (token == undefined || token == null) {
     document.getElementById('register').style.display = 'block';
     document.getElementById('user').style.height = '90px'
     document.getElementById('error').innerHTML = 'Um einen Account zu erstellen, brauchst du zur Zeit einen Invite Link. Sende uns eine Mail für weitere Infos: <a href="mailto:zgk@mxis.ch?subject=Invite Link Anfrage">zgk@mxis.ch</a>'
-}else{
+} else {
     var input = document.getElementById("password");
     input.addEventListener("keyup", function(event) {
         if (event.keyCode === 13) {
@@ -52,8 +52,9 @@ if(token == undefined || token == null){
     });
 }
 
-async function createUser(){
-    if(token != undefined){
+async function createUser() {
+    if (token != undefined) {
+        document.getElementById('loader').style.display = "inline-block"
         var name = document.getElementById('name').value;
         var email = document.getElementById('email').value;
         var password = document.getElementById('password').value;
@@ -62,7 +63,7 @@ async function createUser(){
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({email: email, name: name, password: password, token: token})
+            body: JSON.stringify({ email: email, name: name, password: password, token: token })
         };
         const response = await fetch('/auth/register', options);
         const json = await response.json();
@@ -70,48 +71,58 @@ async function createUser(){
             console.log(json);
             var error = document.getElementById('error');
             error.innerHTML = "Register successfull"
+            document.getElementById('loader').style.display = "none"
             window.location.replace('/');
-        } else if (json.status == 408){
+        } else if (json.status == 408) {
             var error = document.getElementById('error');
             error.innerHTML = "Bitte fülle alle Felder aus"
+            document.getElementById('loader').style.display = "none"
             console.log(json)
-        }else if (json.status == 407){
+        } else if (json.status == 407) {
             var error = document.getElementById('error');
             error.innerHTML = "Bitte gib eine echte Email Adresse ein"
+            document.getElementById('loader').style.display = "none"
             console.log(json)
-        }else if (json.status == 410){
+        } else if (json.status == 410) {
             var error = document.getElementById('error');
             error.innerHTML = '<p>Diese Email wird bereits verwendet. Wenn das deine ist, setze <a href="https://zgk.mxis.ch/account/reset/">hier</a> dein Passwort zurück</p>'
+            document.getElementById('loader').style.display = "none"
             console.log(json)
-        }else if (json.status == 406){
+        } else if (json.status == 406) {
             var error = document.getElementById('error');
             error.innerHTML = "Das Passwort ist zu kurz (min 8)"
+            document.getElementById('loader').style.display = "none"
             console.log(json)
-        }else if (json.status == 405){
+        } else if (json.status == 405) {
             var error = document.getElementById('error');
             error.innerHTML = "Das Passwort ist zu lang (max 20)"
+            document.getElementById('loader').style.display = "none"
             console.log(json)
-        }else if (json.status == 404){
+        } else if (json.status == 404) {
             var error = document.getElementById('error');
             error.innerHTML = "Das Passwort darf keine Lücken enthalten"
+            document.getElementById('loader').style.display = "none"
             console.log(json)
-        }else if (json.status == 401){
+        } else if (json.status == 401) {
             var error = document.getElementById('error');
             error.innerHTML = "Der Invite Link ist abgelaufen oder wurde zu oft benutzt"
+            document.getElementById('loader').style.display = "none"
             console.log(json)
-        }else if (json.status == 403){
+        } else if (json.status == 403) {
             var error = document.getElementById('error');
             error.innerHTML = "Der Invite Link existiert nicht"
+            document.getElementById('loader').style.display = "none"
             console.log(json)
-        }else {
+        } else {
             var error = document.getElementById('error');
             error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
+            document.getElementById('loader').style.display = "none"
             console.log(json)
         }
     }
 }
 
-setInterval(function(){ 
+setInterval(function() {
     var dot = document.getElementById("dot")
     dot.className = (dot.className == 'green') ? 'blink' : 'green';
 }, 1000);
@@ -140,12 +151,12 @@ function switchThemeSlider() {
     if (toggleSwitch.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        //switchText.innerHTML = "Dark Mode"
+            //switchText.innerHTML = "Dark Mode"
         document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
         document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        //switchText.innerHTML = "Light Mode"
+            //switchText.innerHTML = "Light Mode"
         document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
     }
 }

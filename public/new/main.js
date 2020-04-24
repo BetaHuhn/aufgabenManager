@@ -32,8 +32,6 @@ detectDarkMode()
 
 var last = document.getElementById('fileDiv')
 
-document.getElementById("loader").style.display = "none";
-
 var role;
 
 function validateForm() {
@@ -70,7 +68,6 @@ async function upload() {
                     }
                 }
             }
-            //document.getElementById("loader").style.display = "block";
             progressDiv.style.display = "block";
             document.getElementById('error').innerHTML = `<h1>Hochladen...</h1>`;
             document.getElementById('form').style.display = "none";
@@ -101,7 +98,6 @@ async function upload() {
                 }
             });
             xhr.onload = function(Event) {
-                //document.getElementById("loader").style.display = "none";
                 progressDiv.style.display = "none";
                 document.getElementById('status').style.display = "none";
                 if (xhr.status == 200) {
@@ -162,7 +158,7 @@ async function upload() {
             } else if (json.status == 404) {
                 document.getElementById('error').innerHTML = `<p class="message" id="message">Diese Klasse gibt es nicht.</p>`
                 document.getElementById('form').style.display = "block";
-            }else {
+            } else {
                 document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
             }
         }
@@ -193,18 +189,18 @@ function Filevalidation() {
     const fi = document.getElementById('select-button');
     // Check if any file is selected. 
     if (fi.files.length > 0) {
-        console.log(fi.files)
-        for (i in fi.files) {
-            var fsize = fi.files.item(i).size;
-            var file = Math.round(fsize);
-            // The size of the file.
-            if (file >= 52428800) {
-                document.getElementById('size').innerHTML = '<b>' +
-                    formatBytes(file) + '</b> (max. 50MB)';
-            } else {
-                document.getElementById('size').innerHTML = '<b>' +
-                    formatBytes(file) + '</b>';
-            }
+        var file = 0;
+        for (var i = 0; i < fi.files.length; i++) {
+            console.log(fi.files[i])
+            file += Math.round(fi.files.item(i).size)
+        }
+        // The size of the file.
+        if (file >= 52428800) {
+            document.getElementById('size').innerHTML = '<b>' +
+                formatBytes(file) + '</b> (max. 50MB)';
+        } else {
+            document.getElementById('size').innerHTML = '<b>' +
+                formatBytes(file) + '</b>';
         }
     }
 }
@@ -240,7 +236,7 @@ async function authenticate() {
                 // replace el with newEL
             el.parentNode.replaceChild(newEl, el);
         } else {
-            if(json.data.classes.length >= 1){
+            if (json.data.classes.length >= 1) {
                 for (i in json.data.classes) {
                     console.log(json.data.classes[i])
                     var sel = document.getElementById('klasse');
@@ -249,7 +245,7 @@ async function authenticate() {
                     opt.value = json.data.classes[i];
                     sel.appendChild(opt);
                 }
-            }else{
+            } else {
                 alert("Fehler: Du bist nicht Mitglied einer Klasse. Bitte melde dich erneut an")
                 var message = createElement('div', 'message', 'message')
                 last.parentElement.appendChild(message)
@@ -257,19 +253,22 @@ async function authenticate() {
                 window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
             }
         }
-        //   var text = createElement('p', 'message', 'message', "Hallo!")
-        //   text.id = 'message'
-        //   last.parentElement.appendChild(text)
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
     } else if (json.status == 405) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
@@ -340,12 +339,12 @@ function switchThemeSlider() {
     if (toggleSwitch.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        //switchText.innerHTML = "Dark Mode"
+            //switchText.innerHTML = "Dark Mode"
         document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
         document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        //switchText.innerHTML = "Light Mode"
+            //switchText.innerHTML = "Light Mode"
         document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
     }
 }

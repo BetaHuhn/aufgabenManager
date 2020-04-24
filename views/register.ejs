@@ -4,7 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <title><%=name%> - Erstelle einen Account</title>
+    <title>
+        <%=name%> - Erstelle einen Account</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <meta name="title" content="<%=name%> - Erstelle einen Account">
@@ -36,39 +37,46 @@
 </head>
 
 <body>
-  <div class="topnav" id="myTopnav">
-    <div class="modeSwitcher">
-      <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
+    <div class="topnav" id="myTopnav">
+        <div class="modeSwitcher">
+            <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
         <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light" aria-hidden="true"></span></input>
       </label>
-    </div>
-    <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
-    <a id="logout" href="/logout" class="menu" style="display: none;">Logout</a>
-    <a href="/settings" class="menu" style="display: none;">Settings</a>
-    <a href="/peers" class="menu" style="display: none;">Peers</a>
-    <a href="javascript:void(0);" class="icon"  style="display: none;" onclick="myFunction()">
-      <i class="burger fa fa-bars"></i>
-    </a>
-  </div>
-  <main>
-    <div class="container">
-      <div id="user" class="login">
-        <div id="register">
-          <h1>Erstelle einen Account</h1>
-          <p class="invite" id="invite"><%=name%></p>
-          <p>Name:</p>
-          <input type="text" id="name"/>
-          <p>Email:</p>
-          <input type="text" id="email"/>
-          <p>Passwort:</p>
-          <input type="password" id="password"/>
-          <button id="loginBtn" type="button" onclick="createUser()">Erstellen</button>
         </div>
-        <p class="message" id="error">Du hast bereits einen Account? <a href="/login">Login!</a></p>
-      </div>
+        <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
+        <a id="logout" href="/logout" class="menu" style="display: none;">Logout</a>
+        <a href="/settings" class="menu" style="display: none;">Settings</a>
+        <a href="/peers" class="menu" style="display: none;">Peers</a>
+        <a href="javascript:void(0);" class="icon" style="display: none;" onclick="myFunction()">
+            <i class="burger fa fa-bars"></i>
+        </a>
     </div>
-  </main>
-  <script src="/register/main.js"></script>
+    <main>
+        <div id="loader" class="loader" style="display: none;">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="container">
+            <div id="user" class="login">
+                <div id="register">
+                    <h1>Erstelle einen Account</h1>
+                    <p class="invite" id="invite">
+                        <%=name%>
+                    </p>
+                    <p>Name:</p>
+                    <input type="text" id="name" />
+                    <p>Email:</p>
+                    <input type="text" id="email" />
+                    <p>Passwort:</p>
+                    <input type="password" id="password" />
+                    <button id="loginBtn" type="button" onclick="createUser()">Erstellen</button>
+                </div>
+                <p class="message" id="error">Du hast bereits einen Account? <a href="/login">Login!</a></p>
+            </div>
+        </div>
+    </main>
+    <script src="/register/main.js"></script>
 </body>
 
 </html>

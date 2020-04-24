@@ -1,6 +1,6 @@
 //main.js
 
-function checkCookie(){
+function checkCookie() {
     // Quick test if browser has cookieEnabled host property
     if (navigator.cookieEnabled) return true;
     // Create cookie
@@ -13,7 +13,7 @@ function checkCookie(){
 
 var check = checkCookie();
 console.log(check)
-if(!check){
+if (!check) {
     console.log("Cookies not enabled")
     document.getElementById('login').style.display = "none"
     var error = document.getElementById('error');
@@ -32,6 +32,7 @@ var ref = url.searchParams.get("ref")
 console.log("Ref: " + ref)
 
 async function login() {
+    document.getElementById('loader').style.display = "inline-block";
     var password = document.getElementById('password').value;
     var email = document.getElementById('email').value;
     const options = {
@@ -46,13 +47,16 @@ async function login() {
     if (json.status == 408) {
         var error = document.getElementById('error');
         error.innerHTML = "Falsches Passwort"
+        document.getElementById('loader').style.display = "none";
     } else if (json.status == 405) {
         var error = document.getElementById('error');
         error.innerHTML = "Diesen Benutzer gibt es nicht"
+        document.getElementById('loader').style.display = "none";
     } else if (json.status == 200) {
         console.log(json);
         var error = document.getElementById('error');
         error.innerHTML = "Login erfolgreich"
+        document.getElementById('loader').style.display = "none";
         if (ref != undefined) {
             console.log(ref)
             window.location.replace(ref)
@@ -62,6 +66,7 @@ async function login() {
     } else {
         var error = document.getElementById('error');
         error.innerHTML = "Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal."
+        document.getElementById('loader').style.display = "none";
     }
 }
 
@@ -102,12 +107,12 @@ function switchThemeSlider() {
     if (toggleSwitch.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        //switchText.innerHTML = "Dark Mode"
+            //switchText.innerHTML = "Dark Mode"
         document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
         document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        //switchText.innerHTML = "Light Mode"
+            //switchText.innerHTML = "Light Mode"
         document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
     }
 }

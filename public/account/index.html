@@ -1,4 +1,4 @@
-<!-- index.html - Maximilian Schiller 2020 --> 
+<!-- index.html - Maximilian Schiller 2020 -->
 <!DOCTYPE html>
 <html lang="de">
 
@@ -33,7 +33,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/static/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
@@ -57,34 +57,39 @@
             <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
               <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light" aria-hidden="true"></span></input>
             </label>
-          </div>
+        </div>
         <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
         <a id="logout" href="/logout" class="menu">Logout</a>
         <a href="/account" class="menu active">Account</a>
         <a href="/new" id="new" class="menu">Neu</a>
         <a href="/" class="menu">Aufgaben</a>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-          <i class="burger fa fa-bars"></i>
+            <i class="burger fa fa-bars"></i>
         </a>
-      </div>
+    </div>
     <main>
+        <div id="loader" class="loader">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <div class="container">
-            <div id="user" class="login">
+            <div id="user" class="login" style="display: none;">
                 <h1 id="heading">Account:</h1>
                 <div id="form">
                     <p>Name:</p>
                     <p class="result" id="name"></p>
 
                     <p>Neues Passwort:</p>
-                    <input required class="input" title="Gib dein altes Passwort ein" type="password" id="oldPassword" placeholder="Altes Passwort"/>
-                    <input required class="input" title="Gib ein neues Passwort ein" type="password" id="newPassword" placeholder="Neues Passwort"/>
+                    <input required class="input" title="Gib dein altes Passwort ein" type="password" id="oldPassword" placeholder="Altes Passwort" />
+                    <input required class="input" title="Gib ein neues Passwort ein" type="password" id="newPassword" placeholder="Neues Passwort" />
                     <button id="changeBtn" onclick="change();">Ändern</button>
 
                     <h1>Discord/Telegram Bot:</h1>
                     <p>Mit diesem Link kannst du den Bot direkt zu einer Telegram Gruppe hinzufügen: </p>
-                   <!--  <ul class="klassen" id="klassen"></ul> -->
+                    <!--  <ul class="klassen" id="klassen"></ul> -->
                     <div style="text-align: center;">
-                      <a id="telegram-link"></a>
+                        <a id="telegram-link"></a>
                     </div>
 
                     <p>Bot Key für manuelles setup:</p>

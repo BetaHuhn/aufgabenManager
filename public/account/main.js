@@ -6,9 +6,9 @@ var $body = document.getElementsByTagName('body')[0];
 function myFunction() {
     var x = document.getElementById("myTopnav");
     if (x.className === "topnav") {
-      x.className += " responsive";
+        x.className += " responsive";
     } else {
-      x.className = "topnav";
+        x.className = "topnav";
     }
 }
 
@@ -29,25 +29,25 @@ function validateForm() {
     if (a == null || a == "", b == null || b == "", c == null || c == "", d == null || d == "" || b == "Klasse") {
         //console.log(false)
         return false;
-    }else{
+    } else {
         //console.log(true)
         return true
     }
 }
 
-async function authenticate(){
+async function authenticate() {
     const options = {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/json'
-      },
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
     };
     const response = await fetch('/api/auth/account', options);
     const json = await response.json();
     if (json.status == 200) {
         console.log(json);
         role = json.data.role
-        if(role == "user"){
+        if (role == "user") {
             var newReiter = document.getElementById('new');
             newReiter.style.display = 'none'
         }
@@ -55,12 +55,12 @@ async function authenticate(){
         name.appendChild(document.createTextNode(json.data.name))
         var botKey = document.getElementById('botKey');
         botKey.appendChild(document.createTextNode(json.data.botKey))
-        if(json.data.classes == null){
+        if (json.data.classes == null) {
             var sel = document.getElementById('klassen');
             var opt = document.createElement('li');
             opt.appendChild(document.createTextNode("Admin"));
             sel.appendChild(opt);
-        }else{
+        } else {
             var a = document.getElementById("telegram-link");
             /* var data = {
                 token: json.data.botKey,
@@ -72,38 +72,45 @@ async function authenticate(){
             a.className = "link"
             a.href = "https://zgk.mxis.ch/t/" + json.data.botKey //https://t.me/zgkmsgbot?startgroup=" + base64
             a.innerHTML = "https://zgk.mxis.ch/t/" + json.data.botKey
-            /* for(i in json.data.classes){
-                console.log(json.data.classes[i])
-                var sel = document.getElementById('klassen');
-                var opt = document.createElement('li');
-                var checkbox = document.createElement('input')
-                checkbox.type = "checkbox"
-                checkbox.id = json.data.classes[i]
-                checkbox.value = json.data.classes[i]
-                checkbox.className = "checkbox"
-                var label = document.createElement("label")
-                label.innerHTML = "zu " + json.data.classes[i] + " hinzufügen"
-                label.for = json.data.classes[i]
-                label.className = "label"
-                opt.appendChild(checkbox);
-                opt.appendChild(label)
-                sel.appendChild(opt);
-            } */
+                /* for(i in json.data.classes){
+                    console.log(json.data.classes[i])
+                    var sel = document.getElementById('klassen');
+                    var opt = document.createElement('li');
+                    var checkbox = document.createElement('input')
+                    checkbox.type = "checkbox"
+                    checkbox.id = json.data.classes[i]
+                    checkbox.value = json.data.classes[i]
+                    checkbox.className = "checkbox"
+                    var label = document.createElement("label")
+                    label.innerHTML = "zu " + json.data.classes[i] + " hinzufügen"
+                    label.for = json.data.classes[i]
+                    label.className = "label"
+                    opt.appendChild(checkbox);
+                    opt.appendChild(label)
+                    sel.appendChild(opt);
+                } */
         }
         //   var text = createElement('p', 'message', 'message', "Hallo!")
         //   text.id = 'message'
         //   last.parentElement.appendChild(text)
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
     } else if (json.status == 405) {
         console.log(json);
         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
-    }else {
+    } else {
         document.getElementById('error').innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
 
-async function change(){
+async function change() {
+    document.getElementById('loader').style.display = "inline-block";
     var oldPassword = document.getElementById('oldPassword').value;
     var newPassword = document.getElementById('newPassword').value;
     const options = {
@@ -111,7 +118,7 @@ async function change(){
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({oldPassword: oldPassword, newPassword: newPassword})
+        body: JSON.stringify({ oldPassword: oldPassword, newPassword: newPassword })
     };
     const response = await fetch('/api/auth/change/password', options);
     const json = await response.json();
@@ -119,42 +126,51 @@ async function change(){
         console.log(json);
         var error = document.getElementById('error');
         error.innerHTML = "Passwort wurde geändert"
+        document.getElementById('loader').style.display = "none";
         //window.location.replace('/account');
-    } else if (json.status == 408){
+    } else if (json.status == 408) {
         var error = document.getElementById('error');
         error.innerHTML = "Falsches Passwort"
+        document.getElementById('loader').style.display = "none";
         console.log(json)
-    }else if (json.status == 407){
+    } else if (json.status == 407) {
         var error = document.getElementById('error');
         error.innerHTML = "Bitte fülle beide Felder aus"
+        document.getElementById('loader').style.display = "none";
         console.log(json)
-    }else if (json.status == 406){
+    } else if (json.status == 406) {
         var error = document.getElementById('error');
         error.innerHTML = "Das Passwort ist zu kurz (min 8)"
+        document.getElementById('loader').style.display = "none";
         console.log(json)
-    }else if (json.status == 405){
+    } else if (json.status == 405) {
         var error = document.getElementById('error');
         error.innerHTML = "Das Passwort ist zu lang (max 20)"
+        document.getElementById('loader').style.display = "none";
         console.log(json)
-    }else if (json.status == 402){
+    } else if (json.status == 402) {
         var error = document.getElementById('error');
         error.innerHTML = "Das Passwort darf keine Lücken enthalten"
+        document.getElementById('loader').style.display = "none";
         console.log(json)
-    }else if (json.status == 403){
+    } else if (json.status == 403) {
         var error = document.getElementById('error');
         error.innerHTML = "Bitte melde dich zuerst an"
+        document.getElementById('loader').style.display = "none";
         window.location.replace("/login")
         console.log(json)
-    }else if (json.status == 401){
+    } else if (json.status == 401) {
         var error = document.getElementById('error');
         error.innerHTML = "Bitte benutze ein anderes Passwort"
+        document.getElementById('loader').style.display = "none";
         console.log(json)
-    }else {
+    } else {
         var error = document.getElementById('error');
         error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
+        document.getElementById('loader').style.display = "none";
         console.log(json)
     }
-    
+
 }
 
 function copy(resp) {
@@ -168,24 +184,23 @@ function copy(resp) {
     copyBtn.innerHTML = 'Copied!';
 }
 
-function createElement(elem, className, id, text, title){
+function createElement(elem, className, id, text, title) {
     var element = document.createElement(elem);
     element.className = className;
-    if(elem == 'p'){
-      var node = document.createTextNode(text);
-      element.appendChild(node);
-    }else if(elem == 'img'){
-      element.src = text
-      element.title = title
-    }
-    else if(elem == 'input'){
-      element.placeholder = text
-    }else if(elem == 'div' && className == "device parent"){
-      element.id = id;
-    }else if(elem == 'a'){
-      element.href = id;
-      var node = document.createTextNode(text);
-      element.appendChild(node);
+    if (elem == 'p') {
+        var node = document.createTextNode(text);
+        element.appendChild(node);
+    } else if (elem == 'img') {
+        element.src = text
+        element.title = title
+    } else if (elem == 'input') {
+        element.placeholder = text
+    } else if (elem == 'div' && className == "device parent") {
+        element.id = id;
+    } else if (elem == 'a') {
+        element.href = id;
+        var node = document.createTextNode(text);
+        element.appendChild(node);
     }
     return element
 }
@@ -195,7 +210,7 @@ function AvoidSpace(event) {
     if (k == 32) return false;
 }
 
-setInterval(function(){ 
+setInterval(function() {
     var dot = document.getElementById("dot")
     dot.className = (dot.className == 'green') ? 'blink' : 'green';
 }, 1000);
@@ -224,12 +239,12 @@ function switchThemeSlider() {
     if (toggleSwitch.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        //switchText.innerHTML = "Dark Mode"
+            //switchText.innerHTML = "Dark Mode"
         document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
         document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        //switchText.innerHTML = "Light Mode"
+            //switchText.innerHTML = "Light Mode"
         document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
     }
 }

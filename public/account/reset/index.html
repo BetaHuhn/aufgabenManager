@@ -1,4 +1,4 @@
-<!-- index.html - Maximilian Schiller 2020 --> 
+<!-- index.html - Maximilian Schiller 2020 -->
 <!DOCTYPE html>
 <html lang="de">
 
@@ -19,7 +19,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/static/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
@@ -38,17 +38,22 @@
 </head>
 
 <body>
-  <div class="topnav" id="myTopnav">
-    <div class="modeSwitcher">
-        <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
+    <div class="topnav" id="myTopnav">
+        <div class="modeSwitcher">
+            <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
           <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light" aria-hidden="true"></span></input>
         </label>
-      </div>
-    <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
-    <a id="login" href="/login" class="menu">Login</a>
-    <a href="/home" class="menu active">Home</a>
-  </div>
+        </div>
+        <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
+        <a id="login" href="/login" class="menu">Login</a>
+        <a href="/home" class="menu active">Home</a>
+    </div>
     <main>
+        <div id="loader" class="loader" style="display: none;">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <div class="container">
             <div id="user" class="login">
                 <h1 id="heading">Passwort zurücksetzen:</h1>

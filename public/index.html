@@ -33,7 +33,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/static/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
@@ -48,39 +48,44 @@
     <script src="https://kit.fontawesome.com/ca8ffbc206.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/statuspage/style.css">
     <script src="/statuspage/main.js"></script>
-    <noscript>Dein Browser unterstützt JavaScript nicht!</noscript> 
+    <noscript>Dein Browser unterstützt JavaScript nicht!</noscript>
 </head>
 
 <body onload="auth()">
-  <div class="topnav" id="myTopnav">
-    <div class="modeSwitcher">
-      <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
+    <div class="topnav" id="myTopnav">
+        <div class="modeSwitcher">
+            <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
         <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light" aria-hidden="true"></span></input>
       </label>
+        </div>
+        <a id="logo" href="/home" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
+        <a id="logoutLink" href="/logout" class="menu">Logout</a>
+        <a id="accountLink" href="/account" class="menu">Account</a>
+        <a id="new" href="/new" class="menu">Neu</a>
+        <a id="aufgabenLink" href="/" class="menu active">Aufgaben</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="burger fa fa-bars"></i>
+        </a>
     </div>
-    <a id="logo" href="/home" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
-    <a id="logoutLink" href="/logout" class="menu">Logout</a>
-    <a id="accountLink" href="/account" class="menu">Account</a>
-    <a id="new" href="/new" class="menu">Neu</a>
-    <a id="aufgabenLink" href="/" class="menu active">Aufgaben</a>
-    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-      <i class="burger fa fa-bars"></i>
-    </a>
-  </div>
 
-  <main id="main">
-    <div class="dashboard" id="dashboard">
-      <h1>Aufgaben</h1>
-      <div id="legend" class="legend parent">
-        <p class="leftest">Fach</p>
-        <p class="child second" >Abgabe</p>
-        <p class="child third">Aufgabe</p>
-        <p class="child fourth">Downloads</p>
-        <p class="child fith">Dateien</p>
-      </div>
-    </div>
-  </main>
-  <script src="main.js"></script>
+    <main id="main">
+        <div id="loader" class="loader">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="dashboard" id="dashboard" style="display: none;">
+            <h1>Aufgaben</h1>
+            <div id="legend" class="legend parent">
+                <p class="leftest">Fach</p>
+                <p class="child second">Abgabe</p>
+                <p class="child third">Aufgabe</p>
+                <p class="child fourth">Downloads</p>
+                <p class="child fith">Dateien</p>
+            </div>
+        </div>
+    </main>
+    <script src="main.js"></script>
 </body>
 
 </html>
