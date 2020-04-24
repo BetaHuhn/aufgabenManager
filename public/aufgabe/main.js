@@ -32,8 +32,6 @@ detectDarkMode()
 
 var last = document.getElementById('fileDiv')
 
-document.getElementById("loader").style.display = "none";
-
 var url_string = window.location.href; //window.location.href
 var url = new URL(url_string);
 var aufgabenId = url.searchParams.get("id")
@@ -51,6 +49,7 @@ function validateForm() {
 }
 
 async function upload() {
+    document.getElementById('loader').style.display = "inline-block"
     var filledOut = validateForm();
     console.log(filledOut)
     if (filledOut) {
@@ -64,12 +63,12 @@ async function upload() {
                 if (file >= 52428800) { //50mb
                     if (!ran) {
                         alert("Alter was'n das für ne Datei... max 50mb bitte!");
+                        document.getElementById('loader').style.display = "none"
                         ran = true;
                         return;
                     }
                 }
             }
-            //document.getElementById("loader").style.display = "block";
             progressDiv.style.display = "block";
             document.getElementById('error').innerHTML = `<p>Hochladen...</p>`;
             document.getElementById('form').style.display = "none";
@@ -89,7 +88,7 @@ async function upload() {
                 }
             });
             xhr.onload = function(Event) {
-                //document.getElementById("loader").style.display = "none";
+                document.getElementById('loader').style.display = "none"
                 progressDiv.style.display = "none";
                 document.getElementById('status').style.display = "none";
                 if (xhr.status == 200) {
@@ -118,12 +117,14 @@ async function upload() {
             xhr.send(data);
         } else {
             document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
+            document.getElementById('loader').style.display = "none"
             setTimeout(function() {
                 alert("Bitte wähle eine oder mehrere Dateien aus");
             }, 0);
         }
     } else {
         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
+        document.getElementById('loader').style.display = "none"
         setTimeout(function() {
             alert("Bitte wähle eine oder mehrere Dateien aus");
         }, 0);
@@ -142,6 +143,26 @@ function moveBar(progress) {
 
 }
 
+function Filevalidation() {
+    const fi = document.getElementById('select-button');
+    // Check if any file is selected. 
+    if (fi.files.length > 0) {
+        var file = 0;
+        for (var i = 0; i < fi.files.length; i++) {
+            console.log(fi.files[i])
+            file += Math.round(fi.files.item(i).size)
+        }
+        // The size of the file.
+        if (file >= 52428800) {
+            document.getElementById('size').innerHTML = '<b>' +
+                formatBytes(file) + '</b> (max. 50MB)';
+        } else {
+            document.getElementById('size').innerHTML = '<b>' +
+                formatBytes(file) + '</b>';
+        }
+    }
+}
+
 function formatBytes(bytes, decimals) {
     if (bytes == 0) return '0 Bytes';
     var k = 1024,
@@ -150,7 +171,6 @@ function formatBytes(bytes, decimals) {
         i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
-
 
 async function authenticate() {
     const options = {
@@ -179,14 +199,13 @@ async function authenticate() {
             `
             document.getElementById('abgabe').parentElement.appendChild(p);
         }
-        
         //renderUser();
-        if(role == 'user'){
+        if (role == 'user') {
             document.getElementById('form').style.display = "block"
             var newReiter = document.getElementById('new');
             newReiter.style.display = 'none'
             renderUser()
-        }else{
+        } else {
             renderTeacher()
         }
     } else if (json.status == 403) {
@@ -194,23 +213,31 @@ async function authenticate() {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 405) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 404 || json.status == 400) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Diese Aufgabe gibt es nicht</p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/error/404')
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login')
     }
 }
@@ -251,20 +278,20 @@ async function renderTeacher() {
             row = table.insertRow(-1);
             for (var j = 0; j < columnCount; j++) { //Column
                 var cell = row.insertCell(-1);
-                if(j == 0){
+                if (j == 0) {
                     if (customers[i][j] != null) {
                         cell.innerHTML = customers[i][j];
                     }
-                }else if(j == 1){
+                } else if (j == 1) {
                     if (customers[i][j] != null) {
                         var abgabe = new Date(customers[i][j])
                         cell.innerHTML = abgabe.toLocaleString();
-                    }else{
+                    } else {
                         cell.innerHTML = "-"
                     }
-                }else if (j == 2) {
+                } else if (j == 2) {
                     console.log(customers[i][2])
-                    if(customers[i][2] != null){
+                    if (customers[i][2] != null) {
                         var btn = document.createElement('span');
                         btn.id = customers[i][j];
                         btn.className = "fas fa-file-download cloud";
@@ -297,32 +324,41 @@ async function renderTeacher() {
         div.className = "pdfDiv"
         div.innerHTML = `<a href="/api/v1/generate/pdf?id=${json.exercise}">Tabelle als PDF herunterladen</a><a href="/api/v1/generate/pdf?id=${json.exercise}">Alle Lösungen herunterladen</a>`
         dvTable.appendChild(div)
-        
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
     } else if (json.status == 403) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 405) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 404) {
         console.log(json);
         document.getElementById('solutionHead').style.display = "none"
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         //document.getElementById('solutionHead').innerHTML = "Lösung Hochladen:"
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login')
     }
 }
 
-function downloadFile(){
+function downloadFile() {
     window.open(this.id, "_blank");
 }
 
@@ -350,27 +386,36 @@ async function renderUser() {
             `
             document.getElementById('solutionHead').parentElement.insertBefore(div, document.getElementById('form'))
         }
-
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
     } else if (json.status == 403) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 405) {
         console.log(json);
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 404) {
         console.log(json);
         document.getElementById('solutionHead').innerHTML = "Lösung Hochladen:"
         document.getElementById('form').style.display = "block"
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
+        document.getElementById('loader').style.display = "none"
+        document.getElementById('user').style.display = "block";
         window.location.replace('/login')
     }
 }
@@ -441,12 +486,12 @@ function switchThemeSlider() {
     if (toggleSwitch.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        //switchText.innerHTML = "Dark Mode"
+            //switchText.innerHTML = "Dark Mode"
         document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
         document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        //switchText.innerHTML = "Light Mode"
+            //switchText.innerHTML = "Light Mode"
         document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
     }
 }

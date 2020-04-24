@@ -1,4 +1,5 @@
 /* main.css - Maximilian Schiller 2020 */
+
 :root {
     --primary-color: rgb(78, 121, 216);
     --primary-color-hover: rgb(82, 128, 226);
@@ -62,7 +63,7 @@ body {
     box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
 }
 
-.logo{
+.logo {
     float: left;
     display: block;
     color: #f2f2f2;
@@ -74,19 +75,19 @@ body {
     margin-right: 2rem;
 }
 
-.logo span #id{
+.logo span #id {
     margin-left: 1rem;
 }
 
-.green{
+.green {
     color: var(--green);
 }
 
-.red{
+.red {
     color: var(--red);
 }
 
-.blink{
+.blink {
     color: var(--nav);
 }
 
@@ -94,7 +95,7 @@ body {
     color: var(--secondary-color-hover);
 }
 
-.menu{
+.menu {
     float: right;
     display: block;
     color: #f2f2f2;
@@ -109,23 +110,24 @@ body {
     background-color: var(--secondary-color);
 }
 
-.menu #logout{ 
+.menu #logout {
     margin-right: 1.5rem;
 }
 
-.topnav{
+.topnav {
     padding: 13px 16px;
 }
 
 .topnav a:hover {
     background-color: var(--secondary-color-hover);
-    color:#f2f2f2;
+    color: #f2f2f2;
 }
 
 .topnav a.active {
     background-color: var(--active);
     color: white;
 }
+
 .topnav a.active:hover {
     background-color: var(--active-hover);
 }
@@ -134,54 +136,54 @@ body {
     display: none;
 }
 
-.burger{
+.burger {
     color: #f2f2f2;
 }
 
-.modeSwitcher{
+.modeSwitcher {
     float: left;
     margin-top: -10px;
     margin-left: 10px;
 }
 
-.light{
+.light {
     color: rgb(38, 57, 110);
     cursor: pointer;
 }
 
-.light:hover{
+.light:hover {
     color: rgb(51, 74, 136);
 }
 
-.dark{
+.dark {
     color: rgb(228, 186, 72);
     cursor: pointer;
 }
 
-.dark:hover{
+.dark:hover {
     color: rgb(235, 194, 84);
 }
 
-#checkbox{
-    display:block;
-    opacity:0;
+#checkbox {
+    display: block;
+    opacity: 0;
     width: 10px;
     height: 10px;
 }
 
-.message{
+.message {
     text-align: center;
     font-size: 1rem;
     margin-top: 10px;
     margin-bottom: 3rem;
 }
 
-.message a{
+.message a {
     color: var(--primary-color);
     text-decoration: none;
 }
 
-.login{
+.login {
     width: 480px;
     height: 550px;
     border-radius: 12px;
@@ -193,7 +195,7 @@ body {
     background-color: var(--white);
 }
 
-.login h1{
+.login h1 {
     text-align: center;
     font-size: 1.4rem;
     margin-top: 1.4rem;
@@ -201,18 +203,18 @@ body {
     color: var(--font-color)
 }
 
-.invite{
+.invite {
     text-align: center;
     font-size: 18px;
     margin-bottom: 10px;
 }
 
-.invite a{
+.invite a {
     color: var(--primary-color-hover);
     text-decoration: none;
 }
 
-.login p{
+.login p {
     margin-left: 10px;
     margin-top: 10px;
 }
@@ -231,7 +233,7 @@ body {
     padding: 12px 14px;
 }
 
-.login button{
+.login button {
     display: block;
     border: 0;
     outline: 0;
@@ -249,11 +251,11 @@ body {
     padding: 15px 38px;
 }
 
-.container{
+.container {
     margin: auto;
 }
 
-.setup{
+.setup {
     width: 920px;
     height: 450px;
     border-radius: 12px;
@@ -264,48 +266,53 @@ body {
     background-color: var(--white);
 }
 
-.setup h1{
+.setup h1 {
     text-align: center;
     font-size: 1.7rem;
     margin-top: 1.2rem;
     color: var(--font-color)
 }
 
-.box{
+.box {
     width: 900px;
     margin: 0 auto;
     margin-top: 2rem;
-    text-align: center; 
+    text-align: center;
 }
-.entity{
+
+.entity {
     width: 250px;
     height: 80px;
     display: inline-block;
-    vertical-align:top;
+    vertical-align: top;
 }
 
-.left{
+.left {
     margin-left: 0rem;
     margin-right: 2.5rem;
 }
-.right{
+
+.right {
     margin-left: 2.5rem;
     margin-right: 1.5rem;
 }
-.wide{
+
+.wide {
     width: 555px;
     margin-right: 0rem;
 }
-.center{
+
+.center {
     margin: 0;
 }
 
-.setup p{
+.setup p {
     text-align: left;
     font-size: 0.8rem;
     margin-top: -0.3rem;
 }
-.setup input{
+
+.setup input {
     display: block;
     width: 100%;
     height: 12px;
@@ -320,7 +327,7 @@ body {
     font-size: 0.9rem;
 }
 
-.saveBtn{
+.saveBtn {
     display: block;
     border: 0;
     outline: 0;
@@ -339,18 +346,67 @@ body {
     padding: 15px 38px;
 }
 
+.loader {
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 80px;
+}
+
+.loader div {
+    display: inline-block;
+    position: absolute;
+    z-index: 1000;
+    width: 16px;
+    background: var(--primary-color);
+    animation: loader 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+.loader div:nth-child(1) {
+    left: 8px;
+    animation-delay: -0.24s;
+}
+
+.loader div:nth-child(2) {
+    left: 32px;
+    animation-delay: -0.12s;
+}
+
+.loader div:nth-child(3) {
+    left: 56px;
+    animation-delay: 0;
+}
+
+@keyframes loader {
+    0% {
+        top: 8px;
+        height: 64px;
+    }
+    50%,
+    100% {
+        top: 24px;
+        height: 32px;
+    }
+}
+
 @media screen and (max-width: 1100px) {
-    .menu{
+    .menu {
         margin-left: 0.5rem;
         margin-right: 0.5rem;
     }
-    .login{
+    .login {
         margin-top: 3rem;
     }
 }
 
 @media screen and (max-width: 880px) {
-    .topnav a:not(:first-child) {display: none;}
+    .topnav a:not(:first-child) {
+        display: none;
+    }
     .topnav a.icon {
         float: right;
         display: block;
@@ -365,7 +421,9 @@ body {
 }
 
 @media screen and (max-width: 880px) {
-    .topnav.responsive {position: relative;}
+    .topnav.responsive {
+        position: relative;
+    }
     .topnav.responsive .icon {
         position: absolute;
         right: 0;
@@ -377,70 +435,61 @@ body {
         text-align: left;
         margin-top: 0.5rem;
     }
-    .login{
+    .login {
         width: 450px;
         height: 470px;
         margin-top: 3rem;
         padding: 10px 22px;
     }
-    
-    .login h1{
+    .login h1 {
         font-size: 1.5rem;
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
     }
-    
-    .login p{
+    .login p {
         margin-left: 10px;
         font-size: 1.2rem;
     }
-    
     .login input {
         width: 400px;
         padding: 15px 16px;
     }
-
 }
 
 @media screen and (max-width: 600px) {
-    .logo{
+    .logo {
         padding: 11px 18px;
         font-size: 17px;
         margin-left: 0.5rem;
         margin-right: 0.5rem;
     }
-    
-    .logo span{
+    .logo span {
         margin-left: 0.5rem;
     }
     .topnav a:hover {
         background-color: var(--primary-color);
-        color:#f2f2f2;
+        color: #f2f2f2;
     }
-    .login{
+    .login {
         width: 400px;
         height: 400px;
         margin-top: 2rem;
         padding: 10px 22px;
     }
-    
-    .login h1{
+    .login h1 {
         font-size: 1.2rem;
         margin-top: 1.2rem;
         margin-bottom: 1.2rem;
     }
-    
-    .login p{
+    .login p {
         margin-left: 10px;
         font-size: 1rem;
     }
-    
     .login input {
         width: 350px;
         padding: 15px 16px;
     }
-    
-    .login button{
+    .login button {
         margin-top: 1.5rem;
         font-size: 1rem;
         padding: 15px 38px;
@@ -448,41 +497,37 @@ body {
 }
 
 @media screen and (max-width: 500px) {
-    .logo{
+    .logo {
         margin-left: -0.5rem;
         margin-right: 0rem;
     }
-    .logo span{
+    .logo span {
         margin-left: 0rem;
     }
     .topnav a.icon {
         margin-left: -0.5rem;
         margin-right: 0.5rem;
     }
-    .login{
+    .login {
         width: 300px;
         height: 370px;
         margin-top: 1.8rem;
         padding: 10px 22px;
     }
-    
-    .login h1{
+    .login h1 {
         font-size: 1rem;
         margin-top: 1rem;
         margin-bottom: 1rem;
     }
-    
-    .login p{
+    .login p {
         margin-left: 6px;
         font-size: 0.9rem;
     }
-    
     .login input {
         width: 280px;
         padding: 12px 12px;
     }
-    
-    .login button{
+    .login button {
         margin-top: 1.2rem;
         font-size: 0.9rem;
         padding: 13px 35px;

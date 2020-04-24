@@ -1,6 +1,6 @@
 /* main.js - Maximilian Schiller 2020 */
 
-function checkCookie(){
+function checkCookie() {
     // Quick test if browser has cookieEnabled host property
     if (navigator.cookieEnabled) return true;
     // Create cookie
@@ -13,7 +13,7 @@ function checkCookie(){
 
 var check = checkCookie();
 console.log(check)
-if(!check){
+if (!check) {
     console.log("Cookies not enabled")
     document.getElementById('login').style.display = "none"
     var error = document.getElementById('error');
@@ -84,16 +84,22 @@ async function auth() {
             button.id = "addBtn"
             last.parentElement.appendChild(button);
         }
+        document.getElementById('dashboard').style.display = "block";
+        document.getElementById('loader').style.display = "none";
     } else if (json.status == 405) {
         console.log(json);
         window.location.replace('/home')
         var message = createElement('div', 'message', 'message')
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
         last.parentElement.appendChild(message)
+        document.getElementById('dashboard').style.display = "block";
+        document.getElementById('loader').style.display = "none";
     } else {
         var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
+        document.getElementById('dashboard').style.display = "block";
+        document.getElementById('loader').style.display = "none";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
@@ -105,28 +111,32 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
     div.style.cursor = "pointer";
     div.title = "Klicke um zu den Lösugen zu gelangen"
     var pName = createElement('p', 'child text name', id, fach + ' (' + klasse + ')')
-    //pName.onclick = function(e) { e.stopPropagation(); }
-    //pName.style.cursor = "text";
+        //pName.onclick = function(e) { e.stopPropagation(); }
+        //pName.style.cursor = "text";
     div.appendChild(pName)
 
     var abgabe = createElement('p', 'child text', id, abgabe)
-    //abgabe.onclick = function(e) { e.stopPropagation(); }
-    //abgabe.style.cursor = "text";
+        //abgabe.onclick = function(e) { e.stopPropagation(); }
+        //abgabe.style.cursor = "text";
     pName.parentElement.appendChild(abgabe)
 
-    var text = createElement('p', 'child aufgabe block-with-text', id, text)
+    if (text.length > 100) {
+        console.log("text longer than 100 C")
+        text = text.substring(0, 100) + "..."
+    }
+    var text = createElement('p', 'child aufgabe', id, text)
     text.onclick = function(e) { e.stopPropagation(); }
     text.style.cursor = "text";
     abgabe.parentElement.appendChild(text)
 
     var downloads = createElement('span', 'child downloads', id, downloads + " Downloads")
-    //downloads.onclick = function(e) { e.stopPropagation(); }
-    //downloads.style.cursor = "text";
+        //downloads.onclick = function(e) { e.stopPropagation(); }
+        //downloads.style.cursor = "text";
     text.parentElement.appendChild(downloads)
 
     var files = createElement('div', 'child stack', id)
-    //files.onclick = function(e) { e.stopPropagation(); }
-    //files.style.cursor = "text";
+        //files.onclick = function(e) { e.stopPropagation(); }
+        //files.style.cursor = "text";
     downloads.parentElement.appendChild(files)
     if (file.count == 1) {
         var count = file.count + " Datei:";
@@ -254,12 +264,12 @@ function switchThemeSlider() {
     if (toggleSwitch.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        //switchText.innerHTML = "Dark Mode"
+            //switchText.innerHTML = "Dark Mode"
         document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
         document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        //switchText.innerHTML = "Light Mode"
+            //switchText.innerHTML = "Light Mode"
         document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
     }
 }

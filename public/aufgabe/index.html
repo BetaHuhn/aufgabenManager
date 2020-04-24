@@ -33,7 +33,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/static/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
@@ -57,7 +57,7 @@
             <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
               <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light" aria-hidden="true"></span></input>
             </label>
-          </div>
+        </div>
         <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
         <a id="logout" href="/logout" class="menu">Logout</a>
         <a href="/account" class="menu">Account</a>
@@ -68,61 +68,32 @@
         </a>
     </div>
     <main>
-        <div class="container">
+        <div id="loader" class="loader">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div id="user" class="container" style="display: none;">
             <h1 id="fach"></h1>
             <div id="aufgabe" class="aufgabe">
                 <p>Aufgaben Text:</p>
                 <p id="text"></p>
-
                 <p>Abgabe:</p>
                 <p id="abgabe"></p>
-
-                <!--<button id="aufgabeBtn" type="button" onclick="upload()">Aufgabe laden</button>-->
             </div>
             <h1 id="solutionHead">Lade Lösungen...</h1>
             <div id="dvTable">
-               <!-- <table>
-                    <tr>
-                      <th>Name</th>
-                      <th>Abgegeben am</th>
-                      <th></th>
-                      <th>Status</th>
-                    </tr>
-                    <tr>
-                      <td>Maximilian Schiller</td>
-                      <td>-</td>
-                      <td></td>
-                      <td>
-                        <span onclick="document.getElementById('link_test').click()" id="abcdefg" title="Lösung Herunterladen" class="fas fa-check-circle no"></span>
-                        <a id="link_test" href="/new" hidden=""></a>
-                     </td>
-                    </tr>
-                    <tr>
-                      <td>Angela Merkel</td>
-                      <td>26.03.2020, 18:00</td>
-                      <td>
-                        <span onclick="document.getElementById('link_test').click()" id="abcdefg" title="Lösung Herunterladen" class="fas fa-cloud-download-alt cloud"></span>
-                        <a id="link_test" href="/new" hidden=""></a>
-                     </td>
-                     <td>
-                        <span onclick="document.getElementById('link_test').click()" id="abcdefg" title="Lösung Herunterladen" class="fas fa-check-circle yes"></span>
-                        <a id="link_test" href="/new" hidden=""></a>
-                     </td>
-                    </tr>
-                  </table>-->
             </div>
             <div id="form" class="file" style="display: none;">
-                <!--<input onkeypress="return AvoidSpace(event)" type="text" id="filename" placeholder="Datei Name (Optional)" class="accent">-->
                 <div id="fileDiv" class="fileDiv">
                     <form id="upload" method="POST" action="/api/new/solution" enctype="multipart/form-data">
-                        <input title="Wähle eine oder mehrere Dateien aus" value="Wähle eine oder mehrere Dateien aus" type="file" id="select-button" name="data" id="files" multiple>
+                        <input title="Wähle eine oder mehrere Dateien aus" onchange="Filevalidation()" value="Wähle eine oder mehrere Dateien aus" type="file" id="select-button" name="data" id="files" multiple>
                         <button id="submitBtn" type="button" title="Lösung Hochladen" onclick="upload()">Hochladen</button>
-                        <!--<p id="size"></p>-->
+                        <p id="size"></p>
                     </form>
                 </div>
-                <div id="loader"></div>
-                <div id="progressDiv" class="w3-light-grey" style="display: none;">
-                    <div id="progressBar" class="w3-green w3-center" style="width:20%">0%</div>
+                <div id="progressDiv" class="progress" style="display: none;">
+                    <div id="progressBar" class="progressBar" style="width:0%">0%</div>
                 </div>
                 <center><pre id="status"></pre></center>
             </div>

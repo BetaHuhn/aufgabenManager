@@ -11,17 +11,19 @@ var last = document.getElementById('fileDiv')
 
 var role;
 
-async function change(){
+async function change() {
     var email = document.getElementById('email').value;
-    if(email){
+    if (email) {
         var error = document.getElementById('error');
         error.innerHTML = "prüfen..."
+        document.getElementById('loader').style.display = "inline-block"
+        document.getElementById('form').style.display = "none"
         const options = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({email: email})
+            body: JSON.stringify({ email: email })
         };
         const response = await fetch('/api/auth/reset/password/request', options);
         const json = await response.json();
@@ -29,26 +31,32 @@ async function change(){
             console.log(json);
             var error = document.getElementById('error');
             error.innerHTML = "Wir haben dir eine Email geschickt"
-            document.getElementById('form').style.display = "none"
-        }else if (json.status == 407){
+            document.getElementById('loader').style.display = "none"
+        } else if (json.status == 407) {
             var error = document.getElementById('error');
             error.innerHTML = "Bitte fülle alle Felder aus"
+            document.getElementById('loader').style.display = "none"
+            document.getElementById('form').style.display = "block"
             console.log(json)
-        }else if (json.status == 404){
+        } else if (json.status == 404) {
             var error = document.getElementById('error');
             error.innerHTML = "Diese Email gibt es nicht"
+            document.getElementById('loader').style.display = "none"
+            document.getElementById('form').style.display = "block"
             console.log(json)
-        }else {
+        } else {
             var error = document.getElementById('error');
             error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
+            document.getElementById('loader').style.display = "none"
+            document.getElementById('form').style.display = "block"
             console.log(json)
         }
-    }else{
+    } else {
         var error = document.getElementById('error');
         error.innerHTML = "Bitte fülle alle Felder aus"
         console.log("Email field not filled out")
     }
-    
+
 }
 
 function AvoidSpace(event) {
@@ -56,7 +64,7 @@ function AvoidSpace(event) {
     if (k == 32) return false;
 }
 
-setInterval(function(){ 
+setInterval(function() {
     var dot = document.getElementById("dot")
     dot.className = (dot.className == 'green') ? 'blink' : 'green';
 }, 1000);
@@ -85,12 +93,12 @@ function switchThemeSlider() {
     if (toggleSwitch.checked) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-        //switchText.innerHTML = "Dark Mode"
+            //switchText.innerHTML = "Dark Mode"
         document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
     } else {
         document.documentElement.setAttribute('data-theme', 'light');
         document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-        //switchText.innerHTML = "Light Mode"
+            //switchText.innerHTML = "Light Mode"
         document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
     }
 }
