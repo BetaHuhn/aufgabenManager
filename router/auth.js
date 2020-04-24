@@ -15,7 +15,7 @@ const Class = require("../models/class")
 const School = require("../models/school")
 const Solution = require("../models/solution")
 
-const {privateEmailUser, privateEmailPassword} = require('../key.json')
+const { privateEmailUser, privateEmailPassword } = require('../key.json')
 let transporter = nodemailer.createTransport({
     host: 'mail.privateemail.com',
     port: 465,
@@ -30,9 +30,9 @@ router.post('/auth/login', async(req, res) => {
     try {
         var user = await User.checkLogin(req.body.email, req.body.password)
         console.log("Login: " + user.name + " success")
-        //console.log(user.classes)
-        var user = await User.findOne({_id: user._id}).populate("classes", "name")
-        //console.log(user)
+            //console.log(user.classes)
+        var user = await User.findOne({ _id: user._id }).populate("classes", "name")
+            //console.log(user)
         req.session.role = user.role;
         req.session.name = user.name;
         req.session.user_id = user._id;
@@ -41,7 +41,7 @@ router.post('/auth/login', async(req, res) => {
         req.session.classNames = user.classes.map(({ name }) => name);
         req.session.school = user.school;
         res.json({ status: 200, response: "success", data: { name: user.name, role: user.role, classes: user.classes.map(({ _id }) => _id) } })
-    
+
     } catch (error) {
         if (error.code == 408) {
             console.log("Login: Wrong Password")
@@ -67,7 +67,7 @@ router.post('/auth/login', async(req, res) => {
 })
 
 router.post('/auth/register', async(req, res) => {
-    var email = req.body.email
+    var email = req.body.email.toLowerCase()
     var password = req.body.password;
     var name = req.body.name;
     try {
@@ -78,7 +78,7 @@ router.post('/auth/register', async(req, res) => {
         } else {
             var ref = "/" + req.body.ref;
         }
-        if (email.length < 5 || name.length <= 2) {
+        if (email.length < 1 || name.length < 1) {
             console.log("Not every field filled out");
             res.json({
                 status: '408'
@@ -99,15 +99,15 @@ router.post('/auth/register', async(req, res) => {
                 status: '406'
             });
         } else if (password.length >= 0) {
-            if (/\s/.test(email)) {
+            if (!validEmail(email)) {
                 console.log(email + " not valid");
                 res.json({
                     status: '407'
                 });
             } else {
-                var sendClass = await Class.findOne({_id: invite.class});
-                if(!sendClass){
-                    return res.json({status: 404, response: "class not found"})
+                var sendClass = await Class.findOne({ _id: invite.class });
+                if (!sendClass) {
+                    return res.json({ status: 404, response: "class not found" })
                 }
                 console.log("Name: " + email + " is using Invite: " + invite._id + " with role: " + invite.role)
                 var query = {
@@ -310,16 +310,16 @@ router.get('/reset', async(req, res) => {
         if (req.query.token != undefined) {
             try {
                 var user = await User.findOne({ resetPasswordToken: req.query.token })
-                if(!user){
+                if (!user) {
                     console.log("user not found")
                     return res.sendStatus(404)
                 }
                 console.log("time: " + new Date().getTime())
                 console.log("expires: " + user.resetPasswordExpires)
-                if(user.resetPasswordExpires >= (new Date().getTime())){
+                if (user.resetPasswordExpires >= (new Date().getTime())) {
                     console.log(user.name + " is using token to reset their password")
                     res.render('resetPassword.ejs', { token: req.query.token })
-                }else{
+                } else {
                     console.log("token expired")
                     return res.send("Der Link ist abgelaufen")
                 }
@@ -411,7 +411,7 @@ router.post('/api/auth/reset/password', async(req, res) => {
         if (req.body.token != undefined && req.body.password != undefined) {
             try {
                 var user = await User.findOne({ resetPasswordToken: req.body.token })
-                if(user.resetPasswordExpires < (new Date().getTime())){
+                if (user.resetPasswordExpires < (new Date().getTime())) {
                     console.log("token expired")
                     return res.json({
                         status: 410,
@@ -625,7 +625,7 @@ router.get('/api/auth/exercise', middleware.auth(), async(req, res) => {
         if (req.query.id != undefined) {
             try {
                 var exercise = await Exercise.findOne({ _id: req.query.id }).populate("class", "name")
-                if(!exercise){
+                if (!exercise) {
                     console.log("Fehler: Aufgabe existiert nicht")
                     return res.json({ status: 404, response: "aufgabe nicht gefunden" })
                 }
@@ -660,7 +660,7 @@ router.get('/api/auth/exercise', middleware.auth(), async(req, res) => {
                 } else if (error.name == "CastError") {
                     console.log("exercise not found")
                     res.json({ status: 404, response: "aufgabe nicht gefunden" })
-                }else {
+                } else {
                     console.log(error)
                     res.json({ status: 400, response: "error" })
                 }
