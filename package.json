@@ -7,6 +7,12 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "Maximilian Schiller",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BetaHuhn/aufgabenManager.git"
+    },
+    "homepage": "https://zgk.mxis.ch",
+    "keywords": ["nodejs", "mongodb", "node-js", "express", "dashboard", "manager", "hausaufgaben"],
     "license": "MIT",
     "dependencies": {
         "@pm2/io": "^4.3.3",
@@ -27,6 +33,7 @@
         "lodash": "^4.17.15",
         "md5": "^2.2.1",
         "memory-cache": "^0.2.0",
+        "minimatch": "^3.0.2",
         "mongoose": "^5.9.2",
         "mv": "^2.1.1",
         "nanoid": "^2.1.11",
