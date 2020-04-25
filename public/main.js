@@ -139,23 +139,29 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
         //files.style.cursor = "text";
     downloads.parentElement.appendChild(files)
     if (file.count == 1) {
-        var count = file.count + " Datei:";
+        var count = file.count + " Datei";
         var name = file.fileName + '.' + file.type;
     } else if (file.count == 0) {
-        var count = file.count + " Dateien:"
+        var count = file.count + " Dateien"
         var name = "keine Dateien"
     } else {
-        var count = file.count + " Dateien:"
+        var count = file.count + " Dateien"
         var name = file.fileName + '.' + file.type;
     }
     files.innerHTML = `
   <p class="blue" id="${id}">${count}</p>
-  <p class="grey" id="${id}">${name}</p>`
-    var buttonStack = createElement('div', 'child buttons', id)
-    files.parentElement.appendChild(buttonStack)
-    buttonStack.innerHTML = `
-  <button onclick="download(this);" id="${id}">Download</button>
-  <a id="link_${id}" href="${file.fileUrl}" style="pointer-events: none;" hidden="">Download</a>`
+  <button class="buttons" onclick="download(this);" title="Klicke um die Aufgabe herunterzuladen" id="${id}">Download</button>
+  <a id="link_${id}" href="${file.fileUrl}" style="pointer-events: none;" hidden="">Download</a>
+  `
+    var arrow = document.createElement('i')
+    arrow.className = "child fas fa-arrow-right arrow"
+    arrow.onclick = function(e) {
+        e.stopPropagation();
+        window.event.cancelBubble = true;
+        window.location.href = "/aufgabe?id=" + id;
+    }
+    files.parentElement.appendChild(arrow)
+
     console.log("Aufgabe von: " + aufgabeUserId + " User ID: " + user_id + " Role: " + role)
     if (role != 'user') {
         if (user_id == aufgabeUserId || role == 'admin') {
@@ -166,7 +172,7 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
                 e.stopPropagation();
                 window.event.cancelBubble = true;
             };
-            buttonStack.parentElement.appendChild(removeDiv)
+            arrow.parentElement.appendChild(removeDiv)
             removeDiv.innerHTML = `<span id="${id}" class="fas fa-trash deleteIcon"></span>`
         }
     }
