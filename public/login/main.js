@@ -31,6 +31,29 @@ var url = new URL(url_string);
 var ref = url.searchParams.get("ref")
 console.log("Ref: " + ref)
 
+async function auth() {
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    const response = await fetch('/api/auth', options);
+    const json = await response.json();
+    if (json.status == 200) {
+        var error = document.getElementById('error');
+        error.innerHTML = "Du bist bereits angemeldet"
+        window.location.href = "/"
+        document.getElementById('loader').style.display = "none";
+    } else {
+        console.log("not logged in")
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('container').style.display = "block";
+    }
+}
+
+auth()
+
 async function login() {
     document.getElementById('loader').style.display = "inline-block";
     var password = document.getElementById('password').value;
