@@ -192,37 +192,6 @@ body {
     color: var(--font-color);
 }
 
-.leftest {
-    margin-left: 20px;
-}
-
-.second {
-    margin-top: 4px;
-    margin-left: 15px;
-    margin-right: 40px;
-}
-
-.third {
-    margin-top: 4px;
-    margin-left: 0px;
-}
-
-.fourth {
-    margin-top: 4px;
-    margin-left: -100px;
-}
-
-.fith {
-    margin-top: 4px;
-    margin-left: -65px;
-    margin-right: 40px;
-}
-
-.sixth {
-    margin-top: 4px;
-    margin-left: 40px;
-}
-
 #home {
     margin-top: 2rem;
     background-color: var(--previewBg);
@@ -299,7 +268,7 @@ body {
 
 .parent {
     display: grid;
-    grid-template-columns: 1fr 1fr 5fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 5fr 1fr 1fr 1fr;
     grid-template-rows: 1fr;
     grid-template-areas: ". . . . . . .";
     align-items: center;
@@ -319,7 +288,7 @@ body {
 .aufgabe {
     margin-top: 15px;
     margin-right: 5px;
-    width: 380px;
+    width: 400px;
     overflow-wrap: break-word;
 }
 
@@ -338,25 +307,30 @@ body {
     width: 120px;
 }
 
+.solution {
+    margin-left: 10px;
+    text-align: center;
+}
+
 .stack {
-    margin-top: -50px;
     margin-left: 10px;
     margin-right: 0px;
-    width: 200px;
+    text-align: center;
 }
 
 .stack p {
-    margin-bottom: -20px;
-    font-size: 18px;
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 0px;
+}
+
+.arrow {
+    font-size: 30px;
+    text-align: center;
 }
 
 .blue {
-    color: var(--accent);
     font-size: 16px;
-}
-
-.grey {
-    font-size: 18px;
 }
 
 .message {
@@ -369,14 +343,13 @@ body {
     text-decoration: none;
 }
 
-.buttons button {
+.buttons {
     display: block;
     border: 0;
     outline: 0;
     cursor: pointer;
-    margin: auto;
     margin-left: 0px;
-    margin-right: -30px;
+    margin-right: 0px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -384,23 +357,18 @@ body {
     color: #fff;
     box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    font-size: 1rem;
+    font-size: 0.8rem;
     padding: 12px 15px;
-    width: 140px;
+    width: 100%;
 }
 
-.buttons button:hover {
+.buttons:hover {
     background: var(--primary-color-hover);
 }
 
 .deleteButton {
-    display: block;
-    border: 0;
-    outline: 0;
     cursor: pointer;
-    margin: auto;
     margin-right: -25px;
-    margin-top: -11px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -411,10 +379,9 @@ body {
     border-bottom-right-radius: 10px;
     font-size: 1rem;
     height: 100%;
-    line-height: 100%;
     width: 60px;
     text-align: center;
-    padding: 11px 0px;
+    padding: 10px 0px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -531,7 +498,7 @@ body {
         margin-left: -5px;
     }
     .aufgabe {
-        width: 320px;
+        width: 390px;
         margin-right: 0px;
     }
     .downloads {
@@ -540,7 +507,6 @@ body {
         width: 120px;
     }
     .stack {
-        width: 130px;
         margin-left: -5px;
     }
     .stack p {
@@ -548,19 +514,6 @@ body {
     }
     .blue {
         margin-top: 20px;
-    }
-    .grey {
-        margin-top: 20px;
-        margin-bottom: 0px;
-    }
-    .leftest {
-        margin-left: 10px;
-    }
-    .fourth {
-        margin-left: -95px;
-    }
-    .buttons button {
-        margin-left: 0px;
     }
     .menu {
         margin-left: 0.5rem;
@@ -576,16 +529,12 @@ body {
         width: 850px;
     }
     .legend {
-        height: 20px;
         font-size: 0.7rem;
     }
     .device {
         margin-top: 0.6rem;
         font-size: 0.7rem;
         padding: 10px 15px;
-    }
-    .fith {
-        margin-left: -60px;
     }
     .text {
         margin-top: 10px;
@@ -596,7 +545,7 @@ body {
     .aufgabe {
         margin-top: 10px;
         margin-right: 0px;
-        width: 250px;
+        width: 350px;
     }
     .name {
         width: 70px;
@@ -612,21 +561,18 @@ body {
         width: 100px;
     }
     .stack {
-        margin-top: -25px;
         margin-left: 2px;
         margin-right: 2px;
-        margin-bottom: 5px;
-        width: 120px;
     }
     .stack p {
         font-size: 14px;
-        margin-bottom: -18px;
     }
-    .buttons button {
-        margin-left: 0px;
+    .arrow {
+        font-size: 25px;
+    }
+    .buttons {
         font-size: 0.6rem;
         padding: 10px 10px;
-        width: 80px;
     }
     .addButton {
         margin-top: 1rem;
@@ -688,24 +634,6 @@ body {
         font-size: 0.5rem;
         padding: 10px 15px;
     }
-    .leftest {
-        margin-left: -5px;
-        margin-right: 10px;
-    }
-    .second {
-        margin-right: 10px;
-    }
-    .third {
-        margin-left: 5px;
-        margin-right: 120px;
-    }
-    .fourth {
-        margin-left: 30px;
-        visibility: hidden;
-    }
-    .fith {
-        margin-left: 20px;
-    }
     .text {
         margin-top: 10px;
         margin-left: 0px;
@@ -715,7 +643,10 @@ body {
     .aufgabe {
         margin-top: 10px;
         margin-right: 0px;
-        width: 220px;
+        width: 250px;
+    }
+    .solution {
+        margin-left: 2px;
     }
     .name {
         width: 60px;
@@ -729,28 +660,26 @@ body {
         margin-right: 5px;
         white-space: nowrap;
         width: 70px;
-        visibility: hidden;
+        display: none;
     }
     .stack {
-        margin-top: -50px;
-        margin-left: 20px;
-        margin-right: 20px;
-        visibility: hidden;
+        margin-left: 10px;
+        margin-right: 10px;
     }
     .stack p {
-        font-size: 18px;
-        margin-bottom: -18px;
+        font-size: 12px;
+        display: none;
     }
-    .buttons button {
+    .arrow {
+        margin-right: 11px;
+    }
+    .buttons {
         margin-top: 0rem;
-        margin-left: -8.5rem;
         font-size: 0.6rem;
         padding: 12px 12px;
-        width: 80px;
     }
     .deleteButton {
         height: 100%;
-        margin-left: -4rem;
         width: 30px;
         padding: 10.5px 0px;
         display: flex;
@@ -790,35 +719,22 @@ body {
         width: 350px;
     }
     .legend {
-        height: 20px;
-        font-size: 0.7rem;
+        font-size: 0.6rem;
+        padding: 10px 15px;
     }
     .device {
         margin-top: 0.6rem;
         font-size: 0.5rem;
         padding: 10px 15px;
     }
-    .leftest {
-        margin-left: -10px;
-    }
-    .second {
-        margin-right: 10px;
-    }
-    .third {
-        margin-right: 10px;
-    }
-    .fourth {
-        margin-left: 30px;
-        visibility: hidden;
-    }
-    .fith {
-        margin-left: -20px;
-    }
     .text {
         margin-top: 4px;
         margin-left: 2px;
         margin-right: 2px;
         width: 55px;
+    }
+    .solution {
+        display: none;
     }
     .aufgabe {
         margin-top: 2px;
@@ -831,38 +747,23 @@ body {
         margin-left: -5px;
         margin-right: -10px;
     }
-    .downloads {
-        margin-top: -25px;
-        margin-left: 5px;
-        margin-right: 5px;
-        white-space: nowrap;
-        width: 60px;
-    }
     .stack {
-        margin-top: -50px;
-        margin-left: 20px;
-        margin-right: 20px;
-        visibility: hidden;
+        margin-left: 10px;
+        margin-right: 10px;
     }
     .stack p {
-        font-size: 18px;
-        margin-bottom: -18px;
+        display: none;
     }
-    .buttons button {
-        margin-top: 0rem;
-        margin-left: -11rem;
+    .arrow {
+        font-size: 20px;
+        margin-left: -2px;
+    }
+    .buttons {
         font-size: 0.3rem;
-        padding: 8px 5px;
-        width: 60px;
+        padding: 10px 9px;
     }
     .deleteButton {
-        margin-left: -8rem;
-        width: 25px;
-        padding: 10px 0px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        visibility: hidden;
+        display: none;
     }
     .deleteButton span {
         font-size: 12px;
