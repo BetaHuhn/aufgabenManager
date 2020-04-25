@@ -30,6 +30,29 @@ function myFunction() {
     }
 }
 
+async function auth() {
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    const response = await fetch('/api/auth', options);
+    const json = await response.json();
+    if (json.status == 200) {
+        var error = document.getElementById('error');
+        error.innerHTML = "Du bist bereits angemeldet"
+        window.location.href = "/"
+        document.getElementById('loader').style.display = "none";
+    } else {
+        console.log("not logged in")
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
+    }
+}
+
+auth()
+
 /* Darkmode Support */
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 detectDarkMode()
