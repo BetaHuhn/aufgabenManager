@@ -21,30 +21,28 @@ var role;
 var user_id;
 
 async function auth() {
-    return
     const options = {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         },
     };
-    const response = await fetch('/api/get/home', options);
+    const response = await fetch('/api/auth', options);
     const json = await response.json();
     if (json.status == 200) {
         console.log(json);
-        //window.location.replace('/')
-    } else if (json.status == 405) {
-        console.log(json);
-    
-        /* var message = createElement('div', 'message', 'message')
-        message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-        document.getElementById('main').appendChild(message) */
-        //window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
+        var login = document.getElementById('login');
+        login.href = "/logout"
+        login.innerHTML = "Logout"
+        var hero = document.getElementById('heroBtn');
+        hero.href = "/aufgaben"
+
     } else {
-        var message = createElement('div', 'message', 'message')
+        console.log("not logged in")
+        /* var message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
-        message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
-        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
+        message.innerHTML = `<p class="message" id="message">Du bist nicht angemeldet</p>`
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search) */
     }
 }
 
