@@ -38,7 +38,7 @@
     --font-color-hover: #7a7a7a;
     --bg-color: #1c1c1c;
     --white: #292929;
-    --white-hover: #3d3d3d;
+    --white-hover: #353535;
     --nav: #292929;
     --input-color: #1c1c1c;
     --table-color: #1c1c1c;
@@ -97,23 +97,20 @@ body {
     color: var(--nav);
 }
 
-.topnav a:hover .blink {
-    color: var(--secondary-color-hover);
-}
-
 .menu {
     float: right;
     display: block;
     color: #f2f2f2;
     text-align: center;
-    padding: 11px 24px;
-    border-radius: 12px;
+    padding: 11px 10px;
     text-decoration: none;
     font-size: 20px;
     margin-left: 1rem;
     margin-right: 1rem;
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-    background-color: var(--secondary-color);
+    /* box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 11px 24px;
+    background-color: var(--secondary-color); */
 }
 
 .menu #logout {
@@ -124,18 +121,56 @@ body {
     padding: 13px 16px;
 }
 
-.topnav a:hover {
-    background-color: var(--secondary-color-hover);
-    color: #f2f2f2;
-}
-
-.topnav a.active {
-    background-color: var(--active);
+.active {
+    /* background-color: var(--active); */
+    position:relative;
+    text-decoration:none;
+    white-space:nowrap;
     color: white;
 }
 
-.topnav a.active:hover {
-    background-color: var(--active-hover);
+.active:after {
+    content:"";
+    position:absolute;
+    height:3px;
+    left:0;
+    right:0;
+    top:100%;
+    background: var(--primary-color);
+    transition:transform .3s cubic-bezier(.51,.92,.24,1)
+}
+.active:hover:after {
+    transform:translateY(2px)
+}
+.active:active:after {
+    transform:translateY(1px);
+    transition:none
+}
+
+.underline {
+    position:relative;
+    color:currentColor;
+    text-decoration:none;
+    transition:color .3s cubic-bezier(.51,.92,.24,1)
+}
+.underline:after {
+    --scale:0;
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:100%;
+    height:3px;
+    background:linear-gradient(135deg,var(--primary-color),var(--primary-color-hover));
+    transform:scaleX(var(--scale));
+    transform-origin:var(--x) 50%;
+    transition:transform .3s cubic-bezier(.51,.92,.24,1)
+}
+.underline:hover {
+    color:#fff
+}
+.underline:hover:after {
+    --scale:1
 }
 
 .topnav .icon {
@@ -264,6 +299,8 @@ body {
 
 .device:hover {
     background-color: var(--white-hover);
+    border: 1px solid var(--primary-color-hover);
+    padding: 10px 23px;
 }
 
 .parent {
@@ -327,6 +364,10 @@ body {
 .arrow {
     font-size: 30px;
     text-align: center;
+}
+
+.arrow:hover{
+    transform:translateX(2px)
 }
 
 .blue {
@@ -393,6 +434,55 @@ body {
 
 .deleteIcon {
     color: #fff;
+}
+
+.trash {
+    background: #fff;
+    width: 17px;
+    height: 16px;
+    display: inline-block;
+    margin: 0 auto;
+    position: relative;
+    -webkit-border-bottom-right-radius: 6px;
+    -webkit-border-bottom-left-radius: 6px;
+    -moz-border-radius-bottomright: 6px;
+    -moz-border-radius-bottomleft: 6px;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+.trash span {
+    position: absolute;
+    height: 4px;
+    background: #fff;
+    top: -6px;
+    left: -2px;
+    right: -2px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    transform: rotate(0deg);
+    transition: transform 250ms;
+    transform-origin: 81% 100%;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+.trash span::after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 4px;
+    background: #fff;
+    top: -2px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    transform: rotate(0deg);
+    transition: transform 250ms;
+    transform-origin: 19% 100%;
+    left: 7px;
+}
+
+.deleteButton:hover .trash span {
+	transform: rotate(30deg);
+	transition: transform 250ms;
 }
 
 .addButton {
