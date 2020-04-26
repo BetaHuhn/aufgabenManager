@@ -588,6 +588,13 @@ tr:last-of-type td:last-of-type {
     .container {
         width: 850px;
     }
+    .menu {
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+    .login {
+        margin-top: 3rem;
+    }
 }
 
 @media screen and (max-width: 1100px) {
@@ -596,10 +603,6 @@ tr:last-of-type td:last-of-type {
     }
     #text {
         margin-left: 20px;
-    }
-    .menu {
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
     }
 }
 
