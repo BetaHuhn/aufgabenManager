@@ -331,7 +331,7 @@ h2 {
     }
 }
 
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 1300px) {
     .menu {
         margin-left: 0.5rem;
         margin-right: 0.5rem;
