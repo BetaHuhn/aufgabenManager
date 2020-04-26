@@ -1,5 +1,4 @@
 /* main.css - Maximilian Schiller 2020 */
-
 :root {
     --primary-color: rgb(78, 121, 216);
     --primary-color-hover: rgb(82, 128, 226);
@@ -8,11 +7,12 @@
     --active: rgb(51, 86, 161);
     --active-hover: rgb(55, 93, 173);
     --accent: rgb(107, 138, 206);
-    --font-color: #8a8a8a;
+    --font-color: #575757;
     --font-color-hover: #7a7a7a;
     --bg-color: #f5f6fa;
     --white: #fff;
     --white-hover: rgb(245, 245, 245);
+    --black: #6a6a6a;
     --nav: rgb(78, 121, 216);
     --input-color: rgb(230, 230, 230);
     --table-color: #ffffff;
@@ -23,6 +23,10 @@
     --green-hover: #60e642;
     --bg-code: rgba(0, 0, 0, .05);
     --previewImage: url('/static/previews/AufgabenViewLight.png');
+    --previewAufgabe: url('/static/previews/AufgabeLight.png');
+    --previewLehrerImage: url('/static/previews/AufgabeLehrerLight.png');
+    --previewLehrerMobileImage: url('/static/previews/AufgabeLehrerMobileLight.png');
+    --previewAufgabenMobileImage:  url('/static/previews/AufgabenMobileLight.png');
     --previewBg: #fff;
 }
 
@@ -39,6 +43,7 @@
     --bg-color: #1c1c1c;
     --white: #292929;
     --white-hover: #3d3d3d;
+    --black: #fff;
     --nav: #292929;
     --input-color: #1c1c1c;
     --table-color: #1c1c1c;
@@ -49,6 +54,10 @@
     --green-hover: #60e642;
     --bg-code: rgba(0, 0, 0, .05);
     --previewImage: url('/static/previews/AufgabenViewDark.png');
+    --previewSchuelerImage: url('/static/previews/AufgabeDark.png');
+    --previewLehrerImage: url('/static/previews/AufgabeLehrerDark.png');
+    --previewLehrerMobileImage: url('/static/previews/AufgabeLehrerMobileDark.png');
+    --previewAufgabenMobileImage:  url('/static/previews/AufgabenMobileDark.png');
     --previewBg: #333;
 }
 
@@ -65,119 +74,79 @@ body {
 
 .topnav {
     overflow: hidden;
-    background-color: var(--nav);
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
 }
 
-.logo {
-    float: left;
-    display: block;
-    color: #f2f2f2;
-    text-align: center;
-    padding: 11px 18px;
-    text-decoration: none;
-    font-size: 20px;
-    margin-left: 20px;
-    margin-right: 2rem;
-}
-
-.logo span #id {
-    margin-left: 1rem;
-}
-
-.green {
-    color: var(--green);
-}
-
-.red {
-    color: var(--red);
-}
-
-.blink {
-    color: var(--nav);
-}
-
-.topnav a:hover .blink {
-    color: var(--secondary-color-hover);
-}
-
-.menu {
+.menu{
     float: right;
     display: block;
-    color: #f2f2f2;
+    color: var(--font-color);
     text-align: center;
     padding: 11px 24px;
-    border-radius: 12px;
     text-decoration: none;
-    font-size: 20px;
+    font-size: 24px;
     margin-left: 1rem;
     margin-right: 1rem;
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-    background-color: var(--secondary-color);
 }
 
-.menu #logout {
+.menu #logout{ 
     margin-right: 1.5rem;
 }
 
-.topnav {
-    padding: 13px 16px;
+.topnav{
+    padding: 30px 20px;
+}
+
+.topnav a {
+    position:relative;
+    color:var(--black);
+    text-decoration:none;
+    white-space:nowrap
 }
 
 .topnav a:hover {
-    background-color: var(--secondary-color-hover);
-    color: #f2f2f2;
-}
-
-.topnav a.active {
-    background-color: var(--active);
-    color: white;
-}
-
-.topnav a.active:hover {
-    background-color: var(--active-hover);
+    opacity: 0.8;
 }
 
 .topnav .icon {
     display: none;
 }
 
-.burger {
+.burger{
     color: #f2f2f2;
 }
 
-.modeSwitcher {
+.modeSwitcher{
     float: left;
     margin-top: -10px;
     margin-left: 10px;
 }
 
-.light {
+.light{
     color: rgb(38, 57, 110);
     cursor: pointer;
 }
 
-.light:hover {
+.light:hover{
     color: rgb(51, 74, 136);
 }
 
-.dark {
+.dark{
     color: rgb(228, 186, 72);
     cursor: pointer;
 }
 
-.dark:hover {
+.dark:hover{
     color: rgb(235, 194, 84);
 }
 
-#checkbox {
-    display: block;
-    opacity: 0;
+#checkbox{
+    display:block;
+    opacity:0;
     width: 10px;
     height: 10px;
 }
 
-.legend {
+.legend{
     height: 30px;
     border-radius: 12px;
     margin-top: 0.7rem;
@@ -186,222 +155,244 @@ body {
     background-color: var(--white);
     font-size: 0.9rem;
 }
-
-.legend p {
+.legend p{
     margin-top: 5px;
     color: var(--font-color);
+
 }
 
-#home {
+.leftest{
+    margin-left: 20px;
+}
+
+.second{
+    margin-top: 4px;
+    margin-left: 15px;
+    margin-right: 40px;
+}
+.third{
+    margin-top: 4px;
+    margin-left: 0px;
+}
+.fourth{
+    margin-top: 4px;
+    margin-left: -100px;
+}
+.fith{
+    margin-top: 4px;
+    margin-left: -65px; 
+    margin-right: 40px;
+}
+.sixth{
+    margin-top: 4px;
+    margin-left: 40px;
+}
+
+#home{
     margin-top: 2rem;
-    background-color: var(--previewBg);
 }
 
-.half {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+.full{
     margin: 0 auto;
-    width: 100%;
-    text-align: left;
-}
-
-.full {
-    margin: 0 auto;
-    padding: 10px 10px;
     width: 100%;
     max-width: 1200px;
     text-align: left;
-    background-color: var(--table-color);
 }
 
-.card {
+.half{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 0 auto;
+    width: 100%;
+    text-align: left;
+    margin-top: 6rem;
+}
+
+
+.split{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    justify-items: end;
+}
+
+.tripple{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin: 0 auto;
+    width: 90%;
+    text-align: left;
+    margin-top: 6rem;
+}
+
+.card{
     border-radius: 6px;
     width: 100%;
     text-align: center;
+    position: relative;
+}
+
+.card__innerPadding{
+    padding: 1rem 1rem;
     overflow: hidden;
-}
-
-.card__inner {
-    padding: 1.6rem 1.5rem 1.5rem;
-    overflow: hidden
-}
-
-#previewBig {
-    background-image: var(--previewImage);
-    background-repeat: no-repeat;
-    width: 1000px;
-    /*or your image's width*/
-    height: 800px;
-    /*or your image's height*/
-    margin: 0;
-    padding: 0;
-    float: right;
-}
-
-.dashboard {
-    margin: auto;
-    width: 1200px;
-    margin-bottom: 2rem;
-}
-
-.dashboard h1 {
-    text-align: left;
-    font-size: 1.7rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    /* background-color: var(--primary-color); */
+    border-radius: 10px;
     color: var(--font-color)
 }
 
-.device {
-    border-radius: 12px;
-    margin-top: 0.7rem;
-    padding: 11px 24px;
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-    background-color: var(--white);
-    font-size: 0.9rem;
-}
-
-.device:hover {
-    background-color: var(--white-hover);
-}
-
-.parent {
-    display: grid;
-    grid-template-columns: 1fr 1fr 5fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr;
-    grid-template-areas: ". . . . . . .";
-    align-items: center;
-}
-
-.child>div {
-    background-color: var(--font-color);
-}
-
-.text {
-    margin-top: 15px;
-    margin-left: 10px;
-    margin-right: 20px;
-    width: 100px;
-}
-
-.aufgabe {
-    margin-top: 15px;
-    margin-right: 5px;
-    width: 400px;
-    overflow-wrap: break-word;
-}
-
-.name {
-    width: 70px;
-    margin-top: 15px;
-    margin-left: 10px;
-    margin-right: 20px;
-}
-
-.downloads {
-    margin-top: -10px;
-    margin-left: -5px;
-    margin-right: 0px;
-    white-space: nowrap;
-    width: 120px;
-}
-
-.solution {
-    margin-left: 10px;
-    text-align: center;
-}
-
-.stack {
-    margin-left: 10px;
-    margin-right: 0px;
-    text-align: center;
-}
-
-.stack p {
-    font-size: 20px;
-    margin-bottom: 10px;
-    margin-top: 0px;
-}
-
-.arrow {
+.card__innerPadding h1{
     font-size: 30px;
-    text-align: center;
+    margin-top: 10px;
 }
 
-.blue {
-    font-size: 16px;
+.card__innerPadding p{
+    font-size: 17px;
 }
 
-.message {
-    font-size: 20px;
-    text-align: center;
+.card__inner{
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 80%;
+    display: grid;
 }
 
-.message a {
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-.buttons {
-    display: block;
-    border: 0;
-    outline: 0;
-    cursor: pointer;
-    margin-left: 0px;
-    margin-right: 0px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: var(--primary-color);
-    color: #fff;
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    font-size: 0.8rem;
-    padding: 12px 15px;
-    width: 100%;
-}
-
-.buttons:hover {
-    background: var(--primary-color-hover);
-}
-
-.deleteButton {
-    cursor: pointer;
-    margin-right: -25px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: var(--primary-color);
-    color: #fff;
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    font-size: 1rem;
-    height: 100%;
-    width: 60px;
-    text-align: center;
-    padding: 10px 0px;
+.flex{
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    width: 90%;
 }
 
-.deleteButton:hover {
-    background: var(--primary-color-hover);
+.hero {
+    display:grid;
+    justify-items:center;
+    grid-gap:0.8rem;
+    margin:2rem 0;
+    padding:0 10%;
+    text-align:center
+}
+@media (max-width:1200px) {
+    .hero {
+        padding:0
+    }
+}
+@media (max-width:600px) {
+    .hero {
+        margin-top:10vh
+    }
+}
+.hero__buttons {
+    display:grid;
+    justify-items:center;
+    grid-gap:1rem
+}
+.hero__button {
+    display:inline-block;
+    position:relative;
+    padding:1rem 2.5rem;
+    background:radial-gradient(farthest-corner at var(--x,0) var(--y,0),var(--primary-color-hover),var(--primary-color));
+    line-height:1;
+    text-decoration:none;
+    text-align:center;
+    white-space:nowrap;
+    cursor:pointer;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    border:0;
+    border-radius:100px
+}
+.hero__button:after {
+    content:"";
+    position:absolute;
+    left:3px;
+    right:3px;
+    top:3px;
+    bottom:3px;
+    background:var(--bg-color);
+    border-radius:inherit;
+    opacity:.9;
+    transition:opacity .6s cubic-bezier(.51,.92,.24,1)
+}
+.hero__button span {
+    position:relative;
+    color:var(--black);
+    z-index:1
+}
+.hero__button:hover:after {
+    opacity:.8
+}
+.hero__line {
+    width:1px;
+    height:50px;
+    background:var(--black);
+    margin: 0;
+}
+.p4 {
+    font-size:.8em;
+    line-height:1.4;
+    margin: 0;
+}
+.link {
+    position:relative;
+    color:var(--black);
+    text-decoration:none;
+    white-space:nowrap
+}
+.link:after {
+    content:"";
+    position:absolute;
+    height:2px;
+    left:0;
+    right:0;
+    top:100%;
+    background: var(--primary-color);
+    transition:transform .3s cubic-bezier(.51,.92,.24,1)
+}
+.link:hover:after {
+    transform:translateY(2px)
+}
+.link:active:after {
+    transform:translateY(1px);
+    transition:none
+}
+.underline {
+    position:relative;
+    color:currentColor;
+    text-decoration:none;
+    transition:color .3s cubic-bezier(.51,.92,.24,1)
+}
+.underline:after {
+    --scale:0;
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:100%;
+    height:2px;
+    background:linear-gradient(135deg,#73fac8,#00bee1);
+    transform:scaleX(var(--scale));
+    transform-origin:var(--x) 50%;
+    transition:transform .3s cubic-bezier(.51,.92,.24,1)
+}
+.underline:hover {
+    color:#fff
+}
+.underline:hover:after {
+    --scale:1
 }
 
-.deleteIcon {
-    color: #fff;
-}
-
-.addButton {
-    display: block;
+button{
     border: 0;
     outline: 0;
     cursor: pointer;
     margin: auto;
-    margin-top: 1rem;
+    margin-left: 0px;
+    margin-right: -30px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -409,406 +400,291 @@ body {
     color: #fff;
     box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    font-size: 1.2rem;
-    padding: 15px 29px;
+    font-size: 17px;
+    padding: 12px 15px;
+    width: 150px;
 }
 
-.addButton:hover {
-    background: var(--primary-color-hover);
+.description{
+    margin: auto;
+    width: 700px;
 }
 
-.device:hover .block-with-text:after {
-    background-color: var(--white-hover);
+.subText{
+    margin: auto;
+    margin-top: 2rem;
+    text-align: center;
 }
 
-.loader {
-    display: inline-block;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 80px;
+.sideNote{
+    margin: auto;
+    vertical-align: middle;
+    text-align: center;
+    max-width: 500px;
 }
 
-.loader div {
-    display: inline-block;
-    position: absolute;
-    z-index: 1000;
-    width: 16px;
-    background: var(--primary-color);
-    animation: loader 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+.separator {
+    height: 1px;
+    width: 100%;
+    background: var(--table-color);
+    border: 0;
+    box-shadow: 0 1px 0 hsla(0,0%,100%,.05);
+    margin-top: 4rem;
+    margin-bottom: 4rem;
 }
 
-.loader div:nth-child(1) {
-    left: 8px;
-    animation-delay: -0.24s;
+.bottom{
+    margin-top: 6rem;
+    margin-bottom: 0;
 }
 
-.loader div:nth-child(2) {
-    left: 32px;
-    animation-delay: -0.12s;
+.previewBig{
+    /* background-image: var(--previewImage);
+    background-repeat: no-repeat; 
+    max-width: 1180px; 
+    height: 715px;  */
+    margin: auto;
+    padding: 30px 30px;
 }
 
-.loader div:nth-child(3) {
-    left: 56px;
-    animation-delay: 0;
+.previewBig img{
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+    display: block;
+    padding: 0;
+    box-shadow: 0 2px 74px 0 rgba(0,0,0,.4);
 }
 
-@keyframes loader {
-    0% {
-        top: 8px;
-        height: 64px;
-    }
-    50%,
-    100% {
-        top: 24px;
-        height: 32px;
-    }
+.previewRight img{
+    max-width: 100%;
+    height: auto;
+    margin: auto;
+    display: block;
+    padding: 0;
+    box-shadow: 0 2px 74px 0 rgba(0,0,0,.4);
 }
 
-@media screen and (max-width: 1300px) {
-    .dashboard {
-        width: 1000px;
-    }
-    .legend {
-        height: 25px;
-        font-size: 0.8rem;
-    }
-    .device {
-        margin-top: 0.6rem;
-        font-size: 0.8rem;
-        padding: 10px 20px;
-    }
-    .deleteButton {
-        height: 100%;
-        width: 55px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    .text {
-        margin-right: 0px;
-        margin-left: 2px;
-        width: 100px;
-    }
-    .name {
-        width: 90px;
-        margin-left: -5px;
-    }
-    .aufgabe {
-        width: 390px;
-        margin-right: 0px;
-    }
-    .downloads {
-        margin-left: -60px;
-        margin-right: -5px;
-        width: 120px;
-    }
-    .stack {
-        margin-left: -5px;
-    }
-    .stack p {
-        font-size: 15px;
-    }
-    .blue {
-        margin-top: 20px;
-    }
-    .menu {
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
-    }
-    .login {
-        margin-top: 3rem;
-    }
+.leftSmall{
+    width: 300px; /*or your image's width*/
+    height: 450px; /*or your image's height*/
+    padding: 0;
+    text-align: center;
+}
+
+.rightSmall{
+    width: 300px; /*or your image's width*/
+    height: 450px; /*or your image's height*/
+    margin: auto;
+    padding: 0;
+    text-align: center;
+}
+
+.previewSmall img{
+    max-width: 100%;
+    max-height: 730px;
+    width: 300px; 
+    height: 450px; 
+    margin: auto;
+    display: block;
+    padding: 0;
+    box-shadow: 0 2px 74px 0 rgba(0,0,0,.4);
+}
+
+.footer {
+    justify-content: end;
+    width: 90%;
+}
+
+.footer a{
+    text-decoration: none;
+    color: var(--font-color);
+    margin: 10px;
+    text-align: left;
+}
+
+.footer a:hover{
+    color: var(--primary-color-hover)
+}
+
+.footer h1{
+    margin: 5px;
+}
+
+.footer p {
+    margin: 5px;
 }
 
 @media screen and (max-width: 1100px) {
-    .dashboard {
-        width: 850px;
+    .half{
+        display:flex;
+        flex-direction:column-reverse;
+        justify-content: space-around;
+        align-self:stretch;
+        margin-left: 0px;
+        gap:.5rem;
+        margin-top: 1rem;
     }
-    .legend {
-        font-size: 0.7rem;
+    .card__inner{
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+        margin: auto;
     }
-    .device {
-        margin-top: 0.6rem;
-        font-size: 0.7rem;
-        padding: 10px 15px;
+    .split{
+        width: 70%;
+        margin: auto;
     }
-    .text {
-        margin-top: 10px;
-        margin-left: 10px;
-        margin-right: 20px;
-        width: 80px;
+    .previewRight img{
+        max-width: 90%;
     }
-    .aufgabe {
-        margin-top: 10px;
-        margin-right: 0px;
-        width: 350px;
+    .leftSmall{
+        margin: auto;
     }
-    .name {
-        width: 70px;
-        margin-top: 10px;
-        margin-left: 10px;
-        margin-right: -10px;
+    .rightSmall{
+        margin: auto;
     }
-    .downloads {
-        margin-top: -5px;
-        margin-left: 2px;
-        margin-right: 7px;
-        white-space: nowrap;
-        width: 100px;
+
+    .footer{
+        justify-content: center !important;
     }
-    .stack {
-        margin-left: 2px;
-        margin-right: 2px;
+
+    .footerHalf{
+        flex-direction: row;
     }
-    .stack p {
-        font-size: 14px;
+
+    body{
+        font-size: 1rem;
     }
-    .arrow {
+    .description{
+        width: 500px;
+    }
+    .full{
+        padding: 0px 0px;
+    }
+    .flex{
+        width: 100%;
+    }
+    .card__innerPadding p{
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .card__innerPadding h1{
         font-size: 25px;
     }
-    .buttons {
-        font-size: 0.6rem;
-        padding: 10px 10px;
-    }
-    .addButton {
-        margin-top: 1rem;
-        font-size: 1rem;
-        padding: 12px 25px;
+    .card__innerPadding p{
+        font-size: 12px;
     }
 }
 
 @media screen and (max-width: 880px) {
-    .topnav a:not(:nth-child(2)) {
-        display: none;
+    .card__innerPadding h1{
+        font-size: 30px;
     }
-    .topnav a.icon {
-        float: right;
-        display: block;
-        padding: 11px 24px;
-        border-radius: 12px;
-        text-decoration: none;
-        font-size: 20px;
-        margin-right: 1rem;
-        box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-        background-color: var(--secondary-color);
+    .card__innerPadding p{
+        font-size: 16px;
     }
-    .topnav.responsive {
-        position: relative;
+    .tripple{
+        grid-template-columns: 1fr;
+        margin: auto;
     }
-    .topnav.responsive .icon {
-        position: absolute;
-        right: 0;
-        top: 0;
+    .flex{
+        display: inline-block;
+        width: 70%;
+        margin: auto;
     }
-    .topnav.responsive a {
-        float: none;
-        display: block;
-        text-align: left;
-        margin-top: 0.5rem;
+    .topnav a{
+        font-size: 18px;
     }
-    .topnav a:hover {
-        background-color: var(--secondary-color-hover);
-        color: #f2f2f2;
-    }
-    #checkboxIcon {
-        margin-right: 20px;
-    }
-    .dashboard h1 {
-        font-size: 1.2rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    .dashboard {
-        width: 550px;
-    }
-    .legend {
-        height: 20px;
-        font-size: 0.7rem;
-    }
-    .device {
-        margin-top: 0.6rem;
-        font-size: 0.5rem;
-        padding: 10px 15px;
-    }
-    .text {
-        margin-top: 10px;
-        margin-left: 0px;
-        margin-right: 5px;
-        width: 60px;
-    }
-    .aufgabe {
-        margin-top: 10px;
-        margin-right: 0px;
-        width: 250px;
-    }
-    .solution {
-        margin-left: 2px;
-    }
-    .name {
-        width: 60px;
-        margin-top: 10px;
-        margin-left: 0px;
-        margin-right: 2px;
-    }
-    .downloads {
-        margin-top: -10px;
-        margin-left: 0px;
-        margin-right: 5px;
-        white-space: nowrap;
-        width: 70px;
-        display: none;
-    }
-    .stack {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-    .stack p {
-        font-size: 12px;
-        display: none;
-    }
-    .arrow {
-        margin-right: 11px;
-    }
-    .buttons {
-        margin-top: 0rem;
-        font-size: 0.6rem;
-        padding: 12px 12px;
-    }
-    .deleteButton {
-        height: 100%;
-        width: 30px;
-        padding: 10.5px 0px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    .deleteButton span {
-        font-size: 15px;
-    }
-    .addButton {
-        margin-top: 1rem;
-        font-size: 0.8rem;
-        padding: 12px 20px;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    .logo {
-        padding: 11px 18px;
-        font-size: 17px;
+    .menu{
+        padding: 10px 10px;
         margin-left: 0.5rem;
         margin-right: 0.5rem;
     }
-    .logo span {
-        margin-left: 0.5rem;
+    #checkboxIcon{
+        margin-right: 20px;
     }
-    .topnav a:hover {
-        background-color: var(--secondary-color-hover);
-        color: #f2f2f2;
+    .footer h1{
+        font-size: 23px;
     }
-    .dashboard h1 {
-        font-size: 1rem;
-        margin-top: 1rem;
+    .footer p {
+        font-size: 14px;
+    }
+    .footer a {
+        font-size: 16px;
+    }
+    .hero__button{
+        padding: 1rem 1.5rem;
+        font-size: 18px;
+    }
+    .card__innerPadding{
+        padding: 10px 10px;
+    }
+    .card__innerPadding h1{
+        font-size: 20px;
+    }
+    .card__innerPadding p{
+        font-size: 15px;
+    }
+    
+}
+
+@media screen and (max-width: 850px) {
+    .split{
+        width: 90%;
+    }
+    .flex{
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .flex{
+        width: 90%;
+    }
+    .rightSmall{
+        display: none;
+    }
+    .split{
+        grid-template-columns: 1fr;
+    }
+    .separator{
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+    .tripple{
+        margin-top: 4rem;
+        padding: 5px 5px;
+    }
+    .description{
+        width: 85%;
+    }
+    .footer{
         margin-bottom: 1rem;
     }
-    .dashboard {
-        width: 350px;
+    .footerHalf{
+        flex-direction: column-reverse;
     }
-    .legend {
-        font-size: 0.6rem;
-        padding: 10px 15px;
-    }
-    .device {
-        margin-top: 0.6rem;
-        font-size: 0.5rem;
-        padding: 10px 15px;
-    }
-    .text {
-        margin-top: 4px;
-        margin-left: 2px;
-        margin-right: 2px;
-        width: 55px;
-    }
-    .solution {
-        display: none;
-    }
-    .aufgabe {
-        margin-top: 2px;
-        margin-right: 0px;
-        width: 150px;
-    }
-    .name {
-        width: 55px;
-        margin-top: 4px;
-        margin-left: -5px;
-        margin-right: -10px;
-    }
-    .stack {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-    .stack p {
-        display: none;
-    }
-    .arrow {
-        font-size: 20px;
-        margin-left: -2px;
-    }
-    .buttons {
-        font-size: 0.3rem;
-        padding: 10px 9px;
-    }
-    .deleteButton {
-        display: none;
-    }
-    .deleteButton span {
-        font-size: 12px;
-    }
-    .addButton {
-        margin-top: 1rem;
-        font-size: 0.8rem;
-        padding: 10px 18px;
+    .bottom{
+        margin-top: 4rem;
+        margin-bottom: 0;
     }
 }
 
 @media screen and (max-width: 500px) {
-    .logo {
+    .logo{
         margin-left: -0.5rem;
         margin-right: 0rem;
     }
-    .logo span {
+    .logo span{
         margin-left: 0rem;
     }
     .topnav a.icon {
         margin-left: -0.5rem;
         margin-right: 0.5rem;
     }
-    .login {
-        width: 350px;
-        height: 370px;
-        margin-top: 1.8rem;
-        padding: 10px 22px;
-    }
-    .login h1 {
-        font-size: 1rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-    }
-    .login p {
-        margin-left: 10px;
-        font-size: 0.9rem;
-    }
-    .login input {
-        width: 320px;
-        padding: 15px 16px;
-    }
-    .login button {
-        margin-top: 1.2rem;
-        font-size: 0.9rem;
-        padding: 13px 35px;
-    }
+    
 }
