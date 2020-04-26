@@ -4,6 +4,7 @@ key.json
 jwt-key.pub
 .tmp/
 .json
+.env
 files/
 mongodump-zgk-db
 mongodump-zgkDev-db

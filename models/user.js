@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const generate = require('nanoid/generate')
 
 var Schema = mongoose.Schema;
-var salt = require('../key.json').salt
+var salt = process.env.SALT
 
 let userSchema = new mongoose.Schema({
     _id: Schema.Types.ObjectId,

@@ -43,23 +43,6 @@ const limitApi = rateLimit({
     headers: true
 });
 
-async function sendPush(name, klasse, fach, abgabe) {
-    /*
-    var url = "https://maker.ifttt.com/trigger/aufgabenBotAufgabe/with/key/eRyGmfJa6ti49eJB84D5xSEGfvYYmasLmNkrhOPPXlp"
-    request(url + "?value1=" + name + "&value2=" + fach +"(" + klasse + ")" + "&value3=" + abgabe, (err, res, body) => {
-        if(err){
-            console.log(err)
-        }
-    });
-    var url = "https://maker.ifttt.com/trigger/meow/with/key/c93lQIUSaBNCaVxAimevf"
-    request(url + "?value1=" + name + "&value2=" + fach + "&value3=" + abgabe, (err, res, body) => {
-        if(err){
-            console.log(err)
-        }
-    });
-    */
-}
-
 router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middleware.cache(900)
     console.log(req.session.name + " is getting home data")
     try {
