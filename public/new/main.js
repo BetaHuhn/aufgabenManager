@@ -109,7 +109,7 @@ async function upload() {
                         //document.getElementById('form').style.display = "block";
                     } else if (json.status == 405) {
                         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-                        window.location.replace('/login')
+                        window.location.replace('/login?ref=new')
                     } else if (json.status == 421) {
                         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt.</p>`
                         document.getElementById('form').style.display = "block";
@@ -151,7 +151,7 @@ async function upload() {
             } else if (json.status == 405) {
                 console.log(json);
                 document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-                window.location.replace('/login')
+                window.location.replace('/login?ref=new')
             } else if (json.status == 421) {
                 document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
                 document.getElementById('form').style.display = "block";

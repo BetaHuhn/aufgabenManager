@@ -238,7 +238,7 @@ async function authenticate() {
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
         document.getElementById('loader').style.display = "none"
         document.getElementById('user').style.display = "block";
-        window.location.replace('/login')
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
 
@@ -354,7 +354,7 @@ async function renderTeacher() {
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
         document.getElementById('loader').style.display = "none"
         document.getElementById('user').style.display = "block";
-        window.location.replace('/login')
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
 
@@ -416,7 +416,7 @@ async function renderUser() {
         message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
         document.getElementById('loader').style.display = "none"
         document.getElementById('user').style.display = "block";
-        window.location.replace('/login')
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
 
