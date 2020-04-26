@@ -167,13 +167,14 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
         if (user_id == aufgabeUserId || role == 'admin') {
             console.log(true)
             var removeDiv = createElement('div', 'child deleteButton', id)
+            removeDiv.id = id
             removeDiv.onclick = function(e) {
                 remove(id);
                 e.stopPropagation();
                 window.event.cancelBubble = true;
             };
             arrow.parentElement.appendChild(removeDiv)
-            removeDiv.innerHTML = `<span id="${id}" class="fas fa-trash deleteIcon"></span>`
+            removeDiv.innerHTML = `<span class="trash child"><span></span></span>`
         }
     }
     return div;
