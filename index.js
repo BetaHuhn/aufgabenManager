@@ -6,6 +6,8 @@ io.init({
 
 const express = require('express');
 const bodyParser = require('body-parser')
+const dotenv = require('dotenv');
+dotenv.config();
 const app = express();
 const cors = require('cors')
 const compression = require('compression');
@@ -16,7 +18,6 @@ const appRouter = require('./router/app.js')
 const apiRouter = require('./router/api.js')
 const middleware = require("./middleware/middleware")
 
-const secret = require('./key.json').key
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session);
 let mongoose = require('mongoose');
@@ -28,7 +29,7 @@ var mongoStore = new MongoStore({
 });
 
 app.use(session({
-    secret: secret,
+    secret: process.env.KEY,
     name: "msuid",
     resave: true,
     saveUninitialized: false,
@@ -40,7 +41,7 @@ app.use(session({
     store: mongoStore
 }));
 
-app.listen(5500, () => console.log('listening on port 5500'));
+app.listen(process.env.PORT, () => console.log('listening on port ' + process.env.PORT));
 app.use(express.static('public'));
 app.use(express.json({ limit: '2mb' }));
 app.set("view engine", "ejs");

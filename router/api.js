@@ -46,24 +46,7 @@ const limitApi = rateLimit({
     headers: true
 });
 
-var apiKey = require('../key.json').key
-
-async function sendPush(name, klasse, fach, abgabe) {
-    /*
-    var url = "https://maker.ifttt.com/trigger/aufgabenBotAufgabe/with/key/eRyGmfJa6ti49eJB84D5xSEGfvYYmasLmNkrhOPPXlp"
-    request(url + "?value1=" + name + "&value2=" + fach +"(" + klasse + ")" + "&value3=" + abgabe, (err, res, body) => {
-        if(err){
-            console.log(err)
-        }
-    });
-    var url = "https://maker.ifttt.com/trigger/meow/with/key/c93lQIUSaBNCaVxAimevf"
-    request(url + "?value1=" + name + "&value2=" + fach + "&value3=" + abgabe, (err, res, body) => {
-        if(err){
-            console.log(err)
-        }
-    });
-    */
-}
+var apiKey = process.env.API_KEY
 
 router.get('/api/v1/status', async(req, res) => {
     var url = "https://zgk.statuspage.io/api/v2/summary.json"

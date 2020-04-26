@@ -15,14 +15,13 @@ const Class = require("../models/class")
 const School = require("../models/school")
 const Solution = require("../models/solution")
 
-const { privateEmailUser, privateEmailPassword } = require('../key.json')
 let transporter = nodemailer.createTransport({
     host: 'mail.privateemail.com',
     port: 465,
     secure: true,
     auth: {
-        user: privateEmailUser,
-        pass: privateEmailPassword
+        user: process.env.PRIVATE_EMAIL_USERNAME,
+        pass: process.env.PRIVATE_EMAIL_PASSWORD
     }
 });
 

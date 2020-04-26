@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-var password = require('../key.json').db
+var password = process.env.DB
 
 const server = '127.0.0.1:27017';
 const database = 'zgkDev'; // REPLACE WITH MongDB DB NAME
