@@ -168,6 +168,7 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
             console.log(true)
             var removeDiv = createElement('div', 'child deleteButton', id)
             removeDiv.id = id
+            removeDiv.title = "Klicke um die Aufgabe zu löschen"
             removeDiv.onclick = function(e) {
                 remove(id);
                 e.stopPropagation();

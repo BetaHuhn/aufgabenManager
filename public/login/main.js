@@ -54,6 +54,8 @@ async function auth() {
 
 auth()
 
+var retryIn = 0;
+
 async function login() {
     document.getElementById('loader').style.display = "inline-block";
     var password = document.getElementById('password').value;
@@ -71,10 +73,27 @@ async function login() {
         var error = document.getElementById('error');
         error.innerHTML = "Falsches Passwort"
         document.getElementById('loader').style.display = "none";
-    } else if (json.status == 405) {
+    } else if (json.status == 416) {
         var error = document.getElementById('error');
         error.innerHTML = "Diesen Benutzer gibt es nicht"
         document.getElementById('loader').style.display = "none";
+    } else if (json.status == 429) {
+        retryIn = json.error.retryIn;
+        var error = document.getElementById('error');
+        error.innerHTML = "Zu viele Login Versuche, bitte warte " + formatTime(json.error.retryIn)
+        document.getElementById('loginBtn').disabled = true;
+        document.getElementById('loader').style.display = "none";
+        console.log(json)
+        var countdown = setInterval(function() {
+            retryIn = retryIn - 1000;
+            if(retryIn <= 0){
+                clearInterval(countdown)
+                document.getElementById('loginBtn').disabled = false;
+                return error.innerHTML = ""
+            }
+            error.innerHTML = "Zu viele Login Versuche, bitte warte " + formatTime(retryIn)
+
+        }, 1000);
     } else if (json.status == 200) {
         console.log(json);
         var error = document.getElementById('error');
@@ -100,6 +119,14 @@ input.addEventListener("keyup", function(event) {
         document.getElementById("loginBtn").click();
     }
 });
+
+function formatTime(d1) {
+    var a = d1 / 1000;
+  	if (a >= 86400) return Math.floor(a/86400) + ' D';
+  	var labels=["Sekunden","Minuten","Stunden"];
+  	var p = Math.floor((Math.log(a) / Math.log(60)));
+  	return Math.floor(a/Math.pow(60,p)) + " " + labels[p];
+}
 
 setInterval(function() {
     var dot = document.getElementById("dot")

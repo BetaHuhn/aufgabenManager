@@ -2,6 +2,7 @@ const express = require('express')
 const crypto = require('crypto')
 const generate = require('nanoid/generate')
 const nodemailer = require('nodemailer')
+const rateLimit = require("../middleware/limiter");
 var ejs = require("ejs");
 
 const router = express.Router()
@@ -25,7 +26,34 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-router.post('/auth/login', async(req, res) => {
+const limitLogin = rateLimit({
+    windowMs: 10 * 60 * 1000, //time frame
+    delayAfter: 5, //Number of requests in time frame
+    delayMs: 10000, //add to delay
+    maxDelayMs: 15 * 60 * 1000, //maximum delay to be applied to the response
+    fib: true, //Use fibonacci sequence to increase delay
+    skipSuccessfulRequests: true,
+    handler: function(req, res, /*next*/ ) {
+        console.log(req.ip + " has exceeded login rate limit")
+        res.status(429).send({
+            status: 429,
+            type: 'error',
+            response: "rate limit ueberschritten",
+            error: {
+                text: 'rate limit ueberschritten',
+                limit: req.rateLimit.limit,
+                current: req.rateLimit.current,
+                remaining: req.rateLimit.remaining,
+                retryIn: req.rateLimit.delay,
+                resetTime: req.rateLimit.resetTime
+            }
+        });
+    },
+    draft_polli_ratelimit_headers: true,
+    headers: true
+});
+
+router.post('/auth/login', limitLogin, async(req, res) => {
     try {
         var user = await User.checkLogin(req.body.email, req.body.password)
         console.log("Login: " + user.name + " success")
@@ -44,20 +72,20 @@ router.post('/auth/login', async(req, res) => {
     } catch (error) {
         if (error.code == 408) {
             console.log("Login: Wrong Password")
-            res.json({
+            res.status(403).json({
                 status: '408',
                 response: "Wrong password"
             });
         } else if (error.code == 405) {
             console.log("Login: User not found")
-            res.json({
-                status: '405',
+            res.status(403).json({
+                status: '416',
                 response: "User doesn't exist"
             });
 
         } else {
             console.log(error)
-            res.json({
+            res.status(400).json({
                 status: '400',
                 response: "Error"
             });
@@ -65,7 +93,7 @@ router.post('/auth/login', async(req, res) => {
     }
 })
 
-router.post('/auth/register', async(req, res) => {
+router.post('/auth/register', limitLogin, async(req, res) => {
     var email = req.body.email.toLowerCase()
     var password = req.body.password;
     var name = req.body.name;
@@ -79,34 +107,34 @@ router.post('/auth/register', async(req, res) => {
         }
         if (email.length < 1 || name.length < 1) {
             console.log("Not every field filled out");
-            res.json({
+            res.status(403).json({
                 status: '408'
             });
         } else if (/\s/.test(password)) {
             console.log("Password has whitespace");
-            res.json({
+            res.status(403).json({
                 status: '404'
             });
         } else if (password.length > 20) {
             console.log("Password is too long");
-            res.json({
+            res.status(403).json({
                 status: '405'
             });
         } else if (password.length < 8) {
             console.log("Password is too short");
-            res.json({
+            res.status(403).json({
                 status: '406'
             });
         } else if (password.length >= 0) {
             if (!validEmail(email)) {
                 console.log(email + " not valid");
-                res.json({
+                res.status(403).json({
                     status: '407'
                 });
             } else {
                 var sendClass = await Class.findOne({ _id: invite.class });
                 if (!sendClass) {
-                    return res.json({ status: 404, response: "class not found" })
+                    return res.status(403).json({ status: 404, response: "class not found" })
                 }
                 console.log("Name: " + email + " is using Invite: " + invite._id + " with role: " + invite.role)
                 var query = {
@@ -127,13 +155,13 @@ router.post('/auth/register', async(req, res) => {
                         if (err) {
                             if (err.code == 11000) {
                                 console.log("Email already in use")
-                                res.json({
+                                res.status(403).json({
                                     status: '410',
                                     response: "Email already in use"
                                 });
                             } else {
                                 console.error(err)
-                                res.json({
+                                res.status(400).json({
                                     status: '400'
                                 });
                             }
@@ -142,7 +170,7 @@ router.post('/auth/register', async(req, res) => {
                             sendClass.save(async function(err, doc) {
                                 if (err) {
                                     console.error(err)
-                                    res.json({
+                                    res.status(400).json({
                                         status: '400'
                                     });
                                 } else {
@@ -172,34 +200,34 @@ router.post('/auth/register', async(req, res) => {
                     })
                 } catch (error) {
                     console.log(error)
-                    res.json({
+                    res.status(400).json({
                         status: '400'
                     });
                 }
             }
         } else {
             console.log(password + " is not valid");
-            res.json({
+            res.status(403).json({
                 status: '401'
             });
         }
     } catch (error) {
         if (error.code == 408) {
             console.log("invite already used")
-            res.json({
+            res.status(403).json({
                 status: '401',
                 response: "invite already used"
             });
         } else if (error.code == 405) {
             console.log(error.error)
-            res.json({
+            res.status(403).json({
                 status: '401',
                 response: "invite doesn't exist"
             });
 
         } else {
             console.log(error)
-            res.json({
+            res.status(400).json({
                 status: '400',
                 response: "Error"
             });
@@ -207,7 +235,7 @@ router.post('/auth/register', async(req, res) => {
     }
 })
 
-router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
+router.post('/api/auth/change/password', limitLogin, middleware.auth(), async(req, res) => {
     //console.log(req.session)
     if (req.body != undefined) {
         if (req.body.oldPassword != undefined && req.body.newPassword != undefined) {
@@ -216,17 +244,17 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                 console.log(user.name + " is trying to change their password")
                 if (/\s/.test(req.body.newPassword)) {
                     console.log("Password has whitespace");
-                    res.json({
+                    res.status(403).json({
                         status: '402'
                     });
                 } else if (req.body.newPassword.length > 20) {
                     console.log("Password is too long");
-                    res.json({
+                    res.status(403).json({
                         status: '405'
                     });
                 } else if (req.body.newPassword.length < 8) {
                     console.log("Password is too short");
-                    res.json({
+                    res.status(403).json({
                         status: '406'
                     });
                 } else if (req.body.newPassword.length >= 0) {
@@ -234,7 +262,7 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                         var user = await User.changePassword(req.session._id, req.body.newPassword)
                         if (!user) {
                             console.log(user)
-                            return res.json({
+                            return res.status(400).json({
                                 status: '400',
                                 response: "Error"
                             });
@@ -247,14 +275,14 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                     } catch (error) {
                         if (error.code == 405) {
                             console.log(error.error)
-                            res.json({
+                            res.status(403).json({
                                 status: '403',
                                 response: "user doesn't exist"
                             });
 
                         } else {
                             console.log(error)
-                            res.json({
+                            res.status(400).json({
                                 status: '400',
                                 response: "Error"
                             });
@@ -262,40 +290,40 @@ router.post('/api/auth/change/password', middleware.auth(), async(req, res) => {
                     }
                 } else {
                     console.log(password + " is not valid");
-                    res.json({
+                    res.status(400).json({
                         status: '401'
                     });
                 }
             } catch (error) {
                 if (error.code == 405) {
                     console.log(error.error)
-                    res.json({
+                    res.status(403).json({
                         status: '403',
                         response: "user doesn't exist"
                     });
 
                 } else if (error.code == 406) {
                     console.log(error.error)
-                    res.json({
+                    res.status(403).json({
                         status: '408',
                         response: "wrong password"
                     });
                 } else {
                     console.log(error)
-                    res.json({
+                    res.status(400).json({
                         status: '400',
                         response: "Error"
                     });
                 }
             }
         } else {
-            res.json({
+            res.status(403).json({
                 status: '407',
                 response: "no password sent"
             });
         }
     } else {
-        res.json({
+        res.status(403).json({
             status: '407',
             response: "no password sent"
         });

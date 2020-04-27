@@ -65,7 +65,7 @@ app.set('trust proxy', 1);
 //app.disable('x-powered-by')
 
 var corsOptions = {
-    origin: 'https://zgk.mxis.ch',
+    origin: 'https://' + process.env.DOMAIN,
     optionsSuccessStatus: 200
 }
 app.use(cors(corsOptions))

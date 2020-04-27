@@ -251,6 +251,12 @@ body {
     padding: 15px 38px;
 }
 
+.login button:disabled,
+.login button[disabled]{
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .container {
     margin: auto;
 }
