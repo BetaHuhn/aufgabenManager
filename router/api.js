@@ -625,7 +625,7 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
     }
 });
 
-router.get('/t/:token', async(req, res) => {
+router.get('/t/:token', limitApi, async(req, res) => {
     try {
         var user = await User.findOne({ botKey: req.params.token })
         if(!user){
@@ -928,7 +928,7 @@ router.post('/api/v1/delete/aufgabe', limitApi, middleware.auth(), async(req, re
     }
 });
 
-router.get("/api/v1/generate/pdf", middleware.auth({ lehrer: true }), async(req, res) => {
+router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), async(req, res) => {
     var id = req.query.id;
     console.log("Generating PDF for Exercise: " + req.query.id)
     var exercise = await Exercise.findOne({ _id: id }).populate({
@@ -999,7 +999,7 @@ router.get("/api/v1/generate/pdf", middleware.auth({ lehrer: true }), async(req,
 });
 })
 
-router.post('/api/v1/add/users/', async(req, res) => {
+router.post('/api/v1/add/users/', limitApi, async(req, res) => {
     /*await User.updateMany({}, { $set: { exercises: [], solutions: [] } })
     return res.json({ status: 200 })*/
     if (req.body != undefined) {

@@ -2,8 +2,9 @@ const express = require('express')
 const crypto = require('crypto')
 const generate = require('nanoid/generate')
 const nodemailer = require('nodemailer')
-const rateLimit = require("../middleware/limiter");
-var ejs = require("ejs");
+const ejs = require("ejs");
+const customRateLimit = require("../middleware/limiter");
+const slowDown = require("express-slow-down");
 
 const router = express.Router()
 const middleware = require("../middleware/middleware")
@@ -26,7 +27,7 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-const limitLogin = rateLimit({
+const limitLogin = customRateLimit({
     windowMs: 10 * 60 * 1000, //time frame
     delayAfter: 5, //Number of requests in time frame
     delayMs: 10000, //add to delay
@@ -51,6 +52,13 @@ const limitLogin = rateLimit({
     },
     draft_polli_ratelimit_headers: true,
     headers: true
+});
+
+const softLimit = slowDown({
+    windowMs: 15 * 60 * 1000, 
+    delayAfter: 100, 
+    delayMs: 200,
+    maxDelayMs:  5 * 1000
 });
 
 router.post('/auth/login', limitLogin, async(req, res) => {
@@ -331,7 +339,7 @@ router.post('/api/auth/change/password', limitLogin, middleware.auth(), async(re
 })
 
 /* If token valid render reset page */
-router.get('/reset', async(req, res) => {
+router.get('/reset', softLimit, async(req, res) => {
     console.log(req.query.token)
     if (req.query != undefined) {
         if (req.query.token != undefined) {
@@ -366,7 +374,7 @@ router.get('/reset', async(req, res) => {
 })
 
 /* Send Password reset email */
-router.post('/api/auth/reset/password/request', async(req, res) => {
+router.post('/api/auth/reset/password/request', softLimit, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.email != undefined) {
             try {
@@ -432,7 +440,7 @@ router.post('/api/auth/reset/password/request', async(req, res) => {
 })
 
 /* Create new Password with token */
-router.post('/api/auth/reset/password', async(req, res) => {
+router.post('/api/auth/reset/password', limitLogin, async(req, res) => {
     console.log(req.body)
     if (req.body != undefined) {
         if (req.body.token != undefined && req.body.password != undefined) {
@@ -440,7 +448,7 @@ router.post('/api/auth/reset/password', async(req, res) => {
                 var user = await User.findOne({ resetPasswordToken: req.body.token })
                 if (user.resetPasswordExpires < (new Date().getTime())) {
                     console.log("token expired")
-                    return res.json({
+                    return res.status(403).json({
                         status: 410,
                         response: "token expired"
                     })
@@ -448,17 +456,17 @@ router.post('/api/auth/reset/password', async(req, res) => {
                 console.log(user.name + " is trying to reset their password")
                 if (/\s/.test(req.body.password)) {
                     console.log("Password has whitespace");
-                    res.json({
+                    res.status(403).json({
                         status: '402'
                     });
                 } else if (req.body.password.length > 20) {
                     console.log("Password is too long");
-                    res.json({
+                    res.status(403).json({
                         status: '405'
                     });
                 } else if (req.body.password.length < 8) {
                     console.log("Password is too short");
-                    res.json({
+                    res.status(403).json({
                         status: '406'
                     });
                 } else if (req.body.password.length >= 0) {
@@ -466,7 +474,7 @@ router.post('/api/auth/reset/password', async(req, res) => {
                         var user = await User.changePassword(user._id, req.body.password)
                         if (!user) {
                             console.log(user)
-                            return res.json({
+                            return res.status(400).json({
                                 status: '400',
                                 response: "Error"
                             });
@@ -479,14 +487,14 @@ router.post('/api/auth/reset/password', async(req, res) => {
                     } catch (error) {
                         if (error.code == 405) {
                             console.log(error.error)
-                            res.json({
+                            res.status(403).json({
                                 status: '404',
                                 response: "user doesn't exist"
                             });
 
                         } else {
                             console.log(error)
-                            res.json({
+                            res.status(400).json({
                                 status: '400',
                                 response: "Error"
                             });
@@ -494,41 +502,41 @@ router.post('/api/auth/reset/password', async(req, res) => {
                     }
                 } else {
                     console.log(req.body.password + " is not valid");
-                    res.json({
+                    res.status(403).json({
                         status: '401'
                     });
                 }
             } catch (error) {
                 if (error.code == 405) {
                     console.log(error.error)
-                    res.json({
+                    res.status(403).json({
                         status: '404',
                         response: "token not found"
                     });
 
                 } else {
                     console.log(error)
-                    res.json({
+                    res.status(400).json({
                         status: '400',
                         response: "Error"
                     });
                 }
             }
         } else {
-            res.json({
+            res.status(403).json({
                 status: '407',
                 response: "no password sent"
             });
         }
     } else {
-        res.json({
+        res.status(403).json({
             status: '407',
             response: "no password sent"
         });
     }
 })
 
-router.post('/auth/check/invite', async(req, res) => {
+router.post('/auth/check/invite', softLimit, async(req, res) => {
     try {
         var invite = await Invite.checkToken(req.body.token)
         res.json({
@@ -570,7 +578,7 @@ router.post('/auth/check/invite', async(req, res) => {
     }
 })
 
-router.get('/api/auth/', middleware.auth(), async(req, res) => {
+router.get('/api/auth/', softLimit, middleware.auth(), async(req, res) => {
     //console.log(req.session)
     res.json({
         status: 200,
@@ -603,7 +611,7 @@ router.get('/api/hash/emails', async(req, res) => {
     })
 })*/
 
-router.get('/api/auth/new', middleware.auth({ lehrer: true }), async(req, res) => {
+router.get('/api/auth/new', softLimit, middleware.auth({ lehrer: true }), async(req, res) => {
     console.log(req.session.name + " visited /new")
     res.json({
         status: 200,
@@ -616,7 +624,7 @@ router.get('/api/auth/new', middleware.auth({ lehrer: true }), async(req, res) =
     })
 })
 
-router.get('/api/auth/account', middleware.auth(), async(req, res) => {
+router.get('/api/auth/account', softLimit, middleware.auth(), async(req, res) => {
     console.log(req.session.name + " visited /account")
     try {
         var user = await User.findOne({ _id: req.session._id }).populate('classes', 'name')
@@ -646,7 +654,7 @@ router.get('/api/auth/account', middleware.auth(), async(req, res) => {
     }
 })
 
-router.get('/api/auth/exercise', middleware.auth(), async(req, res) => {
+router.get('/api/auth/exercise', softLimit, middleware.auth(), async(req, res) => {
     console.log(req.session.name + " visited /aufgabe")
     if (req.query != undefined) {
         if (req.query.id != undefined) {
@@ -702,7 +710,7 @@ router.get('/api/auth/exercise', middleware.auth(), async(req, res) => {
     }
 })
 
-router.get('/logout', function(req, res) {
+router.get('/logout', softLimit, function(req, res) {
     console.log(req.session.name + " logged out")
     req.session.destroy();
     res.redirect('/');
