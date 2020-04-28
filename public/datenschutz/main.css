@@ -11,6 +11,7 @@
     --font-color-hover: #7a7a7a;
     --bg-color: #f5f6fa;
     --white: #fff;
+    --underline: #fff;
     --nav: rgb(78, 121, 216);
     --input-color: rgb(230, 230, 230);
     --table-color: #ffffff;
@@ -34,6 +35,7 @@
     --font-color-hover: #7a7a7a;
     --bg-color: #1c1c1c;
     --white: #292929;
+    --underline: rgb(78, 121, 216);
     --nav: #292929;
     --input-color: #1c1c1c;
     --table-color: #1c1c1c;
@@ -62,7 +64,7 @@ body {
     box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
 }
 
-.logo{
+.logo {
     float: left;
     display: block;
     color: #f2f2f2;
@@ -74,97 +76,132 @@ body {
     margin-right: 2rem;
 }
 
-.logo span #id{
+.logo span #id {
     margin-left: 1rem;
 }
 
-.green{
+.green {
     color: var(--green);
 }
 
-.red{
+.red {
     color: var(--red);
 }
 
-.blink{
+.blink {
     color: var(--nav);
 }
 
-.topnav a:hover .blink {
-    color: var(--secondary-color-hover);
-}
-
-.menu{
+.menu {
     float: right;
     display: block;
     color: #f2f2f2;
     text-align: center;
-    padding: 11px 24px;
-    border-radius: 12px;
+    padding: 11px 10px;
     text-decoration: none;
     font-size: 20px;
     margin-left: 1rem;
     margin-right: 1rem;
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-    background-color: var(--secondary-color);
+    /* box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 11px 24px;
+    background-color: var(--secondary-color); */
 }
 
-.menu #logout{ 
+.menu #logout {
     margin-right: 1.5rem;
 }
 
-.topnav{
+.topnav {
     padding: 13px 16px;
 }
 
-.topnav a:hover {
-    background-color: var(--secondary-color-hover);
-    color:#f2f2f2;
-}
-
-.topnav a.active {
-    background-color: var(--active);
+.active {
+    /* background-color: var(--active); */
+    position:relative;
+    text-decoration:none;
+    white-space:nowrap;
     color: white;
 }
-.topnav a.active:hover {
-    background-color: var(--active-hover);
+
+.active:after {
+    content:"";
+    position:absolute;
+    height:3px;
+    left:0;
+    right:0;
+    top:100%;
+    background: var(--underline);
+    transition:transform .3s cubic-bezier(.51,.92,.24,1)
+}
+.active:hover:after {
+    transform:translateY(2px)
+}
+.active:active:after {
+    transform:translateY(1px);
+    transition:none
+}
+.underline {
+    position:relative;
+    color:#fff;
+    text-decoration:none;
+    transition:color .3s cubic-bezier(.51,.92,.24,1)
+}
+.underline:after {
+    --scale:0;
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:100%;
+    height:3px;
+    background:var(--underline);
+    transform:scaleX(var(--scale));
+    transform-origin:var(--x) 50%;
+    transition:transform .3s cubic-bezier(.51,.92,.24,1)
+}
+.underline:hover {
+    color:#fff
+}
+.underline:hover:after {
+    --scale:1
 }
 
 .topnav .icon {
     display: none;
 }
 
-.burger{
+.burger {
     color: #f2f2f2;
 }
 
-.modeSwitcher{
+.modeSwitcher {
     float: left;
     margin-top: -10px;
     margin-left: 10px;
 }
 
-.light{
+.light {
     color: rgb(38, 57, 110);
     cursor: pointer;
 }
 
-.light:hover{
+.light:hover {
     color: rgb(51, 74, 136);
 }
 
-.dark{
+.dark {
     color: rgb(228, 186, 72);
     cursor: pointer;
 }
 
-.dark:hover{
+.dark:hover {
     color: rgb(235, 194, 84);
 }
 
-#checkbox{
-    display:block;
-    opacity:0;
+#checkbox {
+    display: block;
+    opacity: 0;
     width: 10px;
     height: 10px;
 }
@@ -280,19 +317,21 @@ body {
 }
 
 @media screen and (max-width: 880px) {
-    .topnav a:not(:nth-child(2)) {display: none;}
+    .topnav a:not(:nth-child(2)) {
+        display: none;
+    }
     .topnav a.icon {
         float: right;
         display: block;
         padding: 11px 24px;
-        border-radius: 12px;
+        outline: none;
         text-decoration: none;
-        font-size: 20px;
+        font-size: 23px;
         margin-right: 1rem;
-        box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
-        background-color: var(--secondary-color);
     }
-    .topnav.responsive {position: relative;}
+    .topnav.responsive {
+        position: relative;
+    }
     .topnav.responsive .icon {
         position: absolute;
         right: 0;
@@ -305,10 +344,8 @@ body {
         margin-top: 0.5rem;
     }
     .topnav a:hover {
-        background-color: var(--secondary-color-hover);
-        color:#f2f2f2;
+        opacity: 0.8;
     }
-
     #checkboxIcon{
         margin-right: 20px;
     }
@@ -357,10 +394,6 @@ body {
     .logo span{
         margin-left: 0.5rem;
     }
-    .topnav a:hover {
-        background-color: var(--secondary-color-hover);
-        color:#f2f2f2;
-    }
     .login{
         width: 400px;
         margin-top: 2rem;
@@ -395,9 +428,14 @@ body {
 }
 
 @media screen and (max-width: 500px) {
+    .topnav a.icon {
+        margin-left: -0.5rem;
+        margin-right: 0.5rem;
+    }
     .logo{
         margin-left: -0.5rem;
         margin-right: 0rem;
+        margin-top: 0px !important;
     }
     .logo span{
         margin-left: 0rem;
