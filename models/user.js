@@ -45,6 +45,9 @@ let userSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    lastLogin:{
+        type: Date
+    },
     botKey: {
         type: String
     },
@@ -88,6 +91,20 @@ userSchema.statics.changePassword = async function(_id, password) {
     }
     user.password = password;
     user.resetPasswordToken = undefined;
+    user.save(function(err) {
+        if (err) {
+            console.error(err);
+        }
+    });
+    return user;
+}
+
+userSchema.statics.logLogin = async function(_id) {
+    var user = await User.findOne({ _id })
+    if (!user) {
+        throw ({ error: 'No user found', code: 405 })
+    }
+    user.lastLogin = CurrentDate()
     user.save(function(err) {
         if (err) {
             console.error(err);
@@ -179,6 +196,18 @@ function hashEmailAddress(email, salt) {
     var sum = crypto.createHash('sha256');
     sum.update(email.toLowerCase() + salt);
     return sum.digest('hex');
+}
+
+function CurrentDate() {
+    let date_ob = new Date();
+    let date = ("0" + date_ob.getDate()).slice(-2);
+    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+    let year = date_ob.getFullYear();
+    let hours = date_ob.getHours();
+    let minutes = date_ob.getMinutes();
+    let seconds = date_ob.getSeconds();
+    var current_date = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
+    return current_date;
 }
 
 const User = mongoose.model('User', userSchema)

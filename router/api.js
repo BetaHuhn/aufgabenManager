@@ -7,6 +7,7 @@ var path = require('path');
 const zipFolder = require('zip-folder');
 var ejs = require("ejs");
 let pdf = require("html-pdf");
+const ObjectId = require('mongoose').Types.ObjectId;
 const rateLimit = require("express-rate-limit");
 const middleware = require("../middleware/middleware")
 const router = express.Router()
@@ -373,19 +374,23 @@ router.get('/api/v1/get/invites', limitApi, async(req, res) => {
     }
 })
 
-router.get('/api/v1/download/:code', limitApi, async(req, res) => {
+router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res) => {
     try {
         var code = req.params.code.split(".")[0];
-        //console.log(code)
-        var aufgabe = await Exercise.findOne({ _id: code })
-        if(!aufgabe){
-            console.log("File not found")
+        if(isObjectIdValid(code)){
+            var aufgabe = await Exercise.findOne({ _id: code })
+            if(!aufgabe){
+                console.log("File not found")
+                return res.sendStatus(404);
+            }
+            var count = await Exercise.increaseDownloads(aufgabe._id, req.session)
+                //console.log(aufgabe)
+            console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
+            res.download(path.join(__dirname, '../files/', aufgabe._id + '.' + aufgabe.files.type), aufgabe.files.fileName + '.' + aufgabe.files.type);
+        }else{
+            console.log("not a valid ObjectID: " + code)
             res.sendStatus(404);
         }
-        var count = await Exercise.increaseDownloads(aufgabe._id)
-            //console.log(aufgabe)
-        console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
-        res.download(path.join(__dirname, '../files/', aufgabe._id + '.' + aufgabe.files.type), aufgabe.files.fileName + '.' + aufgabe.files.type);
     } catch (error) {
         if (error.code == 405) {
             console.log("File not found")
@@ -485,10 +490,8 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
             try {
                 if (req.query.new != undefined) {
                     if (req.query.new.toLowerCase() === "true") {
-                        console.log("isNew: " + middleware.getIsNew())
                         if (middleware.getIsNew() == true) {
                             var run = true;
-                            console.log("test")
                         } else {
                             var run = false;
                         }
@@ -510,8 +513,6 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
                     } else {
                         var exercises = await Exercise.find().populate('class school', 'name')
                     }
-                    console.log("API is getting data")
-                    console.log(req.query)
                     var data = []
                     for (i in exercises) {
                         data.push({
@@ -625,7 +626,7 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
     }
 });
 
-router.get('/t/:token', async(req, res) => {
+router.get('/t/:token', limitApi, async(req, res) => {
     try {
         var user = await User.findOne({ botKey: req.params.token })
         if(!user){
@@ -928,7 +929,7 @@ router.post('/api/v1/delete/aufgabe', limitApi, middleware.auth(), async(req, re
     }
 });
 
-router.get("/api/v1/generate/pdf", middleware.auth({ lehrer: true }), async(req, res) => {
+router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), async(req, res) => {
     var id = req.query.id;
     console.log("Generating PDF for Exercise: " + req.query.id)
     var exercise = await Exercise.findOne({ _id: id }).populate({
@@ -999,7 +1000,7 @@ router.get("/api/v1/generate/pdf", middleware.auth({ lehrer: true }), async(req,
 });
 })
 
-router.post('/api/v1/add/users/', async(req, res) => {
+router.post('/api/v1/add/users/', limitApi, async(req, res) => {
     /*await User.updateMany({}, { $set: { exercises: [], solutions: [] } })
     return res.json({ status: 200 })*/
     if (req.body != undefined) {
@@ -1089,6 +1090,18 @@ function CurrentDate() {
     let seconds = date_ob.getSeconds();
     var current_date = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
     return current_date;
+}
+
+function isObjectIdValid(id) { 
+    if (ObjectId.isValid(id)) { 
+        if (String(new ObjectId(id)) === id) { 
+            return true 
+        } else { 
+            return false 
+        }
+    } else { 
+        return false 
+    } 
 }
 
 String.prototype.isLowerCase = function() {

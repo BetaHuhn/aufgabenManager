@@ -3,7 +3,7 @@ const fileUpload = require('express-fileupload');
 const request = require('request');
 const _ = require('lodash');
 const zipFolder = require('zip-folder');
-const rateLimit = require("express-rate-limit");
+const slowDown = require("express-slow-down");
 
 let mongoose = require('mongoose')
 const Exercise = require('../models/exercise')
@@ -21,33 +21,16 @@ router.use(fileUpload({
     limits: { fileSize: 52428800 }
 }));
 
-const limitApi = rateLimit({
-    windowMs: 60 * 60 * 1000, //1 hour time frame
-    max: 100, //Number of requests in time frame  8 Anfragen in 5 Minuten
-    handler: function(req, res, /*next*/ ) {
-        console.log(req.ip + " has exceeded rate limit")
-        res.status(429).send({
-            status: 429,
-            type: 'error',
-            response: "rate limit ueberschritten",
-            error: {
-                text: 'rate limit ueberschritten',
-                limit: req.rateLimit.limit,
-                current: req.rateLimit.current,
-                remaining: req.rateLimit.remaining,
-                resetTime: req.rateLimit.resetTime
-            }
-        });
-    },
-    draft_polli_ratelimit_headers: true,
-    headers: true
+const softLimit = slowDown({
+    windowMs: 15 * 60 * 1000, 
+    delayAfter: 100, 
+    delayMs: 200,
+    maxDelayMs:  10 * 1000
 });
 
-router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middleware.cache(900)
-    console.log(req.session.name + " is getting home data")
+router.get('/api/get/home', softLimit, middleware.auth(), async(req, res) => { //, middleware.cache(900)
     try {
         var classes = await Class.find({ '_id': { $in: req.session.classes } }).populate("exercises")
-        //console.log(classes)
         var data = []
         for(i in classes){
             for (j in classes[i].exercises) {
@@ -64,8 +47,7 @@ router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middlewa
                 })
             }
         }
-       // console.log(data)
-        console.log("Sending " + data.length + " exercises")
+        console.log(req.session.name + " is getting home data -> Sending " + data.length + " exercises")
         res.json({
             status: 200,
             response: 'success',
@@ -90,7 +72,7 @@ router.get('/api/get/home', middleware.auth(), async(req, res) => { //, middlewa
     }
 });
 
-router.post('/api/new/exercise', middleware.auth({ lehrer: true }), async(req, res) => {
+router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), async(req, res) => {
     console.log(req.session.name + " is creating a new exercise")
     console.log(req.body)
     if (req.body != undefined) {
@@ -257,7 +239,7 @@ router.post('/api/new/exercise', middleware.auth({ lehrer: true }), async(req, r
     }
 })
 
-router.get('/api/delete/exercise', middleware.auth({ lehrer: true }), async(req, res) => {
+router.get('/api/delete/exercise', softLimit, middleware.auth({ lehrer: true }), async(req, res) => {
     try {
         const exercise = await Exercise.findOne({ _id: req.query.id })
         if (!exercise) {
@@ -294,7 +276,7 @@ router.get('/api/delete/exercise', middleware.auth({ lehrer: true }), async(req,
     }
 });
 
-router.get('/register', async(req, res) => {
+router.get('/register', softLimit, async(req, res) => {
     console.log(req.query.token + " was accessed")
     if (req.query == undefined) {
         res.render('inviteError.ejs', { message: 'Um einen Account zu erstellen, brauchst du zur Zeit einen Invite Link. Sende uns eine Mail für weitere Infos: zgk@mxis.ch' })
@@ -332,7 +314,7 @@ router.get('/register', async(req, res) => {
     }
 })
 
-router.get('/api/get/solutions', middleware.auth(), async(req, res) => { //{ user: true }
+router.get('/api/get/solutions', softLimit, middleware.auth(), async(req, res) => { //{ user: true }
     console.log(req.session.name + " is getting solutions")
     if (req.query != undefined) {
         if (req.query.id != undefined) {
@@ -401,7 +383,7 @@ router.get('/api/get/solutions', middleware.auth(), async(req, res) => { //{ use
     }
 })
 
-router.get('/api/get/table', middleware.auth({lehrer: true}), async(req, res) => { //{ user: true }
+router.get('/api/get/table', softLimit, middleware.auth({lehrer: true}), async(req, res) => { //{ user: true }
     console.log(req.session.name + " is getting table data")
     if (req.query != undefined) {
         if (req.query.id != undefined) {
@@ -494,7 +476,7 @@ router.get('/api/get/table', middleware.auth({lehrer: true}), async(req, res) =>
     }
 })
 
-router.post('/api/new/solution', middleware.auth({ user: true }), async(req, res) => {
+router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), async(req, res) => {
     console.log(req.session.name + " lädt eine Lösung hoch")
     if (req.body != undefined) {
         if (req.body.id != undefined) {

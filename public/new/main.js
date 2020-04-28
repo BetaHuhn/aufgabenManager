@@ -105,11 +105,12 @@ async function upload() {
                     console.log(json);
                     if (json.status == 200) {
                         document.getElementById('heading').style.display = "none";
-                        document.getElementById('error').innerHTML = `Aufgabe erfolgreich erstellt! <a href="/new">Noch eine erstellen</a>`;
+                        document.getElementById('error').innerHTML = `Aufgabe erfolgreich erstellt!`;
+                        window.location.href = "/aufgabe?id=" + json.data._id
                         //document.getElementById('form').style.display = "block";
                     } else if (json.status == 405) {
                         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-                        window.location.replace('/login')
+                        window.location.replace('/login?ref=new')
                     } else if (json.status == 421) {
                         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt.</p>`
                         document.getElementById('form').style.display = "block";
@@ -146,12 +147,13 @@ async function upload() {
             const json = await response.json();
             if (json.status == 200) {
                 //(id, name, ip, send, receive, lastHandshake, createdAt, pub, priv){
-                document.getElementById('error').innerHTML = `Aufgabe erfolgreich erstellt! <a href="/new">Noch eine erstellen</a>`;
                 document.getElementById('heading').style.display = "none";
+                document.getElementById('error').innerHTML = `Aufgabe erfolgreich erstellt!`;
+                window.location.href = "/aufgabe?id=" + json.data._id
             } else if (json.status == 405) {
                 console.log(json);
                 document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-                window.location.replace('/login')
+                window.location.replace('/login?ref=new')
             } else if (json.status == 421) {
                 document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
                 document.getElementById('form').style.display = "block";
@@ -164,12 +166,20 @@ async function upload() {
         }
     } else {
         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
-        var a = document.getElementById('fach').value;
-        var b = document.getElementById('klasse').value;
-        var c = document.getElementById('text').value;
-        var d = document.getElementById('abgabe').value;
-        var e = document.getElementById('name').value;
-        alert("Bitte Fülle alle Felder aus (Datei und Datei Name Optional): Fach: " + a + " Klasse: " + (b == "Klasse") ? undefined : b + " Text: " + c + " Abgabe: " + d + " Dateiname: " + e);
+        var a = document.getElementById('fach');
+        var b = document.getElementById('klasse');
+        var c = document.getElementById('text');
+        var d = document.getElementById('abgabe');
+        var e = document.getElementById('name');
+        var array = [a, b, c, d]
+        for(i in array){
+            if(array[i].value == null || array[i].value == ""){
+                array[i].style.border = "1px solid var(--red)"
+            }else{
+                array[i].style.border = "none"
+            }
+        }
+        alert("Bitte Fülle alle Felder aus (Datei und Datei Name Optional): Fach: " + a.value + " Klasse: " + ((b.value == "Klasse") ? undefined : b.value) + " Text: " + c.value + " Abgabe: " + d.value + " Dateiname: " + e.value);
     }
 
 }

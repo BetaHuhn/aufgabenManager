@@ -1,6 +1,9 @@
 # Aufgaben Manager
-> Ein auf Node.js basierender Aufgaben Manager für Schulen
+Ein auf Node.js basierender Aufgaben Manager für Schulen.
 
+Vorschau: [zgk.mxis.ch](https://zgk.mxis.ch)
+
+![Home Page](https://zgk.mxis.ch/static/previews/MockupLight.png)
 ## Features
 - Unterstützt mehrere Schulen/Klassen
 - Rollenverteilung nach Lehrern und Schülern
@@ -21,6 +24,9 @@
 ## Anforderungen
 - Node.js (v12.13.0 oder neuer)
 - MongoDB
+
+## Dokumention 
+[zgk.mxis.ch/dokumentation](https://zgk.mxis.ch/dokumentation)
 
 ## API
 ### Alle aktuellen Aufgaben holen
