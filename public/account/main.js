@@ -109,6 +109,8 @@ async function authenticate() {
     }
 }
 
+var retryIn = 0;
+
 async function change() {
     document.getElementById('loader').style.display = "inline-block";
     var oldPassword = document.getElementById('oldPassword').value;
@@ -164,6 +166,23 @@ async function change() {
         error.innerHTML = "Bitte benutze ein anderes Passwort"
         document.getElementById('loader').style.display = "none";
         console.log(json)
+    }else if (json.status == 429) {
+        retryIn = json.error.retryIn;
+        var error = document.getElementById('error');
+        error.innerHTML = "Zu viele Login Versuche, bitte warte " + formatTime(json.error.retryIn)
+        document.getElementById('changeBtn').disabled = true;
+        document.getElementById('loader').style.display = "none";
+        console.log(json)
+        var countdown = setInterval(function() {
+            retryIn = retryIn - 1000;
+            if(retryIn <= 0){
+                clearInterval(countdown)
+                document.getElementById('changeBtn').disabled = false;
+                return error.innerHTML = ""
+            }
+            error.innerHTML = "Zu viele Anfragen, bitte warte " + formatTime(retryIn)
+
+        }, 1000);
     } else {
         var error = document.getElementById('error');
         error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
@@ -171,6 +190,14 @@ async function change() {
         console.log(json)
     }
 
+}
+
+function formatTime(d1) {
+    var a = d1 / 1000;
+  	if (a >= 86400) return Math.floor(a/86400) + ' D';
+  	var labels=["Sekunden","Minuten","Stunden"];
+  	var p = Math.floor((Math.log(a) / Math.log(60)));
+  	return Math.floor(a/Math.pow(60,p)) + " " + labels[p];
 }
 
 function copy(resp) {

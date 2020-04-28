@@ -59,10 +59,10 @@
             </label>
         </div>
         <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
-        <a id="logout" href="/logout" class="menu">Logout</a>
-        <a href="/account" class="menu">Account</a>
+        <a id="logout" href="/logout" class="menu underline">Logout</a>
+        <a href="/account" class="menu underline">Account</a>
         <a href="/new" class="menu active">Neu</a>
-        <a href="/" class="menu">Aufgaben</a>
+        <a href="/aufgaben" class="menu underline">Aufgaben</a>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
             <i class="burger fa fa-bars"></i>
         </a>
@@ -76,14 +76,13 @@
         <div class="container">
             <div id="user" class="login" style="display: none;">
                 <h1 id="heading">Erstelle eine Aufgabe</h1>
-                <div id="form">
+                <form id="form">
                     <p>Fach:</p>
                     <input required title="Gib ein Fach ein" class="input" type="text" id="fach" />
 
                     <select required title="Wähle eine Klasse aus" id="klasse">
                         <option selected disabled>Klasse</option>
-                        
-                      </select>
+                    </select>
 
                     <p>Aufgaben Text:</p>
                     <textarea required maxlength="250" title="Aufgaben Text der den Schülern angezeigt wird" rows="5" cols="50" class="form__field" id="text"></textarea>
@@ -101,7 +100,7 @@
                             <button id="submitBtn" type="button" onclick="upload()">Erstellen</button>
                         </form>
                     </div>
-                </div>
+                </form>
                 <p class="message" id="error"></p>
 
                 <div id="progressDiv" class="progress" style="display: none;">
@@ -111,6 +110,7 @@
             </div>
         </div>
     </main>
+    <a href="/dokumentation" title="Hilfe" class="help"><i id="help" class="fas fa-question-circle"></i></a>
     <script src="main.js"></script>
 </body>
 

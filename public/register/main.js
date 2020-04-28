@@ -42,7 +42,7 @@ async function auth() {
     if (json.status == 200) {
         var error = document.getElementById('error');
         error.innerHTML = "Du bist bereits angemeldet"
-        window.location.href = "/"
+        window.location.href = "/aufgaben"
         document.getElementById('loader').style.display = "none";
     } else {
         console.log("not logged in")
@@ -75,6 +75,8 @@ if (token == undefined || token == null) {
     });
 }
 
+var retryIn = 0;
+
 async function createUser() {
     if (token != undefined) {
         document.getElementById('loader').style.display = "inline-block"
@@ -95,7 +97,7 @@ async function createUser() {
             var error = document.getElementById('error');
             error.innerHTML = "Register successfull"
             document.getElementById('loader').style.display = "none"
-            window.location.replace('/');
+            window.location.replace('/aufgaben');
         } else if (json.status == 408) {
             var error = document.getElementById('error');
             error.innerHTML = "Bitte fülle alle Felder aus"
@@ -136,6 +138,22 @@ async function createUser() {
             error.innerHTML = "Der Invite Link existiert nicht"
             document.getElementById('loader').style.display = "none"
             console.log(json)
+        }else if (json.status == 429) {
+            retryIn = json.error.retryIn;
+            var error = document.getElementById('error');
+            error.innerHTML = "Zu viele Login Versuche, bitte warte " + formatTime(json.error.retryIn)
+            document.getElementById('loginBtn').disabled = true;
+            document.getElementById('loader').style.display = "none";
+            console.log(json)
+            var countdown = setInterval(function() {
+                retryIn = retryIn - 1000;
+                if(retryIn <= 0){
+                    clearInterval(countdown)
+                    document.getElementById('loginBtn').disabled = false;
+                    return error.innerHTML = ""
+                }
+                error.innerHTML = "Zu viele Anfragen, bitte warte " + formatTime(retryIn)
+            }, 1000);
         } else {
             var error = document.getElementById('error');
             error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
@@ -143,6 +161,14 @@ async function createUser() {
             console.log(json)
         }
     }
+}
+
+function formatTime(d1) {
+    var a = d1 / 1000;
+  	if (a >= 86400) return Math.floor(a/86400) + ' D';
+  	var labels=["Sekunden","Minuten","Stunden"];
+  	var p = Math.floor((Math.log(a) / Math.log(60)));
+  	return Math.floor(a/Math.pow(60,p)) + " " + labels[p];
 }
 
 setInterval(function() {
