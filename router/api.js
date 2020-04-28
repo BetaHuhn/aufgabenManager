@@ -485,10 +485,8 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
             try {
                 if (req.query.new != undefined) {
                     if (req.query.new.toLowerCase() === "true") {
-                        console.log("isNew: " + middleware.getIsNew())
                         if (middleware.getIsNew() == true) {
                             var run = true;
-                            console.log("test")
                         } else {
                             var run = false;
                         }
@@ -510,8 +508,6 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
                     } else {
                         var exercises = await Exercise.find().populate('class school', 'name')
                     }
-                    console.log("API is getting data")
-                    console.log(req.query)
                     var data = []
                     for (i in exercises) {
                         data.push({

@@ -29,10 +29,8 @@ const softLimit = slowDown({
 });
 
 router.get('/api/get/home', softLimit, middleware.auth(), async(req, res) => { //, middleware.cache(900)
-    console.log(req.session.name + " is getting home data")
     try {
         var classes = await Class.find({ '_id': { $in: req.session.classes } }).populate("exercises")
-        //console.log(classes)
         var data = []
         for(i in classes){
             for (j in classes[i].exercises) {
@@ -49,8 +47,7 @@ router.get('/api/get/home', softLimit, middleware.auth(), async(req, res) => { /
                 })
             }
         }
-       // console.log(data)
-        console.log("Sending " + data.length + " exercises")
+        console.log(req.session.name + " is getting home data -> Sending " + data.length + " exercises")
         res.json({
             status: 200,
             response: 'success',
