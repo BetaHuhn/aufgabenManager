@@ -79,11 +79,14 @@ exerciseSchema.pre('deleteOne', async function(next) {
     next()
 });
 
-exerciseSchema.statics.increaseDownloads = async function(_id, user) {
+exerciseSchema.statics.increaseDownloads = async function(_id, session) {
     var exercise = await Exercise.findOne({ _id })
     exercise.downloads = exercise.downloads + 1;
-    console.log(user)
-    exercise.downloadedBy.push({user: user, date: CurrentDate()})
+    if(session){
+        exercise.downloadedBy.push({user: session._id, date: CurrentDate()})
+    }else{
+        exercise.downloadedBy.push({date: CurrentDate()})
+    }
     exercise.save(function(err) {
         if (err) {
             console.error(err);

@@ -383,7 +383,7 @@ router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res
                 console.log("File not found")
                 return res.sendStatus(404);
             }
-            var count = await Exercise.increaseDownloads(aufgabe._id, req.session._id)
+            var count = await Exercise.increaseDownloads(aufgabe._id, req.session)
                 //console.log(aufgabe)
             console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
             res.download(path.join(__dirname, '../files/', aufgabe._id + '.' + aufgabe.files.type), aufgabe.files.fileName + '.' + aufgabe.files.type);
