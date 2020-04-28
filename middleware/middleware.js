@@ -32,12 +32,15 @@ module.exports = {
                     next();
                 }
             } else {
-                if (RegExp(/^\/api/).test(req.path)) {
+                if (req.originalUrl.includes("/api/v1/download") && req.method === 'GET'){
+                    return res.redirect('/login?ref=' + req.path)
+                }else if (RegExp(/^\/api/).test(req.path)) {
                     console.log("not authenticated: no session found")
                     return res.json({ status: 405, response: "not authorized" })
+                }else{
+                    console.log("not authenticated: no session found")
+                    return res.redirect("/login");
                 }
-                console.log("not authenticated: no session found")
-                return res.redirect("/login");
             }
         }
     },

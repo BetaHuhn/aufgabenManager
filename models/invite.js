@@ -29,7 +29,10 @@ let inviteSchema = new mongoose.Schema({
         },
         max: {
             type: Number
-        }
+        },
+        lastUsed:{
+            type: Date
+        },
     },
     token: {
         type: String,

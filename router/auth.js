@@ -65,9 +65,8 @@ router.post('/auth/login', limitLogin, async(req, res) => {
     try {
         var user = await User.checkLogin(req.body.email, req.body.password)
         console.log("Login: " + user.name + " success")
-            //console.log(user.classes)
+        user = await User.logLogin(user._id)
         var user = await User.findOne({ _id: user._id }).populate("classes", "name")
-            //console.log(user)
         req.session.role = user.role;
         req.session.name = user.name;
         req.session.user_id = user._id;
