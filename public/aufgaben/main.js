@@ -120,19 +120,18 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
         //abgabe.style.cursor = "text";
     pName.parentElement.appendChild(abgabe)
 
-    if (text.length > 100) {
-        console.log("text longer than 100 C")
-        text = text.substring(0, 100) + "..."
-    }
-    var text = createElement('p', 'child aufgabe', id, text)
-    text.onclick = function(e) { e.stopPropagation(); }
-    text.style.cursor = "text";
-    abgabe.parentElement.appendChild(text)
+    var exercise = document.createElement('div')
+    exercise.id = id;
+    exercise.className = "child";
+    exercise.innerHTML = (text.length > 100) ? `<p class="aufgabe">${text.substring(0, 100)}...<a href="/aufgabe?id=${id}">mehr</a></p>` : `<p class="aufgabe">${text}</p>`;
+    exercise.onclick = function(e) { e.stopPropagation(); }
+    exercise.style.cursor = "text";
+    abgabe.parentElement.appendChild(exercise)
 
     var downloads = createElement('span', 'child downloads', id, downloads + " Downloads")
         //downloads.onclick = function(e) { e.stopPropagation(); }
         //downloads.style.cursor = "text";
-    text.parentElement.appendChild(downloads)
+        exercise.parentElement.appendChild(downloads)
 
     var files = createElement('div', 'child stack', id)
         //files.onclick = function(e) { e.stopPropagation(); }
@@ -153,14 +152,22 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
   <button class="buttons" onclick="download(this);" title="Klicke um die Aufgabe herunterzuladen" id="${id}">Download</button>
   <a id="link_${id}" href="${file.fileUrl}" style="pointer-events: none;" hidden="">Download</a>
   `
+    var div2 = document.createElement('div')
+    div2.className = "solutionDiv"
     var arrow = document.createElement('i')
-    arrow.className = "child fas fa-arrow-right arrow"
-    arrow.onclick = function(e) {
+    arrow.className = "child fas fa-arrow-right arrow" //fa-clipboard-list
+    div2.onclick = function(e) {
         e.stopPropagation();
         window.event.cancelBubble = true;
         window.location.href = "/aufgabe?id=" + id;
     }
-    files.parentElement.appendChild(arrow)
+    div2.appendChild(arrow)
+    var p = document.createElement('p')
+    p.className = "blue"
+    p.style.margin = "2px"
+    p.innerHTML = (role == "user") ? "Details" : "Lösungen"
+    div2.appendChild(p)
+    files.parentElement.appendChild(div2)
 
     console.log("Aufgabe von: " + aufgabeUserId + " User ID: " + user_id + " Role: " + role)
     if (role != 'user') {
@@ -174,7 +181,7 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
                 e.stopPropagation();
                 window.event.cancelBubble = true;
             };
-            arrow.parentElement.appendChild(removeDiv)
+            div2.parentElement.appendChild(removeDiv)
             removeDiv.innerHTML = `<span class="trash child"><span></span></span>`
         }
     }

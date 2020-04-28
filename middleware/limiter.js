@@ -78,8 +78,6 @@ function RateLimit(options) {
         delay: delay
       };
 
-      console.log(req.rateLimit)
-
       if (options.headers && !res.headersSent) {
         res.setHeader("X-RateLimit-Limit", req.rateLimit.limit);
         res.setHeader("X-RateLimit-Remaining", req.rateLimit.remaining);
@@ -144,10 +142,7 @@ function RateLimit(options) {
 
       let prevDelay = ( delay - options.delayMs != 0) ? delay - options.delayMs : options.delayMs;
       let d = new Date();
-      console.log("current: " + d.getTime() + " last: " + last.getTime() + " delay: " + delay + " prevDelay: " + prevDelay)
-      console.log("diff: " +  Math.abs(d.getTime() - last.getTime()))
       if (delay !== 0 && Math.abs(d.getTime() - last.getTime()) <= prevDelay) {
-        console.log("true")
         options.store.decrement(key);
         if (options.headers && !res.headersSent) {
           res.setHeader("Retry-After", Math.ceil(delay));

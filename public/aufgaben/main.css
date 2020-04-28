@@ -330,6 +330,11 @@ body {
     overflow-wrap: break-word;
 }
 
+.aufgabe a{
+    color: var(--primary-color-hover);
+    text-decoration: none;
+}
+
 .name {
     width: 70px;
     margin-top: 15px;
@@ -365,10 +370,13 @@ body {
 .arrow {
     font-size: 30px;
     text-align: center;
-    padding: 20px 0px;
+    margin-bottom: 5px;
 }
 
-.arrow:hover{
+.solutionDiv{
+    text-align: center;
+}
+.solutionDiv:hover .arrow{
     transform:translateX(2px)
 }
 
@@ -743,6 +751,9 @@ body {
         margin-top: 10px;
         margin-right: 0px;
         width: 250px;
+    }
+    .blue{
+        display: none;
     }
     .solution {
         margin-left: 2px;
