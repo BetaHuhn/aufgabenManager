@@ -7,6 +7,7 @@ var path = require('path');
 const zipFolder = require('zip-folder');
 var ejs = require("ejs");
 let pdf = require("html-pdf");
+const ObjectId = require('mongoose').Types.ObjectId;
 const rateLimit = require("express-rate-limit");
 const middleware = require("../middleware/middleware")
 const router = express.Router()
@@ -373,19 +374,23 @@ router.get('/api/v1/get/invites', limitApi, async(req, res) => {
     }
 })
 
-router.get('/api/v1/download/:code', limitApi, async(req, res) => {
+router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res) => {
     try {
         var code = req.params.code.split(".")[0];
-        //console.log(code)
-        var aufgabe = await Exercise.findOne({ _id: code })
-        if(!aufgabe){
-            console.log("File not found")
+        if(isObjectIdValid(code)){
+            var aufgabe = await Exercise.findOne({ _id: code })
+            if(!aufgabe){
+                console.log("File not found")
+                return res.sendStatus(404);
+            }
+            var count = await Exercise.increaseDownloads(aufgabe._id, req.session._id)
+                //console.log(aufgabe)
+            console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
+            res.download(path.join(__dirname, '../files/', aufgabe._id + '.' + aufgabe.files.type), aufgabe.files.fileName + '.' + aufgabe.files.type);
+        }else{
+            console.log("not a valid ObjectID: " + code)
             res.sendStatus(404);
         }
-        var count = await Exercise.increaseDownloads(aufgabe._id)
-            //console.log(aufgabe)
-        console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
-        res.download(path.join(__dirname, '../files/', aufgabe._id + '.' + aufgabe.files.type), aufgabe.files.fileName + '.' + aufgabe.files.type);
     } catch (error) {
         if (error.code == 405) {
             console.log("File not found")
@@ -1085,6 +1090,18 @@ function CurrentDate() {
     let seconds = date_ob.getSeconds();
     var current_date = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
     return current_date;
+}
+
+function isObjectIdValid(id) { 
+    if (ObjectId.isValid(id)) { 
+        if (String(new ObjectId(id)) === id) { 
+            return true 
+        } else { 
+            return false 
+        }
+    } else { 
+        return false 
+    } 
 }
 
 String.prototype.isLowerCase = function() {
