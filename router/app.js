@@ -22,17 +22,17 @@ router.use(fileUpload({
 }));
 
 const softLimit = slowDown({
-    windowMs: 15 * 60 * 1000, 
-    delayAfter: 100, 
+    windowMs: 15 * 60 * 1000,
+    delayAfter: 100,
     delayMs: 200,
-    maxDelayMs:  10 * 1000
+    maxDelayMs: 10 * 1000
 });
 
 router.get('/api/get/home', softLimit, middleware.auth(), async(req, res) => { //, middleware.cache(900)
     try {
         var classes = await Class.find({ '_id': { $in: req.session.classes } }).populate("exercises")
         var data = []
-        for(i in classes){
+        for (i in classes) {
             for (j in classes[i].exercises) {
                 data.push({
                     _id: classes[i].exercises[j]._id,
@@ -60,7 +60,7 @@ router.get('/api/get/home', softLimit, middleware.auth(), async(req, res) => { /
                 klassen: req.session.classNames
             }
         })
-            
+
     } catch (error) {
         if (error.code == 405) {
             console.log("user not found")
@@ -80,8 +80,8 @@ router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), a
             if (req.session.classNames.includes(req.body.klasse) || req.session.role == "admin") {
                 var userID = req.session._id //'5e8356c961d55a53b0027fd1'
                 var sendClass = await Class.findOne({ name: req.body.klasse });
-                if(!sendClass){
-                    return res.json({status: 404, response: "class not found"})
+                if (!sendClass) {
+                    return res.json({ status: 404, response: "class not found" })
                 }
                 var uid = new mongoose.Types.ObjectId();
                 if (!req.files || Object.keys(req.files).length === 0) {
@@ -167,9 +167,9 @@ router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), a
                             middleware.setIsNew(true)
                             middleware.resetCache(doc.class)
                             var user = await User.findOne({ _id: userID })
-                            if(user.exercises == undefined || user.exercises == null){
+                            if (user.exercises == undefined || user.exercises == null) {
                                 user.exercises = [doc._id]
-                            }else{
+                            } else {
                                 user.exercises.push(doc._id)
                             }
                             user.save(function(err) {
@@ -177,9 +177,9 @@ router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), a
                                     console.error(err);
                                 }
                             });
-                            if(sendClass.exercises == undefined || sendClass.exercises == null){
+                            if (sendClass.exercises == undefined || sendClass.exercises == null) {
                                 sendClass.exercises = [doc._id]
-                            }else{
+                            } else {
                                 sendClass.exercises.push(doc._id)
                             }
                             sendClass.save(function(err) {
@@ -204,7 +204,7 @@ router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), a
                                     downloads: doc.downloads
                                 }
                             });
-                           // sendPush(req.session.name, doc.klasse, doc.fach, doc.abgabe)
+                            // sendPush(req.session.name, doc.klasse, doc.fach, doc.abgabe)
                         }
                     })
                 } catch (error) {
@@ -247,7 +247,7 @@ router.get('/api/delete/exercise', softLimit, middleware.auth({ lehrer: true }),
         }
         if (req.session._id == exercise.user || req.session.role == 'admin') {
             await exercise.remove(async function(err, doc) {
-                if(err){
+                if (err) {
                     console.error(err)
                     return res.json({ status: 500, response: "es ist ein fehler aufgetreten" })
                 }
@@ -283,8 +283,8 @@ router.get('/register', softLimit, async(req, res) => {
     } else if (req.query.token != undefined) {
         try {
             var invite = await Invite.checkToken(req.query.token)
-            //console.log(invite)
-            switch(invite.role){
+                //console.log(invite)
+            switch (invite.role) {
                 case 'admin':
                     var roleString = 'Admin';
                     break;
@@ -293,7 +293,7 @@ router.get('/register', softLimit, async(req, res) => {
                     var roleString = 'Lehrer';
                     break;
                 default:
-                    var roleString = 'Schüler';                
+                    var roleString = 'Schüler';
             }
             res.render('register.ejs', { inviteUrl: invite.inviteUrl, token: invite.token, used: invite.used.count, max: invite.used.max, klasse: invite.class.name, name: invite.name, role: invite.role, roleString: roleString, type: invite.type })
         } catch (error) {
@@ -322,14 +322,14 @@ router.get('/api/get/solutions', softLimit, middleware.auth(), async(req, res) =
                 var exercise = await Exercise.findOne({ _id: req.query.id })
                 if (req.session.classes.includes(String(exercise.class))) {
                     try {
-                        if(req.session.role == "teacher" || req.session.role == "admin"){
-                            if(exercise.user == req.session._id || req.session.role == "admin"){
+                        if (req.session.role == "teacher" || req.session.role == "admin") {
+                            if (exercise.user == req.session._id || req.session.role == "admin") {
                                 var solutions = await Solution.find({ exercise: exercise._id }).populate("user", "name")
-                            }else{
+                            } else {
                                 console.log("Fehler: Die Aufgabe gehört " + req.session.name + " nicht")
                                 res.json({ status: 404, response: "keine lösungen gefunden" })
                             }
-                        }else{
+                        } else {
                             var solutions = await Solution.findOne({ user: req.session._id, exercise: exercise._id })
                         }
                         if (solutions) {
@@ -383,7 +383,7 @@ router.get('/api/get/solutions', softLimit, middleware.auth(), async(req, res) =
     }
 })
 
-router.get('/api/get/table', softLimit, middleware.auth({lehrer: true}), async(req, res) => { //{ user: true }
+router.get('/api/get/table', softLimit, middleware.auth({ lehrer: true }), async(req, res) => { //{ user: true }
     console.log(req.session.name + " is getting table data")
     if (req.query != undefined) {
         if (req.query.id != undefined) {
@@ -391,31 +391,31 @@ router.get('/api/get/table', softLimit, middleware.auth({lehrer: true}), async(r
                 var exercise = await Exercise.findOne({ _id: req.query.id })
                 if (req.session.classes.includes(String(exercise.class))) {
                     try {
-                        if(exercise.user == req.session._id || req.session.role == "admin"){
+                        if (exercise.user == req.session._id || req.session.role == "admin") {
                             //var solutions = await Solution.find({ exercise: exercise._id }).populate("user")
                             var klasse = await Class.find({ _id: exercise.class }).populate({
-                                path : 'users',
+                                path: 'users',
                                 select: 'name role solutions',
-                                populate : {
-                                  path : 'solutions',
-                                  match: { exercise: exercise._id },
-                                  select: 'exercise createdAt',
+                                populate: {
+                                    path: 'solutions',
+                                    match: { exercise: exercise._id },
+                                    select: 'exercise createdAt',
                                 }
                             })
                             var data = []
-                            for(i in klasse){
-                                for(j in klasse[i].users){
-                                    if(klasse[i].users[j].role == "user"){
-                                        if(klasse[i].users[j].solutions.length >= 1){
+                            for (i in klasse) {
+                                for (j in klasse[i].users) {
+                                    if (klasse[i].users[j].role == "user") {
+                                        if (klasse[i].users[j].solutions.length >= 1) {
                                             data.push({
                                                 _id: klasse[i].users[j]._id,
                                                 name: klasse[i].users[j].name,
                                                 solutions: klasse[i].users[j].solutions,
                                                 fileUrl: "https://zgk.mxis.ch/api/v1/solution/download?id=" + klasse[i].users[j].solutions[0]._id,
                                                 status: true,
-                                                createdAt: klasse[i].users[j].solutions[ klasse[i].users[j].solutions.length - 1 ].createdAt
+                                                createdAt: klasse[i].users[j].solutions[klasse[i].users[j].solutions.length - 1].createdAt
                                             })
-                                        }else{
+                                        } else {
                                             data.push({
                                                 _id: klasse[i].users[j]._id,
                                                 name: klasse[i].users[j].name,
@@ -439,11 +439,11 @@ router.get('/api/get/table', softLimit, middleware.auth({lehrer: true}), async(r
                                     _id: req.session._id,
                                 }
                             })
-                        }else{
+                        } else {
                             console.log("Fehler: Die Aufgabe gehört " + req.session.name + " nicht")
                             res.json({ status: 404, response: "keine lösungen gefunden" })
                         }
-                        
+
                     } catch (error) {
                         if (error.code == 405) {
                             console.log("Fehler: Keine Lösungen gefunden")
@@ -483,11 +483,11 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
             try {
                 var exercise = await Exercise.findOne({ _id: req.body.id }).populate("solutions");
                 if (req.session.classes.includes(String(exercise.class))) {
-                    var solution = await Solution.findOne({ exercise: exercise._id, user: req.session._id})
-                    if(solution){
+                    var solution = await Solution.findOne({ exercise: exercise._id, user: req.session._id })
+                    if (solution) {
                         var uid = new mongoose.Types.ObjectId();
                         var today = new Date();
-                        var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2)  + "-" + ("0" + today.getSeconds()).slice(-2) ;
+                        var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2) + "-" + ("0" + today.getSeconds()).slice(-2);
                         if (!req.files || Object.keys(req.files).length === 0) {
                             console.log("Fehler: Keine Datei hochgeladen")
                             res.json({
@@ -502,13 +502,13 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                             var files = {
                                 count: 1,
                                 type: type,
-                                fileName:  req.session.name.replace(/\s/g, "") + "-" + date
+                                fileName: req.session.name.replace(/\s/g, "") + "-" + date
                             }
                             photo.mv('./files/solutions/' + solution._id + "/" + files.fileName + "." + type, function(err) {
-                                if (err) throw err;
-                                console.log("File " + file_id + " moved")
-                            })
-                            //console.log(req.body.filename)
+                                    if (err) throw err;
+                                    console.log("File " + file_id + " moved")
+                                })
+                                //console.log(req.body.filename)
                         } else {
                             var count = req.files.data.length;
                             console.log(count + " files uploaded")
@@ -525,7 +525,7 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                             var files = {
                                 count: count,
                                 type: 'zip',
-                                fileName:  req.session.name.replace(/\s/g, "") + "-" + date
+                                fileName: req.session.name.replace(/\s/g, "") + "-" + date
                             }
                             zipFolder('./files/uploads/' + uid + '/', './files/solutions/' + solution._id + "/" + files.fileName + ".zip", function(err) {
                                 if (err) {
@@ -573,11 +573,11 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                             }
                         });
 
-                    }else{
+                    } else {
                         //console.log(false)
                         var uid = new mongoose.Types.ObjectId();
                         var today = new Date();
-                        var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2)  + "-" + ("0" + today.getSeconds()).slice(-2) ;
+                        var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2) + "-" + ("0" + today.getSeconds()).slice(-2);
                         if (!req.files || Object.keys(req.files).length === 0) {
                             console.log("Fehler: Keine Datei hochgeladen")
                             res.json({
@@ -592,13 +592,13 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                             var files = {
                                 count: 1,
                                 type: type,
-                                fileName:  req.session.name.replace(/\s/g, "") + "-" + date
+                                fileName: req.session.name.replace(/\s/g, "") + "-" + date
                             }
                             photo.mv('./files/solutions/' + uid + "/" + files.fileName + "." + type, function(err) {
-                                if (err) throw err;
-                                console.log("File " + file_id + " moved")
-                            })
-                            //console.log(req.body.filename)
+                                    if (err) throw err;
+                                    console.log("File " + file_id + " moved")
+                                })
+                                //console.log(req.body.filename)
                         } else {
                             var count = req.files.data.length;
                             console.log(count + " files uploaded")
@@ -636,7 +636,7 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                 type: files.type,
                                 multiple: false
                             },
-                            versions:[{
+                            versions: [{
                                 _id: new mongoose.Types.ObjectId(),
                                 createdAt: CurrentDate(),
                                 files: files
@@ -656,9 +656,9 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
 
                                 } else {
                                     var user = await User.findOne({ _id: req.session._id })
-                                    if(user.solutions == undefined || user.solutions == null){
+                                    if (user.solutions == undefined || user.solutions == null) {
                                         user.solutions = [doc._id]
-                                    }else{
+                                    } else {
                                         user.solutions.push(doc._id)
                                     }
                                     user.save(function(err) {
@@ -666,9 +666,9 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                             console.error(err);
                                         }
                                     });
-                                    if(exercise.solutions == undefined || exercise.solutions == null){
+                                    if (exercise.solutions == undefined || exercise.solutions == null) {
                                         exercise.solutions = [doc._id]
-                                    }else{
+                                    } else {
                                         exercise.solutions.push(doc._id)
                                     }
                                     exercise.save(function(err) {
@@ -737,6 +737,18 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
     }
 })
 
+router.post('/api/admin/', softLimit, middleware.auth({ admin: true }), async(req, res) => {
+    if (req.body != undefined) {
+        if (req.body.apiKey == apiKey && req.body.password == "Start$") {
+            //todo:: ip von der API hinzer ws:// schreiben
+            var connection = new WebSocket("ws://")
+            connection.send(JSON.stringify(req.body));
+            connection.onmessage = function(e) {
+                res = e.data;
+            }
+        }
+    }
+});
 
 function CurrentDate() {
     let date_ob = new Date();

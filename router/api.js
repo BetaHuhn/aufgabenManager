@@ -52,7 +52,7 @@ var apiKey = process.env.API_KEY
 router.get('/api/v1/status', async(req, res) => {
     var url = "https://zgk.statuspage.io/api/v2/summary.json"
     request(url, (err, response, body) => {
-        if(err){
+        if (err) {
             console.log(err)
         }
         res.json({
@@ -113,9 +113,9 @@ router.post('/api/v1/create/class', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == 'Start$') {
             var name = req.body.name;
-            var school = await School.findOne({_id: req.body.school});
-            if(!school){
-                return res.json({status: 404, response: "school not found"})
+            var school = await School.findOne({ _id: req.body.school });
+            if (!school) {
+                return res.json({ status: 404, response: "school not found" })
             }
             var query = {
                 _id: new mongoose.Types.ObjectId(),
@@ -173,13 +173,13 @@ router.post('/api/v1/create/class', limitApi, async(req, res) => {
 router.post('/api/v1/add/admin', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == 'Start$') {
-            var user = await User.findOne({_id: req.body.user});
-            if(!user){
-                return res.json({status: 404, response: "user not found"})
+            var user = await User.findOne({ _id: req.body.user });
+            if (!user) {
+                return res.json({ status: 404, response: "user not found" })
             }
-            var school = await School.findOne({_id: req.body.school});
-            if(!school){
-                return res.json({status: 404, response: "school not found"})
+            var school = await School.findOne({ _id: req.body.school });
+            if (!school) {
+                return res.json({ status: 404, response: "school not found" })
             }
             school.admins.push(user._id)
             school.save(async function(err, doc) {
@@ -214,12 +214,12 @@ router.post('/api/v1/add/admin', limitApi, async(req, res) => {
 router.post('/api/v1/create/invite', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == 'Start$') {
-            var sendClass = await Class.findOne({_id: req.body.class});
-            if(!sendClass){
-                return res.json({status: 404, response: "class not found"})
+            var sendClass = await Class.findOne({ _id: req.body.class });
+            if (!sendClass) {
+                return res.json({ status: 404, response: "class not found" })
             }
             var role = req.body.role;
-            switch(role){
+            switch (role) {
                 case 'admin':
                     var roleString = 'Admin';
                     break;
@@ -228,7 +228,7 @@ router.post('/api/v1/create/invite', limitApi, async(req, res) => {
                     var roleString = 'Lehrer';
                     break;
                 default:
-                    var roleString = 'Schüler';                
+                    var roleString = 'Schüler';
             }
             //var type = req.body.type;
             var name = (req.body.name != undefined) ? req.body.name : (sendClass.name + " " + roleString + " Invite Link");
@@ -315,17 +315,17 @@ router.get('/api/v1/get/invites', limitApi, async(req, res) => {
         if (req.query.apiKey == apiKey) {
             try {
                 if (req.query.id != undefined) {
-                    var invite = await Invite.find({_id: req.query.id})
+                    var invite = await Invite.find({ _id: req.query.id })
                 } else if (req.query.token != undefined) {
-                    var invite = await Invite.find({token: req.query.token})
+                    var invite = await Invite.find({ token: req.query.token })
                 } else if (req.query.klasse != undefined) {
-                    var invite = await Invite.find({class: req.query.class})
+                    var invite = await Invite.find({ class: req.query.class })
                 } else if (req.query.role != undefined) {
-                    var invite = await Invite.find({role: req.query.role})
+                    var invite = await Invite.find({ role: req.query.role })
                 } else if (req.query.type != undefined) {
-                    var invite = await Invite.find({type: req.query.type})
+                    var invite = await Invite.find({ type: req.query.type })
                 } else if (req.query.name != undefined) {
-                    var invite = await Invite.find({name: req.query.name})
+                    var invite = await Invite.find({ name: req.query.name })
                 } else {
                     var invite = await Invite.find()
                 }
@@ -377,9 +377,9 @@ router.get('/api/v1/get/invites', limitApi, async(req, res) => {
 router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res) => {
     try {
         var code = req.params.code.split(".")[0];
-        if(isObjectIdValid(code)){
+        if (isObjectIdValid(code)) {
             var aufgabe = await Exercise.findOne({ _id: code })
-            if(!aufgabe){
+            if (!aufgabe) {
                 console.log("File not found")
                 return res.sendStatus(404);
             }
@@ -387,7 +387,7 @@ router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res
                 //console.log(aufgabe)
             console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
             res.download(path.join(__dirname, '../files/', aufgabe._id + '.' + aufgabe.files.type), aufgabe.files.fileName + '.' + aufgabe.files.type);
-        }else{
+        } else {
             console.log("not a valid ObjectID: " + code)
             res.sendStatus(404);
         }
@@ -406,19 +406,19 @@ router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res
 router.get('/api/v1/solution/download', limitApi, middleware.auth(), async(req, res) => {
     try {
         console.log(req.session.name + " is getting solutions: " + req.query.id)
-        var solution = await Solution.findOne({_id: req.query.id}).populate('user', 'name')
-        if(!solution){
+        var solution = await Solution.findOne({ _id: req.query.id }).populate('user', 'name')
+        if (!solution) {
             console.log("Fehler: Solution existiert nicht")
             return res.sendStatus(404);
         }
-        if( solution.access.includes(req.session._id) || req.session.role == "admin"){
+        if (solution.access.includes(req.session._id) || req.session.role == "admin") {
             console.log("Sending file: " + solution._id)
-            if(solution.file.multiple){
+            if (solution.file.multiple) {
                 res.download(path.join(__dirname, '../files/solutions/' + solution._id + ".zip"), solution.user.name.replace(/\s+/g, '') + '.zip');
-            }else{
+            } else {
                 res.download(path.join(__dirname, '../files/solutions/' + solution._id + "/" + solution.versions[0].files.fileName + "." + solution.file.type), solution.user.name.replace(/\s+/g, '') + '.' + solution.file.type);
             }
-        }else{
+        } else {
             console.log("Fehler: " + req.session.name + " nicht der Inhaber von: " + solution._id)
             return res.sendStatus(404);
         }
@@ -629,7 +629,7 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
 router.get('/t/:token', limitApi, async(req, res) => {
     try {
         var user = await User.findOne({ botKey: req.params.token })
-        if(!user){
+        if (!user) {
             console.log("no user with botkey: " + req.params.token)
             return res.sendStatus(404)
         }
@@ -644,7 +644,7 @@ router.get('/t/:token', limitApi, async(req, res) => {
 router.get('/api/v1/verify', limitApi, async(req, res) => {
     if (req.query != undefined) {
         if (req.query.apiKey == apiKey) {
-            if(req.query.email){
+            if (req.query.email) {
                 try {
                     var user = await User.findByOneEmail(req.query.email)
                     try {
@@ -677,10 +677,10 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
                         res.json({ status: 500, response: "internal error, bitte kontaktiere support" })
                     }
                 }
-            }else if(req.query.token){
+            } else if (req.query.token) {
                 try {
                     var user = await User.findOne({ botKey: req.query.token }).populate('classes school', 'name')
-                    if(!user){
+                    if (!user) {
                         console.log("no user with botkey: " + req.query.token)
                         return res.json({
                             status: 404,
@@ -707,7 +707,7 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
                     console.log(error)
                     res.json({ status: 500, response: "internal error, bitte kontaktiere support" })
                 }
-            }else{
+            } else {
                 res.json({
                     status: '405',
                     response: 'kein parameter gesendet'
@@ -730,14 +730,14 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
 router.post('/api/v1/create/exercise', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey) {
-            var uClass = await Class.findOne({_id: req.body.class})
-            var user = await User.findOne({_id: req.body.user})
-            //console.log(user)
-            if(uClass == undefined || user == undefined){
+            var uClass = await Class.findOne({ _id: req.body.class })
+            var user = await User.findOne({ _id: req.body.user })
+                //console.log(user)
+            if (uClass == undefined || user == undefined) {
                 console.log("Fehler: User oder Class nicht gefunden")
-                return res.json({status: 404})
+                return res.json({ status: 404 })
             }
-            return res.json({status: 400, response: "currently in developement"})
+            return res.json({ status: 400, response: "currently in developement" })
             console.log(req)
             console.log(req.files)
             var uid = new mongoose.Types.ObjectId();
@@ -824,9 +824,9 @@ router.post('/api/v1/create/exercise', limitApi, async(req, res) => {
                     } else {
                         console.log(doc)
                         console.log("Exercise added as: " + uid)
-                        if(user.exercises == undefined || user.exercises == null){
+                        if (user.exercises == undefined || user.exercises == null) {
                             user.exercises = [doc._id]
-                        }else{
+                        } else {
                             user.exercises.push(doc._id)
                         }
                         user.save(function(err) {
@@ -834,9 +834,9 @@ router.post('/api/v1/create/exercise', limitApi, async(req, res) => {
                                 console.error(err);
                             }
                         });
-                        if(uClass.exercises == undefined || uClass.exercises == null){
+                        if (uClass.exercises == undefined || uClass.exercises == null) {
                             uClass.exercises = [doc._id]
-                        }else{
+                        } else {
                             uClass.exercises.push(doc._id)
                         }
                         uClass.save(function(err) {
@@ -933,32 +933,32 @@ router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), 
     var id = req.query.id;
     console.log("Generating PDF for Exercise: " + req.query.id)
     var exercise = await Exercise.findOne({ _id: id }).populate({
-        path : 'class',
-        select: 'name users',
-        populate : {
-          path : 'users',
-          select: 'name role solutions',
-          populate:{
-              path: 'solutions',
-              select: 'file createdAt',
-              match: { exercise: id }
-          }
-        }
-    })
-    //console.log(exercise.class)
+            path: 'class',
+            select: 'name users',
+            populate: {
+                path: 'users',
+                select: 'name role solutions',
+                populate: {
+                    path: 'solutions',
+                    select: 'file createdAt',
+                    match: { exercise: id }
+                }
+            }
+        })
+        //console.log(exercise.class)
     var students = []
-    for(i in exercise.class.users){
-        if(exercise.class.users[i].role == "user"){
-            if(exercise.class.users[i].solutions.length >= 1){
+    for (i in exercise.class.users) {
+        if (exercise.class.users[i].role == "user") {
+            if (exercise.class.users[i].solutions.length >= 1) {
                 var datum = new Date(exercise.class.users[i].solutions[0].createdAt)
-                datum = ("0" + datum.getDate()).slice(-2) + "." + ("0" + (datum.getMonth() + 1)).slice(-2) + "." +  datum.getFullYear() + ", " + ("0" + datum.getHours()).slice(-2) + ":" + ("0" + datum.getMinutes()).slice(-2) ;
+                datum = ("0" + datum.getDate()).slice(-2) + "." + ("0" + (datum.getMonth() + 1)).slice(-2) + "." + datum.getFullYear() + ", " + ("0" + datum.getHours()).slice(-2) + ":" + ("0" + datum.getMinutes()).slice(-2);
                 students.push({
                     name: exercise.class.users[i].name,
                     datum: datum,
                     link: "https://zgk.mxis.ch/api/v1/solution/download?id=" + exercise.class.users[i].solutions[0]._id,
                     status: "ja"
                 })
-            }else{
+            } else {
                 students.push({
                     name: exercise.class.users[i].name,
                     datum: "-",
@@ -971,33 +971,33 @@ router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), 
     var abgabe = new Date(exercise.deadline)
     abgabe = ("0" + abgabe.getDate()).slice(-2) + "." + ("0" + (abgabe.getMonth() + 1)).slice(-2) + "." + abgabe.getFullYear();
     var today = new Date()
-    today = ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." +  today.getFullYear() + ", " + ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) ;
-            
-    ejs.renderFile(path.join(__dirname, '../views/', "pdfTemplate.ejs"), { link: "https://zgk.mxis.ch/aufgabe?id=" + exercise._id, createdAt: today, fach: exercise.subject, text: exercise.text, abgabe: abgabe, klasse: String(exercise.class.name), students: students}, (err, data) => {
-    if (err) {
-          console.log(err);
-          res.send("error")
-    } else {
-        let options = {
-            "height": "11.25in",
-            "width": "8.5in",
-            "header": {
-                "height": "20mm"
-            },
-            "footer": {
-                "height": "20mm",
-            },
-        };
-        pdf.create(data, options).toFile("report.pdf", function (err, data) {
-            if (err) {
-                res.send(err);
-            } else {
-                //res.send("File created successfully");
-                res.download(path.join(__dirname, '../report.pdf'), exercise.subject + exercise.class.name + ".pdf");
-            }
-        });
-    }
-});
+    today = ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." + today.getFullYear() + ", " + ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2);
+
+    ejs.renderFile(path.join(__dirname, '../views/', "pdfTemplate.ejs"), { link: "https://zgk.mxis.ch/aufgabe?id=" + exercise._id, createdAt: today, fach: exercise.subject, text: exercise.text, abgabe: abgabe, klasse: String(exercise.class.name), students: students }, (err, data) => {
+        if (err) {
+            console.log(err);
+            res.send("error")
+        } else {
+            let options = {
+                "height": "11.25in",
+                "width": "8.5in",
+                "header": {
+                    "height": "20mm"
+                },
+                "footer": {
+                    "height": "20mm",
+                },
+            };
+            pdf.create(data, options).toFile("report.pdf", function(err, data) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    //res.send("File created successfully");
+                    res.download(path.join(__dirname, '../report.pdf'), exercise.subject + exercise.class.name + ".pdf");
+                }
+            });
+        }
+    });
 })
 
 router.post('/api/v1/add/users/', limitApi, async(req, res) => {
@@ -1010,10 +1010,10 @@ router.post('/api/v1/add/users/', limitApi, async(req, res) => {
                 var uClass = await Class.findOne({ _id: req.body.class })
                 var users = []
                 var ids = []
-                for(i in req.body.data){
+                for (i in req.body.data) {
                     var user = req.body.data[i];
                     console.log("Creating user: user.name")
-                    var nUser ={
+                    var nUser = {
                         _id: new mongoose.Types.ObjectId(),
                         email: user.email,
                         name: user.name,
@@ -1031,7 +1031,7 @@ router.post('/api/v1/add/users/', limitApi, async(req, res) => {
                 }
                 console.log("Saving...")
                 User.insertMany(users)
-                    .then(function (docs) {
+                    .then(function(docs) {
                         console.log(docs)
                         console.log("done")
                         uClass.users = ids;
@@ -1039,14 +1039,14 @@ router.post('/api/v1/add/users/', limitApi, async(req, res) => {
                             if (err) {
                                 console.error(err);
                                 res.json({ status: 400, response: "error" })
-                            }   
+                            }
                             console.log("Users added to class " + uClass.name)
                             res.json({ status: 200, response: "success", data: docs });
                         });
                     })
-                    .catch(function (err) {
+                    .catch(function(err) {
                         console.log(err)
-                        res.json({status: 500})
+                        res.json({ status: 500 })
                     });
             } catch (error) {
                 if (error.code == 405) {
@@ -1092,16 +1092,16 @@ function CurrentDate() {
     return current_date;
 }
 
-function isObjectIdValid(id) { 
-    if (ObjectId.isValid(id)) { 
-        if (String(new ObjectId(id)) === id) { 
-            return true 
-        } else { 
-            return false 
+function isObjectIdValid(id) {
+    if (ObjectId.isValid(id)) {
+        if (String(new ObjectId(id)) === id) {
+            return true
+        } else {
+            return false
         }
-    } else { 
-        return false 
-    } 
+    } else {
+        return false
+    }
 }
 
 String.prototype.isLowerCase = function() {
