@@ -11,19 +11,26 @@ module.exports = {
             //console.log(req.session)
             if (req.session && req.session.role) {
                 if (role != undefined) {
-                    if (role.lehrer) {
+                    if (role.admin) {
+                        if (req.session.role == 'admin') {
+                            next();
+                        } else {
+                            console.log("not permitted")
+                            return res.json({ status: 405, response: "not permitted" })
+                        }
+                    }else if (role.lehrer) {
                         if (req.session.role == 'teacher' || req.session.role == 'admin') {
                             next();
                         } else {
-                            console.log("not authorized")
-                            return res.json({ status: 405, response: "not authorized" })
+                            console.log("not permitted")
+                            return res.json({ status: 405, response: "not permitted" })
                         }
                     } else if (role.user) {
                         if (req.session.role == 'user' || req.session.role == 'admin') {
                             next();
                         } else {
-                            console.log("not authorized")
-                            return res.json({ status: 405, response: "not authorized" })
+                            console.log("not permitted")
+                            return res.json({ status: 405, response: "not permitted" })
                         }
                     } else {
                         next();
