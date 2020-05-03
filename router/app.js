@@ -739,14 +739,13 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
 
 router.post('/api/admin/', softLimit, middleware.auth({ admin: true }), async(req, res) => {
     if (req.body != undefined) {
-        if (req.body.apiKey == apiKey && req.body.password == "Start$") {
-            //todo:: ip von der API hinzer ws:// schreiben
-            var connection = new WebSocket("ws://")
-            connection.send(JSON.stringify(req.body));
-            connection.onmessage = function(e) {
-                res = e.data;
-            }
-        }
+        /* ToDo */
+        res.json({
+            status: 200,
+            response: "success",
+            data: e.data
+        })
+        
     }
 });
 
