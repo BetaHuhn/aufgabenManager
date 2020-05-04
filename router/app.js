@@ -739,13 +739,18 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
 
 router.post('/api/admin/', softLimit, middleware.auth({ admin: true }), async(req, res) => {
     if (req.body != undefined) {
-        /* ToDo */
-        res.json({
-            status: 200,
-            response: "success",
-            data: e.data
-        })
-        
+        if (req.body.apiKey == apiKey && req.body.password == "Start$") {
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: req.body
+            };
+            const response = await fetch(process.env.BOT_IP + ':' + process.env.BOT_PORT + '/api', options);
+            const json = await response.json();
+            res.send(json);
+        }
     }
 });
 
