@@ -740,12 +740,17 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
 router.post('/api/admin/', softLimit, middleware.auth({ admin: true }), async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == "Start$") {
-            //todo:: ip von der API hinzer ws:// schreiben
-            var connection = new WebSocket("ws://")
-            connection.send(JSON.stringify(req.body));
-            connection.onmessage = function(e) {
-                res = e.data;
-            }
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: req.body
+            };
+            //todo:: enter port
+            const response = await fetch('http://localhost:abc/api', options);
+            const json = await response.json();
+            res.send(json);
         }
     }
 });
