@@ -610,6 +610,18 @@ router.get('/api/hash/emails', async(req, res) => {
     })
 })*/
 
+router.get('/api/auth/admin', softLimit, middleware.auth({ admin: true }), async(req, res) => {
+    console.log(req.session.name + " visited /admin")
+    res.json({
+        status: 200,
+        response: "authenticated",
+        data: {
+            name: req.session.name,
+            role: req.session.role
+        }
+    })
+})
+
 router.get('/api/auth/new', softLimit, middleware.auth({ lehrer: true }), async(req, res) => {
     console.log(req.session.name + " visited /new")
     res.json({
