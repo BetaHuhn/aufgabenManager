@@ -43,9 +43,14 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/ca8ffbc206.js" crossorigin="anonymous"></script>
+    <script async src="https://stats.mxis.ch/statistik.js" data-ackee-server="https://stats.mxis.ch" data-ackee-domain-id="0c19f821-94e9-40dd-860b-339a1c57c332" data-ackee-opts='{ "detailed": true }'></script>
+    <link rel="stylesheet" href="/statuspage/style.css">
+    <script src="/statuspage/main.js"></script>
+    <noscript>Dein Browser unterstützt JavaScript nicht!</noscript>
 </head>
 
-<body onload="load()" onload="auth()">
+<body onload="auth()">
     <div class="topnav" id="myTopnav">
         <div class="modeSwitcher">
             <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
@@ -70,11 +75,11 @@
             </div>
             <div class="box">
                 <h2 id="headline">Content</h2>
-                <div class="input" id="c1">
+                <div class="input" id="c1" style="display: none;">
                     <label id="c1txt">TXT</label>
                     <input type="text" id="c1c">
                 </div>
-                <div class="input" id="c2">
+                <div class="input" id="c2" style="display: none;">
                     <label id="c2txt">TXT</label>
                     <input type="text" id="c2c">
                 </div>
