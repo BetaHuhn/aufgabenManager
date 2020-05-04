@@ -747,8 +747,7 @@ router.post('/api/admin/', softLimit, middleware.auth({ admin: true }), async(re
                 },
                 body: req.body
             };
-            //todo:: enter port
-            const response = await fetch('http://localhost:abc/api', options);
+            const response = await fetch('http://localhost:5700/api', options);
             const json = await response.json();
             res.send(json);
         }
