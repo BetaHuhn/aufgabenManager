@@ -1,15 +1,8 @@
-/* main.js - Noah Till 2020 */
+/* main.js - Maximilian Schiller & Noah Till 2020 */
 
 /* Darkmode Support */
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 detectDarkMode()
-
-var data;
-var last = document.getElementById('legend')
-var numAufgaben = 0;
-
-var role;
-var user_id;
 
 var c1 = document.getElementById('c1c').value;
 var c2 = document.getElementById('c2c').value;
@@ -26,11 +19,8 @@ async function auth() {
     const json = await response.json();
     if (json.status == 200) {
         console.log(json);
-        var login = document.getElementById('login');
-        login.href = "/logout"
-        login.innerHTML = "Logout"
-        var hero = document.getElementById('heroBtn');
-        hero.href = "/aufgaben"
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('wrapper').style.display = "block";
     } else if(json.response == "not permitted"){
         console.log("not permitted")
         window.location.replace('/')
@@ -92,15 +82,16 @@ async function submit() {
     c1 = document.getElementById('c1c').value;
     c2 = document.getElementById('c2c').value;
     if (req == "") {
-        document.getElementById('status').innerHTML = "You should click a Function!";
+        document.getElementById('status').innerHTML = "Klicke zuerst auf eine Funktion";
         return;
     }
     if (c1 == "") {
-        document.getElementById('status').innerHTML = "You should have some arguments!";
+        document.getElementById('status').innerHTML = "Bitte gib zuerst ein Argument ein";
         return;
     }
     console.log("req: " + req + ", c1: " + c1 + ", c2: " + c2);
     var options;
+    document.getElementById('loader').style.display = "block";
     document.getElementById('status').innerHTML = "Sending...";
     if (req == "postclass") {
         options = {
@@ -119,16 +110,24 @@ async function submit() {
             body: JSON.stringify({ "req": req, "c1": c1 })
         };
     }
-    var response;
-    try {
-        response = await fetch('/api/admin', options);
-    } catch (e) {
-        document.getElementById('status').innerHTML = "Failed to reach api, maybe its offline!";
-        return;
-    }
+    const response = await fetch('/api/new/exercise', options);
     const json = await response.json();
-    document.getElementById('status').innerHTML = "status: " + json.status + " response: " + json.response;
+    if (json.status == 200) {
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('status').innerHTML = "status: " + json.status + " response: " + json.data;
+    }else if(json.status == 405){
+        window.location.href = "/login"
+    }else{
+        console.log(json)
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('status').innerHTML = "Failed to reach api, maybe its offline!";
+    }
 }
+
+setInterval(function() {
+    var dot = document.getElementById("dot")
+    dot.className = (dot.className == 'green') ? 'blink' : 'green';
+}, 1000);
 
 /* Dark Mode switch logic */
 

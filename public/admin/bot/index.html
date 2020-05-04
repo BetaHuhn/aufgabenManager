@@ -1,28 +1,13 @@
-<!-- index.html - Noah Till 2020 -->
+<!-- index.html - Maximilian Schiller & Noah Till 2020 -->
 <!DOCTYPE html>
 <html lang="de">
-
 <head>
     <meta charset="utf-8">
-    <title>Aufgaben Manager</title>
+    <title>Bot - Aufgaben Manager Admin</title>
     <meta name="viewport" content="widp=device-widp,initial-scale=1">
 
-    <meta name="title" content="Aufgaben Manager">
-    <meta name="description" content="Alle aktuellen Aufgaben im Überblick">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://zgk.mxis.ch">
-    <meta property="og:title" content="Aufgaben Manager">
-    <meta property="og:description" content="Alle aktuellen Aufgaben im Überblick">
-    <meta property="og:image" content="https://zgk.mxis.ch/static/banner.png">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://zgk.mxis.ch">
-    <meta property="twitter:title" content="Aufgaben Manager">
-    <meta property="twitter:description" content="Alle aktuellen Aufgaben im Überblick">
-    <meta property="twitter:image" content="https://zgk.mxis.ch/static/banner.png">
+    <meta name="title" content="Bot - Aufgaben Manager Admin">
+    <meta name="description" content="Steuerung für den Telegram/Discord Bot">
 
     <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-icon-60x60.png">
@@ -41,6 +26,7 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/static/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
+
     <link rel="stylesheet" href="main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://kit.fontawesome.com/ca8ffbc206.js" crossorigin="anonymous"></script>
@@ -58,38 +44,53 @@
                     aria-hidden="true"></span></input>
             </label>
         </div>
-        <a id="privacy" href="/" class="menu underline">Home</a>
+        <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green"> online</span></a>
+        <a id="logout" href="/logout" class="menu underline">Logout</a>
+        <a href="/admin" class="menu underline">Admin</a>
+        <a href="/admin/bot" class="menu active">Bot</a>
+        <a href="/aufgaben" class="menu underline">Aufgaben</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="burger fa fa-bars"></i>
+        </a>
     </div>
     <main id="main">
-        <div class="topic">
-            <h1>Bot Management</h1>
+        <div id="loader" class="loader">
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
-        <div class="console">
-            <div class="buttonbar">
-                <button onclick="changeReq(this)" req="post"><span>Post</span></button>
-                <button onclick="changeReq(this)" req="postall"><span>Post all</span></button>
-                <button onclick="changeReq(this)" req="postclass"><span>Post Class</span></button>
-                <button onclick="changeReq(this)" req="disctoken"><span>Discord Token</span></button>
-                <button onclick="changeReq(this)" req="teletoken"><span>Telegram Token</span></button>
-                <button onclick="changeReq(this)" req="telename"><span>Telegram Name</span></button>
+        <div id="wrapper" style="display: none;">
+            <div class="topic">
+                <h1>Admin Bot Management</h1>
             </div>
-            <div class="box">
-                <h2 id="headline">Content</h2>
-                <div class="input" id="c1" style="display: none;">
-                    <label id="c1txt">TXT</label>
-                    <input type="text" id="c1c">
+            <div class="console">
+                <div class="buttonbar">
+                    <button onclick="changeReq(this)" req="post"><span>Post</span></button>
+                    <button onclick="changeReq(this)" req="postall"><span>Post all</span></button>
+                    <button onclick="changeReq(this)" req="postclass"><span>Post Class</span></button>
+                    <button onclick="changeReq(this)" req="disctoken"><span>Discord Token</span></button>
+                    <button onclick="changeReq(this)" req="teletoken"><span>Telegram Token</span></button>
+                    <button onclick="changeReq(this)" req="telename"><span>Telegram Name</span></button>
                 </div>
-                <div class="input" id="c2" style="display: none;">
-                    <label id="c2txt">TXT</label>
-                    <input type="text" id="c2c">
-                </div>
-                <div class="submit">
-                    <div>
-                        <button class="submit" onclick="submit()"><span>Send</span></button>
+                <div class="box">
+                    <h2 id="headline">Content</h2>
+                    <div class="input" id="c1" style="display: none;">
+                        <label id="c1txt">TXT</label>
+                        <input type="text" id="c1c">
                     </div>
-                    <label id="status"></label>
+                    <div class="input" id="c2" style="display: none;">
+                        <label id="c2txt">TXT</label>
+                        <input type="text" id="c2c">
+                    </div>
+                    <div class="submit">
+                        <div>
+                            <button class="submit" onclick="submit()"><span>Send</span></button>
+                        </div>
+                        <label id="status"></label>
+                    </div>
                 </div>
             </div>
+        </div>
     </main>
     <script src="main.js"></script>
 </body>
