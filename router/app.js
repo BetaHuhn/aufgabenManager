@@ -747,7 +747,7 @@ router.post('/api/admin/', softLimit, middleware.auth({ admin: true }), async(re
                 },
                 body: req.body
             };
-            const response = await fetch('http://localhost:5700/api', options);
+            const response = await fetch(process.env.BOT_IP + ':' + process.env.BOT_PORT + '/api', options);
             const json = await response.json();
             res.send(json);
         }
