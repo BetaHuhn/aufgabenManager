@@ -110,7 +110,7 @@ async function submit() {
             body: JSON.stringify({ "req": req, "c1": c1 })
         };
     }
-    const response = await fetch('/api/new/exercise', options);
+    const response = await fetch('/api/admin', options);
     const json = await response.json();
     if (json.status == 200) {
         document.getElementById('loader').style.display = "none";
