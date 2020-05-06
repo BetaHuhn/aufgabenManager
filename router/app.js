@@ -754,7 +754,7 @@ router.post('/api/admin/', softLimit, middleware.auth({ admin: true }), async(re
                 });
             }
             console.log(body)
-            req.json({
+            res.json({
                 status: 200,
                 response: "success",
                 data: body
