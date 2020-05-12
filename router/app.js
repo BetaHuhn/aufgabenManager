@@ -4,17 +4,17 @@ const request = require('request');
 const _ = require('lodash');
 const zipFolder = require('zip-folder');
 const slowDown = require("express-slow-down");
+const CurrentDate = require("../utils/currentDate")
+const mongoose = require('mongoose')
+const middleware = require("../middleware/middleware")
+const router = express.Router()
 
-let mongoose = require('mongoose')
 const Exercise = require('../models/exercise')
 const User = require('../models/user')
 const Invite = require("../models/invite")
 const Class = require("../models/class")
 const School = require("../models/school")
 const Solution = require("../models/solution")
-
-const middleware = require("../middleware/middleware")
-const router = express.Router()
 
 router.use(fileUpload({
     createParentPath: true,
@@ -30,8 +30,8 @@ const softLimit = slowDown({
 
 router.get('/api/get/home', softLimit, middleware.auth(), async(req, res) => { //, middleware.cache(900)
     try {
-        var classes = await Class.find({ '_id': { $in: req.session.classes } }).populate("exercises")
-        var data = []
+        const classes = await Class.find({ '_id': { $in: req.session.classes } }).populate("exercises")
+        let data = []
         for (i in classes) {
             for (j in classes[i].exercises) {
                 data.push({
@@ -78,36 +78,36 @@ router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), a
     if (req.body != undefined) {
         if ((req.body.klasse != undefined || req.body.klasse != '' || req.body.klasse.length != 0) && req.body.fach != undefined && req.body.abgabe != undefined && req.body.text != undefined) {
             if (req.session.classNames.includes(req.body.klasse) || req.session.role == "admin") {
-                var userID = req.session._id //'5e8356c961d55a53b0027fd1'
-                var sendClass = await Class.findOne({ name: req.body.klasse });
+                const userID = req.session._id //'5e8356c961d55a53b0027fd1'
+                const sendClass = await Class.findOne({ name: req.body.klasse });
                 if (!sendClass) {
                     return res.json({ status: 404, response: "class not found" })
                 }
-                var uid = new mongoose.Types.ObjectId();
+                const uid = new mongoose.Types.ObjectId();
+                let files;
                 if (!req.files || Object.keys(req.files).length === 0) {
                     console.log("No files uploaded")
-                    var files = { count: 0 }
+                    files = { count: 0 }
                 } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
                     console.log("One file uploaded")
                     let photo = req.files.data;
-                    var type = photo.name.split('.').pop();
-                    var file_id = uid + "." + type;
+                    let type = photo.name.split('.').pop();
+                    let file_id = uid + "." + type;
                     photo.mv('./files/' + file_id, function(err) {
                         if (err) throw err;
                         console.log("File " + file_id + " moved")
                     })
                     console.log(req.body.filename)
                     console.log((req.body.filename == undefined || req.body.filename === "" || req.body.filename.length == 0 || req.body.filename == null))
-                    var files = {
+                    files = {
                         count: 1,
                         type: type,
                         fileName: (req.body.filename == undefined || req.body.filename === "" || req.body.filename.length == 0 || req.body.filename == null) ? req.body.fach + "Aufgabe" : req.body.filename,
                         fileUrl: "https://zgk.mxis.ch/api/v1/download/" + file_id
                     }
                 } else {
-                    var count = req.files.data.length;
+                    let count = req.files.data.length;
                     console.log(count + " files uploaded")
-                    var files = [];
                     _.forEach(_.keysIn(req.files.data), (key) => {
                         let file = req.files.data[key];
 
@@ -124,14 +124,14 @@ router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), a
                             console.log('All files Zipped up: ' + uid + '.zip');
                         }
                     });
-                    var files = {
+                    files = {
                         count: count,
                         type: 'zip',
                         fileName: (req.body.filename == undefined || req.body.filename === "" || req.body.filename.length == 0 || req.body.filename == null) ? req.body.fach + "Aufgabe" : req.body.filename,
                         fileUrl: "https://zgk.mxis.ch/api/v1/download/" + uid + '.zip'
                     }
                 }
-                var query = {
+                const query = {
                     _id: uid,
                     user: userID,
                     text: req.body.text,
@@ -144,7 +144,7 @@ router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), a
                     downloads: 0
                 }
                 try {
-                    let exercise = new Exercise(query)
+                    const exercise = new Exercise(query)
                     exercise.save(async function(err, doc) {
                         if (err) {
                             console.log(err)
@@ -166,7 +166,7 @@ router.post('/api/new/exercise', softLimit, middleware.auth({ lehrer: true }), a
                             console.log(doc)
                             middleware.setIsNew(true)
                             middleware.resetCache(doc.class)
-                            var user = await User.findOne({ _id: userID })
+                            const user = await User.findOne({ _id: userID })
                             if (user.exercises == undefined || user.exercises == null) {
                                 user.exercises = [doc._id]
                             } else {
@@ -282,18 +282,18 @@ router.get('/register', softLimit, async(req, res) => {
         res.render('inviteError.ejs', { message: 'Um einen Account zu erstellen, brauchst du zur Zeit einen Invite Link. Sende uns eine Mail für weitere Infos: zgk@mxis.ch' })
     } else if (req.query.token != undefined) {
         try {
-            var invite = await Invite.checkToken(req.query.token)
-                //console.log(invite)
+            const invite = await Invite.checkToken(req.query.token)
+            let roleString
             switch (invite.role) {
                 case 'admin':
-                    var roleString = 'Admin';
+                    roleString = 'Admin';
                     break;
                 case 'teacher':
                 case 'lehrer':
-                    var roleString = 'Lehrer';
+                    roleString = 'Lehrer';
                     break;
                 default:
-                    var roleString = 'Schüler';
+                    roleString = 'Schüler';
             }
             res.render('register.ejs', { inviteUrl: invite.inviteUrl, token: invite.token, used: invite.used.count, max: invite.used.max, klasse: invite.class.name, name: invite.name, role: invite.role, roleString: roleString, type: invite.type })
         } catch (error) {
@@ -319,21 +319,22 @@ router.get('/api/get/solutions', softLimit, middleware.auth(), async(req, res) =
     if (req.query != undefined) {
         if (req.query.id != undefined) {
             try {
-                var exercise = await Exercise.findOne({ _id: req.query.id })
+                const exercise = await Exercise.findOne({ _id: req.query.id })
                 if (req.session.classes.includes(String(exercise.class))) {
                     try {
+                        let solutions;
                         if (req.session.role == "teacher" || req.session.role == "admin") {
                             if (exercise.user == req.session._id || req.session.role == "admin") {
-                                var solutions = await Solution.find({ exercise: exercise._id }).populate("user", "name")
+                                solutions = await Solution.find({ exercise: exercise._id }).populate("user", "name")
                             } else {
                                 console.log("Fehler: Die Aufgabe gehört " + req.session.name + " nicht")
                                 res.json({ status: 404, response: "keine lösungen gefunden" })
                             }
                         } else {
-                            var solutions = await Solution.findOne({ user: req.session._id, exercise: exercise._id })
+                            solutions = await Solution.findOne({ user: req.session._id, exercise: exercise._id })
                         }
                         if (solutions) {
-                            var data = []
+                            let data = []
                             for (i in solutions.versions) {
                                 data.push(solutions.versions[i])
                             }
@@ -388,12 +389,11 @@ router.get('/api/get/table', softLimit, middleware.auth({ lehrer: true }), async
     if (req.query != undefined) {
         if (req.query.id != undefined) {
             try {
-                var exercise = await Exercise.findOne({ _id: req.query.id })
+                const exercise = await Exercise.findOne({ _id: req.query.id })
                 if (req.session.classes.includes(String(exercise.class))) {
                     try {
                         if (exercise.user == req.session._id || req.session.role == "admin") {
-                            //var solutions = await Solution.find({ exercise: exercise._id }).populate("user")
-                            var klasse = await Class.find({ _id: exercise.class }).populate({
+                            const klasse = await Class.find({ _id: exercise.class }).populate({
                                 path: 'users',
                                 select: 'name role solutions',
                                 populate: {
@@ -402,7 +402,7 @@ router.get('/api/get/table', softLimit, middleware.auth({ lehrer: true }), async
                                     select: 'exercise createdAt',
                                 }
                             })
-                            var data = []
+                            let data = []
                             for (i in klasse) {
                                 for (j in klasse[i].users) {
                                     if (klasse[i].users[j].role == "user") {
@@ -481,13 +481,14 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
     if (req.body != undefined) {
         if (req.body.id != undefined) {
             try {
-                var exercise = await Exercise.findOne({ _id: req.body.id }).populate("solutions");
+                const exercise = await Exercise.findOne({ _id: req.body.id }).populate("solutions");
                 if (req.session.classes.includes(String(exercise.class))) {
-                    var solution = await Solution.findOne({ exercise: exercise._id, user: req.session._id })
+                    const solution = await Solution.findOne({ exercise: exercise._id, user: req.session._id })
                     if (solution) {
-                        var uid = new mongoose.Types.ObjectId();
-                        var today = new Date();
-                        var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2) + "-" + ("0" + today.getSeconds()).slice(-2);
+                        let uid = new mongoose.Types.ObjectId();
+                        let today = new Date();
+                        let date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2) + "-" + ("0" + today.getSeconds()).slice(-2);
+                        let files;
                         if (!req.files || Object.keys(req.files).length === 0) {
                             console.log("Fehler: Keine Datei hochgeladen")
                             res.json({
@@ -497,9 +498,9 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                         } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
                             console.log("One file uploaded")
                             let photo = req.files.data;
-                            var type = photo.name.split('.').pop();
-                            var file_id = uid + "." + type;
-                            var files = {
+                            let type = photo.name.split('.').pop();
+                            let file_id = uid + "." + type;
+                            files = {
                                 count: 1,
                                 type: type,
                                 fileName: req.session.name.replace(/\s/g, "") + "-" + date
@@ -510,9 +511,8 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                 })
                                 //console.log(req.body.filename)
                         } else {
-                            var count = req.files.data.length;
+                            let count = req.files.data.length;
                             console.log(count + " files uploaded")
-                            var files = [];
                             _.forEach(_.keysIn(req.files.data), (key) => {
                                 let file = req.files.data[key];
 
@@ -522,7 +522,7 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                     console.log("File " + file.name + " moved")
                                 })
                             });
-                            var files = {
+                            files = {
                                 count: count,
                                 type: 'zip',
                                 fileName: req.session.name.replace(/\s/g, "") + "-" + date
@@ -574,10 +574,10 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                         });
 
                     } else {
-                        //console.log(false)
-                        var uid = new mongoose.Types.ObjectId();
-                        var today = new Date();
-                        var date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2) + "-" + ("0" + today.getSeconds()).slice(-2);
+                        let uid = new mongoose.Types.ObjectId();
+                        let today = new Date();
+                        let date = today.getFullYear() + "-" + ("0" + (today.getMonth() + 1)).slice(-2) + "-" + ("0" + today.getDate()).slice(-2) + "_" + ("0" + today.getHours()).slice(-2) + "-" + ("0" + today.getMinutes()).slice(-2) + "-" + ("0" + today.getSeconds()).slice(-2);
+                        let files;
                         if (!req.files || Object.keys(req.files).length === 0) {
                             console.log("Fehler: Keine Datei hochgeladen")
                             res.json({
@@ -587,9 +587,9 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                         } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
                             console.log("One file uploaded")
                             let photo = req.files.data;
-                            var type = photo.name.split('.').pop();
-                            var file_id = uid + "." + type;
-                            var files = {
+                            let type = photo.name.split('.').pop();
+                            let file_id = uid + "." + type;
+                            files = {
                                 count: 1,
                                 type: type,
                                 fileName: req.session.name.replace(/\s/g, "") + "-" + date
@@ -600,9 +600,8 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                 })
                                 //console.log(req.body.filename)
                         } else {
-                            var count = req.files.data.length;
+                            let count = req.files.data.length;
                             console.log(count + " files uploaded")
-                            var files = [];
                             _.forEach(_.keysIn(req.files.data), (key) => {
                                 let file = req.files.data[key];
 
@@ -612,7 +611,7 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                     console.log("File " + file.name + " moved")
                                 })
                             });
-                            var files = {
+                            files = {
                                 count: count,
                                 type: 'zip',
                                 fileName: req.session.name.replace(/\s/g, "") + "-" + date
@@ -625,7 +624,7 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                 }
                             });
                         }
-                        var query = {
+                        const query = {
                             _id: uid,
                             user: req.session._id,
                             exercise: exercise._id,
@@ -645,7 +644,7 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                             createdAt: CurrentDate()
                         }
                         try {
-                            let solution = new Solution(query)
+                            const solution = new Solution(query)
                             solution.save(async function(err, doc) {
                                 if (err) {
                                     console.log(err)
@@ -655,7 +654,7 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                     });
 
                                 } else {
-                                    var user = await User.findOne({ _id: req.session._id })
+                                    const user = await User.findOne({ _id: req.session._id })
                                     if (user.solutions == undefined || user.solutions == null) {
                                         user.solutions = [doc._id]
                                     } else {
@@ -676,7 +675,6 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
                                             console.error(err);
                                         }
                                     });
-                                    //console.log(doc)
                                     console.log("Lösung hinzugefügt als: " + doc._id)
                                     res.json({
                                         status: '200',
@@ -762,18 +760,6 @@ router.post('/api/admin/', softLimit, middleware.auth({ admin: true }), async(re
         });
     }
 });
-
-function CurrentDate() {
-    let date_ob = new Date();
-    let date = ("0" + date_ob.getDate()).slice(-2);
-    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    let year = date_ob.getFullYear();
-    let hours = date_ob.getHours();
-    let minutes = date_ob.getMinutes();
-    let seconds = date_ob.getSeconds();
-    var current_date = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
-    return current_date;
-}
 
 String.prototype.isLowerCase = function() {
     return this.valueOf().toLowerCase() === this.valueOf();

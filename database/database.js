@@ -1,17 +1,16 @@
-let mongoose = require('mongoose');
-var password = process.env.DB
+const mongoose = require('mongoose');
 
 const server = '127.0.0.1:27017';
-const database = 'zgkDev'; // REPLACE WITH MongDB DB NAME
+const database = process.env.DB_NAME;
 const options = {
-    user:"zgk",
-    pass: password,
+    user: process.env.DB_USERNAME,
+    pass: process.env.DB_PASSWORD,
     keepAlive: true,
     keepAliveInitialDelay: 300000,
     useNewUrlParser: true,
     useUnifiedTopology: true
 };
-var url = `mongodb://${server}/${database}?authSource=zgkDev`
+const url = `mongodb://${server}/${database}?authSource=${process.env.DB_AUTH}`
 
 module.exports.connect = function() {
 

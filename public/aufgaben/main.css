@@ -63,7 +63,6 @@ body {
     font-family: "Roboto", sans-serif;
     color: var(--font-color);
     background-color: var(--bg-color);
-    overflow: hidden;
 }
 
 .topnav {

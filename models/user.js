@@ -1,12 +1,12 @@
-let mongoose = require('mongoose')
+const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-const crypto = require('crypto');
 const generate = require('nanoid/generate')
+const CurrentDate = require("../utils/currentDate")
+const hashEmailAddress = require("../utils/hashEmailAddress")
+const Schema = mongoose.Schema;
+const salt = process.env.SALT
 
-var Schema = mongoose.Schema;
-var salt = process.env.SALT
-
-let userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     _id: Schema.Types.ObjectId,
     classes: [{ 
         type: Schema.Types.ObjectId, 
@@ -85,7 +85,7 @@ userSchema.pre('remove', async function(next) {
 });
 
 userSchema.statics.changePassword = async function(_id, password) {
-    var user = await User.findOne({ _id })
+    const user = await User.findOne({ _id })
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
@@ -100,7 +100,7 @@ userSchema.statics.changePassword = async function(_id, password) {
 }
 
 userSchema.statics.logLogin = async function(_id) {
-    var user = await User.findOne({ _id })
+    const user = await User.findOne({ _id })
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
@@ -114,11 +114,11 @@ userSchema.statics.logLogin = async function(_id) {
 }
 
 userSchema.statics.generateBotKey = async function(_id) {
-    var user = await User.findOne({ _id })
+    const user = await User.findOne({ _id })
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
-    var botKey = generate('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ', 8)
+    const botKey = generate('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ', 8)
     user.botKey = botKey;
     user.save(function(err) {
         if (err) {
@@ -129,11 +129,11 @@ userSchema.statics.generateBotKey = async function(_id) {
 }
 
 userSchema.statics.generateResetToken = async function(_id) {
-    var user = await User.findOne({ _id })
+    const user = await User.findOne({ _id })
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
-    var token = generate('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ', 16)
+    const token = generate('123456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ', 16)
     user.resetPasswordToken = token;
     user.resetPasswordExpires = new Date().getTime() + (30 * 60 * 1000)
     console.log(user.resetPasswordExpires)
@@ -147,7 +147,7 @@ userSchema.statics.generateResetToken = async function(_id) {
 }
 
 userSchema.statics.checkLogin = async(email, password) => {
-    var emailHash = hashEmailAddress(email.toLowerCase(), salt)
+    const emailHash = hashEmailAddress(email.toLowerCase(), salt)
     console.log("Email: " + email + " Hash: " + emailHash)
     const user = await User.findOne({ email: emailHash })
     if (!user) {
@@ -174,9 +174,9 @@ userSchema.statics.checkPassword = async(_id, password) => {
 
 userSchema.statics.findByOneEmail = async(email) => {
     console.log("Email: " + email)
-    var emailHash = hashEmailAddress(email.toLowerCase(), salt)
+    const emailHash = hashEmailAddress(email.toLowerCase(), salt)
     console.log(emailHash)
-    var user = await User.findOne({ email: emailHash }).populate('classes school', 'name')
+    const user = await User.findOne({ email: emailHash }).populate('classes school', 'name')
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
@@ -184,30 +184,12 @@ userSchema.statics.findByOneEmail = async(email) => {
 }
 
 userSchema.statics.findByEmail = async(email) => {
-    var emailHash = hashEmailAddress(email.toLowerCase(), salt)
-    var user = await User.find({ email: emailHash }).populate('classes school', 'name')
+    const emailHash = hashEmailAddress(email.toLowerCase(), salt)
+    const user = await User.find({ email: emailHash }).populate('classes school', 'name')
     if (!user) {
         throw ({ error: 'No user found', code: 405 })
     }
     return user
-}
-
-function hashEmailAddress(email, salt) {
-    var sum = crypto.createHash('sha256');
-    sum.update(email.toLowerCase() + salt);
-    return sum.digest('hex');
-}
-
-function CurrentDate() {
-    let date_ob = new Date();
-    let date = ("0" + date_ob.getDate()).slice(-2);
-    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    let year = date_ob.getFullYear();
-    let hours = date_ob.getHours();
-    let minutes = date_ob.getMinutes();
-    let seconds = date_ob.getSeconds();
-    var current_date = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
-    return current_date;
 }
 
 const User = mongoose.model('User', userSchema)
