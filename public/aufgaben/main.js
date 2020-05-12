@@ -11,6 +11,8 @@ function checkCookie() {
     return ret;
 }
 
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/service-worker.js'); }
+
 var check = checkCookie();
 console.log(check)
 if (!check) {
