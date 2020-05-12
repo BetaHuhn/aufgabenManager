@@ -9,6 +9,8 @@ function myFunction() {
     }
 }
 
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/service-worker.js'); }
+
 /* Darkmode Support */
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 detectDarkMode()
