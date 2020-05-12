@@ -1,7 +1,8 @@
-let mongoose = require('mongoose')
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const CurrentDate = require("../utils/currentDate")
+const Schema = mongoose.Schema;
 
-let exerciseSchema = new mongoose.Schema({
+const exerciseSchema = new mongoose.Schema({
     _id: Schema.Types.ObjectId,
     user:{
         type:Schema.Types.ObjectId, ref:'User'
@@ -80,7 +81,7 @@ exerciseSchema.pre('deleteOne', async function(next) {
 });
 
 exerciseSchema.statics.increaseDownloads = async function(_id, session) {
-    var exercise = await Exercise.findOne({ _id })
+    const exercise = await Exercise.findOne({ _id })
     exercise.downloads = exercise.downloads + 1;
     if(session){
         exercise.downloadedBy.push({user: session._id, date: CurrentDate()})
@@ -109,18 +110,6 @@ exerciseSchema.statics.removeExercise = async(_id) => {
             console.error(err)
             throw ({ error: err, code: 400 })
         })
-}
-
-function CurrentDate() {
-    let date_ob = new Date();
-    let date = ("0" + date_ob.getDate()).slice(-2);
-    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    let year = date_ob.getFullYear();
-    let hours = date_ob.getHours();
-    let minutes = date_ob.getMinutes();
-    let seconds = date_ob.getSeconds();
-    var current_date = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
-    return current_date;
 }
 
 const Exercise = mongoose.model('Exercise', exerciseSchema)

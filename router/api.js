@@ -3,16 +3,16 @@ const generate = require('nanoid/generate')
 const fileUpload = require('express-fileupload');
 const request = require('request');
 const _ = require('lodash');
-var path = require('path');
-const zipFolder = require('zip-folder');
-var ejs = require("ejs");
-let pdf = require("html-pdf");
-const ObjectId = require('mongoose').Types.ObjectId;
+const path = require('path');
+const ejs = require("ejs");
+const pdf = require("html-pdf");
 const rateLimit = require("express-rate-limit");
+const CurrentDate = require("../utils/currentDate")
+const isObjectIdValid = require("../utils/isObjectIdValid")
 const middleware = require("../middleware/middleware")
 const router = express.Router()
 
-let mongoose = require('mongoose')
+const mongoose = require('mongoose')
 const Exercise = require('../models/exercise')
 const User = require('../models/user')
 const Invite = require("../models/invite")
@@ -43,14 +43,13 @@ const limitApi = rateLimit({
             }
         });
     },
-    draft_polli_ratelimit_headers: true,
     headers: true
 });
 
-var apiKey = process.env.API_KEY
+const apiKey = process.env.API_KEY
 
 router.get('/api/v1/status', async(req, res) => {
-    var url = "https://zgk.statuspage.io/api/v2/summary.json"
+    const url = "https://zgk.statuspage.io/api/v2/summary.json"
     request(url, (err, response, body) => {
         if (err) {
             console.log(err)
@@ -66,14 +65,14 @@ router.get('/api/v1/status', async(req, res) => {
 router.post('/api/v1/create/school', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == 'Start$') {
-            var name = req.body.name;
-            var query = {
+            const name = req.body.name;
+            const query = {
                 _id: new mongoose.Types.ObjectId(),
                 name: name,
                 createdAt: CurrentDate(),
             }
             try {
-                let school = new School(query)
+                const school = new School(query)
                 school.save(async function(err, doc) {
                     if (err) {
                         console.error(err)
@@ -112,19 +111,19 @@ router.post('/api/v1/create/school', limitApi, async(req, res) => {
 router.post('/api/v1/create/class', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == 'Start$') {
-            var name = req.body.name;
-            var school = await School.findOne({ _id: req.body.school });
+            const name = req.body.name;
+            const school = await School.findOne({ _id: req.body.school });
             if (!school) {
                 return res.json({ status: 404, response: "school not found" })
             }
-            var query = {
+            const query = {
                 _id: new mongoose.Types.ObjectId(),
                 name: name,
                 school: school._id,
                 createdAt: CurrentDate(),
             }
             try {
-                let newClass = new Class(query)
+                const newClass = new Class(query)
                 newClass.save(async function(err, doc) {
                     if (err) {
                         console.error(err)
@@ -173,11 +172,11 @@ router.post('/api/v1/create/class', limitApi, async(req, res) => {
 router.post('/api/v1/add/admin', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == 'Start$') {
-            var user = await User.findOne({ _id: req.body.user });
+            const user = await User.findOne({ _id: req.body.user });
             if (!user) {
                 return res.json({ status: 404, response: "user not found" })
             }
-            var school = await School.findOne({ _id: req.body.school });
+            const school = await School.findOne({ _id: req.body.school });
             if (!school) {
                 return res.json({ status: 404, response: "school not found" })
             }
@@ -214,35 +213,34 @@ router.post('/api/v1/add/admin', limitApi, async(req, res) => {
 router.post('/api/v1/create/invite', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == 'Start$') {
-            var sendClass = await Class.findOne({ _id: req.body.class });
+            const sendClass = await Class.findOne({ _id: req.body.class });
             if (!sendClass) {
                 return res.json({ status: 404, response: "class not found" })
             }
-            var role = req.body.role;
+            const role = req.body.role;
+            let roleString;
             switch (role) {
                 case 'admin':
-                    var roleString = 'Admin';
+                    roleString = 'Admin';
                     break;
                 case 'teacher':
                 case 'lehrer':
-                    var roleString = 'Lehrer';
+                    roleString = 'Lehrer';
                     break;
                 default:
-                    var roleString = 'Schüler';
+                    roleString = 'Schüler';
             }
-            //var type = req.body.type;
-            var name = (req.body.name != undefined) ? req.body.name : (sendClass.name + " " + roleString + " Invite Link");
+            const name = (req.body.name != undefined) ? req.body.name : (sendClass.name + " " + roleString + " Invite Link");
             console.log(name)
-            let token = generate('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 32);
-            var inviteUrl = 'https://zgk.mxis.ch/register?token=' + token;
-            var used = {
+            const token = generate('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 32);
+            const inviteUrl = 'https://zgk.mxis.ch/register?token=' + token;
+            const used = {
                 active: true,
                 count: 0,
                 max: req.body.max
             }
-            var query = {
+            const query = {
                 _id: new mongoose.Types.ObjectId(),
-                //type: type,
                 name: name,
                 used: used,
                 class: sendClass._id,
@@ -253,7 +251,7 @@ router.post('/api/v1/create/invite', limitApi, async(req, res) => {
                 createdAt: CurrentDate(),
             }
             try {
-                let invite = new Invite(query)
+                const invite = new Invite(query)
                 invite.save(async function(err, doc) {
                     if (err) {
                         console.error(err)
@@ -314,23 +312,23 @@ router.get('/api/v1/get/invites', limitApi, async(req, res) => {
     if (req.query != undefined) {
         if (req.query.apiKey == apiKey) {
             try {
+                let invite;
                 if (req.query.id != undefined) {
-                    var invite = await Invite.find({ _id: req.query.id })
+                   invite = await Invite.find({ _id: req.query.id })
                 } else if (req.query.token != undefined) {
-                    var invite = await Invite.find({ token: req.query.token })
+                    invite = await Invite.find({ token: req.query.token })
                 } else if (req.query.klasse != undefined) {
-                    var invite = await Invite.find({ class: req.query.class })
+                    invite = await Invite.find({ class: req.query.class })
                 } else if (req.query.role != undefined) {
-                    var invite = await Invite.find({ role: req.query.role })
+                    invite = await Invite.find({ role: req.query.role })
                 } else if (req.query.type != undefined) {
-                    var invite = await Invite.find({ type: req.query.type })
+                    invite = await Invite.find({ type: req.query.type })
                 } else if (req.query.name != undefined) {
-                    var invite = await Invite.find({ name: req.query.name })
+                    invite = await Invite.find({ name: req.query.name })
                 } else {
-                    var invite = await Invite.find()
+                    invite = await Invite.find()
                 }
-                //console.log(invite)
-                var data = []
+                let data = []
                 for (i in invite) {
                     data.push({
                         _id: invite[i]._id,
@@ -376,15 +374,14 @@ router.get('/api/v1/get/invites', limitApi, async(req, res) => {
 
 router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res) => {
     try {
-        var code = req.params.code.split(".")[0];
+        const code = req.params.code.split(".")[0];
         if (isObjectIdValid(code)) {
-            var aufgabe = await Exercise.findOne({ _id: code })
+            const aufgabe = await Exercise.findOne({ _id: code })
             if (!aufgabe) {
                 console.log("File not found")
                 return res.sendStatus(404);
             }
-            var count = await Exercise.increaseDownloads(aufgabe._id, req.session)
-                //console.log(aufgabe)
+            const count = await Exercise.increaseDownloads(aufgabe._id, req.session)
             console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
             res.download(path.join(__dirname, '../files/', aufgabe._id + '.' + aufgabe.files.type), aufgabe.files.fileName + '.' + aufgabe.files.type);
         } else {
@@ -400,13 +397,12 @@ router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res
             res.sendStatus(404);
         }
     }
-    //res.sendFile(path.join(__dirname, '../files/', req.params.code));
 });
 
 router.get('/api/v1/solution/download', limitApi, middleware.auth(), async(req, res) => {
     try {
         console.log(req.session.name + " is getting solutions: " + req.query.id)
-        var solution = await Solution.findOne({ _id: req.query.id }).populate('user', 'name')
+        const solution = await Solution.findOne({ _id: req.query.id }).populate('user', 'name')
         if (!solution) {
             console.log("Fehler: Solution existiert nicht")
             return res.sendStatus(404);
@@ -431,17 +427,17 @@ router.get('/api/v1/solution/download', limitApi, middleware.auth(), async(req, 
             res.sendStatus(404);
         }
     }
-    //res.sendFile(path.join(__dirname, '../files/', req.params.code));
 });
 
 router.post('/api/v1/change/user', limitApi, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey) {
             try {
+                let user;
                 if (req.body.user_id != undefined) {
-                    var user = await User.findOne({ _id: req.body.user_id })
+                    user = await User.findOne({ _id: req.body.user_id })
                 } else if (req.body.email != undefined) {
-                    var user = await User.findByOneEmail(req.body.email)
+                    user = await User.findByOneEmail(req.body.email)
                 } else {
                     return res.json({ status: 400, response: "error" })
                 }
@@ -488,32 +484,26 @@ router.get('/api/v1/get/aufgabe', limitApi, async(req, res) => {
     if (req.query != undefined) {
         if (req.query.apiKey == apiKey) {
             try {
+                let run = true;
                 if (req.query.new != undefined) {
-                    if (req.query.new.toLowerCase() === "true") {
-                        if (middleware.getIsNew() == true) {
-                            var run = true;
-                        } else {
-                            var run = false;
-                        }
-                    } else {
-                        var run = true;
+                    if (req.query.new.toLowerCase() === "true" && middleware.getIsNew() == false) {
+                        let run = false;
                     }
-                } else {
-                    var run = true;
                 }
                 if (run) {
+                    let exercises;
                     if (req.query.id != undefined) {
-                        var exercises = await Exercise.find({ _id: req.query.id }).populate('class school', 'name')
+                        exercises = await Exercise.find({ _id: req.query.id }).populate('class school', 'name')
                     } else if (req.query.user != undefined) {
-                        var exercises = await Exercise.find({ user: req.query.user }).populate('class school', 'name')
+                        exercises = await Exercise.find({ user: req.query.user }).populate('class school', 'name')
                     } else if (req.query.klasse != undefined) {
-                        var exercises = await Exercise.find({ class: req.query.class }).populate('class school', 'name')
+                        exercises = await Exercise.find({ class: req.query.class }).populate('class school', 'name')
                     } else if (req.query.abgabe != undefined) {
-                        var exercises = await Exercise.find({ deadline: req.query.deadline }).populate('class school', 'name')
+                        exercises = await Exercise.find({ deadline: req.query.deadline }).populate('class school', 'name')
                     } else {
-                        var exercises = await Exercise.find().populate('class school', 'name')
+                        exercises = await Exercise.find().populate('class school', 'name')
                     }
-                    var data = []
+                    let data = []
                     for (i in exercises) {
                         data.push({
                             _id: exercises[i]._id, //Update Bot API to use new key names
@@ -569,19 +559,19 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
     if (req.query != undefined) {
         if (req.query.apiKey == apiKey) {
             try {
+                let user;
                 if (req.query.id != undefined) {
-                    var user = await User.find({ _id: req.query.id }).populate('classes school', 'name')
+                    user = await User.find({ _id: req.query.id }).populate('classes school', 'name')
                 } else if (req.query.klasse != undefined) {
-                    var user = await User.find({ class: req.query.class }).populate('classes school', 'name')
+                    user = await User.find({ class: req.query.class }).populate('classes school', 'name')
                 } else if (req.query.email != undefined) {
-                    var user = await User.findByEmail(req.query.email)
+                    user = await User.findByEmail(req.query.email)
                 } else if (req.query.role != undefined) {
-                    var user = await User.find({ role: req.query.role }).populate('classes school', 'name')
+                    user = await User.find({ role: req.query.role }).populate('classes school', 'name')
                 } else {
-                    var user = await User.find().populate('classes school', 'name')
+                    user = await User.find().populate('classes school', 'name')
                 }
-                //console.log(user)
-                var data = []
+                let data = []
                 for (i in user) {
                     data.push({
                         _id: user[i]._id,
@@ -628,7 +618,7 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
 
 router.get('/t/:token', limitApi, async(req, res) => {
     try {
-        var user = await User.findOne({ botKey: req.params.token })
+        const user = await User.findOne({ botKey: req.params.token })
         if (!user) {
             console.log("no user with botkey: " + req.params.token)
             return res.sendStatus(404)
@@ -646,9 +636,9 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
         if (req.query.apiKey == apiKey) {
             if (req.query.email) {
                 try {
-                    var user = await User.findByOneEmail(req.query.email)
+                    const user = await User.findByOneEmail(req.query.email)
                     try {
-                        var botKey = await User.generateBotKey(user._id)
+                        let botKey = await User.generateBotKey(user._id)
                     } catch (error) {
                         if (error.code == 405) {
                             console.log("User not found - botkey")
@@ -679,7 +669,7 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
                 }
             } else if (req.query.token) {
                 try {
-                    var user = await User.findOne({ botKey: req.query.token }).populate('classes school', 'name')
+                    const user = await User.findOne({ botKey: req.query.token }).populate('classes school', 'name')
                     if (!user) {
                         console.log("no user with botkey: " + req.query.token)
                         return res.json({
@@ -711,164 +701,6 @@ router.get('/api/v1/verify', limitApi, async(req, res) => {
                 res.json({
                     status: '405',
                     response: 'kein parameter gesendet'
-                });
-            }
-        } else {
-            res.json({
-                status: '401',
-                response: "nicht autorisiert"
-            });
-        }
-    } else {
-        res.json({
-            status: '400',
-            response: 'kein api key gesendet'
-        });
-    }
-});
-
-router.post('/api/v1/create/exercise', limitApi, async(req, res) => {
-    if (req.body != undefined) {
-        if (req.body.apiKey == apiKey) {
-            var uClass = await Class.findOne({ _id: req.body.class })
-            var user = await User.findOne({ _id: req.body.user })
-                //console.log(user)
-            if (uClass == undefined || user == undefined) {
-                console.log("Fehler: User oder Class nicht gefunden")
-                return res.json({ status: 404 })
-            }
-            return res.json({ status: 400, response: "currently in developement" })
-            console.log(req)
-            console.log(req.files)
-            var uid = new mongoose.Types.ObjectId();
-            if (!req.files || Object.keys(req.files).length === 0) {
-                console.log("No files uploaded")
-                var files = { count: 0 }
-                return
-            } else if (req.files.data.length == undefined || req.files.data.length <= 1) {
-                console.log("One file uploaded")
-                let photo = req.files.data;
-                var type = photo.name.split('.').pop();
-                var file_id = uid + "." + type;
-                photo.mv('./files/' + file_id, function(err) {
-                    if (err) throw err;
-                    console.log("File " + file_id + " moved")
-                })
-                console.log(req.body.filename)
-                console.log((req.body.filename == undefined || req.body.filename === "" || req.body.filename.length == 0 || req.body.filename == null))
-                var files = {
-                    count: 1,
-                    type: type,
-                    fileName: (req.body.filename == undefined || req.body.filename === "" || req.body.filename.length == 0 || req.body.filename == null) ? req.body.fach + "Exercise" : req.body.filename,
-                    fileUrl: "https://zgk.mxis.ch/api/v1/download/" + file_id
-                }
-            } else {
-                var count = req.files.data.length;
-                console.log(count + " files uploaded")
-                var files = [];
-                _.forEach(_.keysIn(req.files.data), (key) => {
-                    let file = req.files.data[key];
-
-                    //move photo to uploads directory
-                    file.mv('./files/uploads/' + uid + "/" + file.name, function(err) {
-                        if (err) throw err;
-                        console.log("File " + file.name + " moved")
-                    })
-                });
-                zipFolder('./files/uploads/' + uid + '/', './files/' + uid + ".zip", function(err) {
-                    if (err) {
-                        console.log('oh no!', err);
-                    } else {
-                        console.log('All files Zipped up: ' + uid + '.zip');
-                    }
-                });
-                var files = {
-                    count: count,
-                    type: 'zip',
-                    fileName: (req.body.filename == undefined || req.body.filename === "" || req.body.filename.length == 0 || req.body.filename == null) ? req.body.fach + "Exercise" : req.body.filename,
-                    fileUrl: "https://zgk.mxis.ch/api/v1/download/" + uid + '.zip'
-                }
-            }
-            return
-            var query = {
-                _id: uid,
-                user: user._id,
-                text: req.body.text,
-                subject: req.body.subject,
-                deadline: new Date(req.body.deadline),
-                files: files,
-                class: uClass._id,
-                school: uClass.school,
-                createdAt: CurrentDate(),
-                downloads: 0
-            }
-            try {
-                let exercise = new Exercise(query)
-                exercise.save(async function(err, doc) {
-                    if (err) {
-                        console.log(err)
-                        if (err.code == 11000) {
-                            console.log("Exercise already in use")
-                            console.log(err)
-                            res.json({
-                                status: '407',
-                                response: "aufgabe already in use"
-                            });
-                        } else {
-                            console.error(err)
-                            res.json({
-                                status: '400',
-                                type: 'error'
-                            });
-                        }
-                    } else {
-                        console.log(doc)
-                        console.log("Exercise added as: " + uid)
-                        if (user.exercises == undefined || user.exercises == null) {
-                            user.exercises = [doc._id]
-                        } else {
-                            user.exercises.push(doc._id)
-                        }
-                        user.save(function(err) {
-                            if (err) {
-                                console.error(err);
-                            }
-                        });
-                        if (uClass.exercises == undefined || uClass.exercises == null) {
-                            uClass.exercises = [doc._id]
-                        } else {
-                            uClass.exercises.push(doc._id)
-                        }
-                        uClass.save(function(err) {
-                            if (err) {
-                                console.error(err);
-                            }
-                        });
-                        console.log("Exercise added to class: " + uClass._id + " and user: " + user._id)
-                        res.json({
-                            status: '200',
-                            response: "success",
-                            type: 'data',
-                            data: {
-                                _id: doc._id,
-                                text: doc.text,
-                                subject: doc.subject,
-                                deadline: doc.deadline,
-                                class: doc.class,
-                                school: doc.school,
-                                user: doc.user,
-                                files: doc.files,
-                                createdAt: doc.createdAt,
-                                downloads: doc.downloads
-                            }
-                        });
-                    }
-                })
-            } catch (error) {
-                console.log(error)
-                res.json({
-                    status: '400',
-                    type: 'error'
                 });
             }
         } else {
@@ -930,9 +762,9 @@ router.post('/api/v1/delete/aufgabe', limitApi, middleware.auth(), async(req, re
 });
 
 router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), async(req, res) => {
-    var id = req.query.id;
+    const id = req.query.id;
     console.log("Generating PDF for Exercise: " + req.query.id)
-    var exercise = await Exercise.findOne({ _id: id }).populate({
+    const exercise = await Exercise.findOne({ _id: id }).populate({
             path: 'class',
             select: 'name users',
             populate: {
@@ -945,12 +777,11 @@ router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), 
                 }
             }
         })
-        //console.log(exercise.class)
-    var students = []
+    let students = []
     for (i in exercise.class.users) {
         if (exercise.class.users[i].role == "user") {
             if (exercise.class.users[i].solutions.length >= 1) {
-                var datum = new Date(exercise.class.users[i].solutions[0].createdAt)
+                let datum = new Date(exercise.class.users[i].solutions[0].createdAt)
                 datum = ("0" + datum.getDate()).slice(-2) + "." + ("0" + (datum.getMonth() + 1)).slice(-2) + "." + datum.getFullYear() + ", " + ("0" + datum.getHours()).slice(-2) + ":" + ("0" + datum.getMinutes()).slice(-2);
                 students.push({
                     name: exercise.class.users[i].name,
@@ -968,17 +799,16 @@ router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), 
             }
         }
     }
-    var abgabe = new Date(exercise.deadline)
+    let abgabe = new Date(exercise.deadline)
     abgabe = ("0" + abgabe.getDate()).slice(-2) + "." + ("0" + (abgabe.getMonth() + 1)).slice(-2) + "." + abgabe.getFullYear();
-    var today = new Date()
+    let today = new Date()
     today = ("0" + today.getDate()).slice(-2) + "." + ("0" + (today.getMonth() + 1)).slice(-2) + "." + today.getFullYear() + ", " + ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2);
-
     ejs.renderFile(path.join(__dirname, '../views/', "pdfTemplate.ejs"), { link: "https://zgk.mxis.ch/aufgabe?id=" + exercise._id, createdAt: today, fach: exercise.subject, text: exercise.text, abgabe: abgabe, klasse: String(exercise.class.name), students: students }, (err, data) => {
         if (err) {
             console.log(err);
             res.send("error")
         } else {
-            let options = {
+            const options = {
                 "height": "11.25in",
                 "width": "8.5in",
                 "header": {
@@ -1001,19 +831,17 @@ router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), 
 })
 
 router.post('/api/v1/add/users/', limitApi, async(req, res) => {
-    /*await User.updateMany({}, { $set: { exercises: [], solutions: [] } })
-    return res.json({ status: 200 })*/
     if (req.body != undefined) {
         if (req.body.apiKey == apiKey && req.body.password == "Start$") {
             console.log("Parsing users...")
             try {
-                var uClass = await Class.findOne({ _id: req.body.class })
-                var users = []
-                var ids = []
+                const uClass = await Class.findOne({ _id: req.body.class })
+                let users = []
+                let ids = []
                 for (i in req.body.data) {
-                    var user = req.body.data[i];
+                    const user = req.body.data[i];
                     console.log("Creating user: user.name")
-                    var nUser = {
+                    const nUser = {
                         _id: new mongoose.Types.ObjectId(),
                         email: user.email,
                         name: user.name,
@@ -1025,7 +853,6 @@ router.post('/api/v1/add/users/', limitApi, async(req, res) => {
                         invite: req.body.invite,
                         role: user.role
                     };
-                    //console.log(nUser)
                     users.push(nUser);
                     ids.push(nUser._id)
                 }
@@ -1070,39 +897,6 @@ router.post('/api/v1/add/users/', limitApi, async(req, res) => {
         });
     }
 });
-
-router.get('/api/v1/test', limitApi, async(req, res) => {
-    res.json({ status: 200, response: "Guten Tag" })
-});
-
-router.post('/api/v1/test', limitApi, async(req, res) => {
-    console.log(req.body)
-    res.json({ status: 200, response: "Guten Tag", data: req.body })
-});
-
-function CurrentDate() {
-    let date_ob = new Date();
-    let date = ("0" + date_ob.getDate()).slice(-2);
-    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    let year = date_ob.getFullYear();
-    let hours = date_ob.getHours();
-    let minutes = date_ob.getMinutes();
-    let seconds = date_ob.getSeconds();
-    var current_date = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
-    return current_date;
-}
-
-function isObjectIdValid(id) {
-    if (ObjectId.isValid(id)) {
-        if (String(new ObjectId(id)) === id) {
-            return true
-        } else {
-            return false
-        }
-    } else {
-        return false
-    }
-}
 
 String.prototype.isLowerCase = function() {
     return this.valueOf().toLowerCase() === this.valueOf();

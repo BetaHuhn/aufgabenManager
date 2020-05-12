@@ -1,7 +1,7 @@
-let mongoose = require('mongoose')
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema;
 
-let inviteSchema = new mongoose.Schema({
+const inviteSchema = new mongoose.Schema({
     _id: Schema.Types.ObjectId,
     class:{
         type:Schema.Types.ObjectId, ref:'Class'
@@ -50,7 +50,7 @@ let inviteSchema = new mongoose.Schema({
 })
 
 inviteSchema.statics.checkToken = async(token) => {
-    var invite = await Invite.findOne({ token }).populate('class', 'name')
+    const invite = await Invite.findOne({ token }).populate('class', 'name')
     if (!invite) {
         throw ({ error: 'No invite found', code: 405 })
     }
@@ -72,7 +72,7 @@ inviteSchema.statics.checkToken = async(token) => {
 }
 
 inviteSchema.statics.increaseUsed = async function(_id) {
-    var invite = await Invite.findOne({ _id })
+    const invite = await Invite.findOne({ _id })
     invite.used.count = invite.used.count + 1;
     invite.save(function(err) {
         if (err) {

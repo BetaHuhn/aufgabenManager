@@ -1,23 +1,21 @@
 const express = require('express')
-const crypto = require('crypto')
 const generate = require('nanoid/generate')
 const nodemailer = require('nodemailer')
 const ejs = require("ejs");
 const customRateLimit = require("../middleware/limiter");
 const slowDown = require("express-slow-down");
-
-const router = express.Router()
+const CurrentDate = require("../utils/currentDate")
+const validEmail = require("../utils/validEmail")
 const middleware = require("../middleware/middleware")
+const mongoose = require('mongoose')
+const router = express.Router()
 
-let mongoose = require('mongoose')
 const Exercise = require('../models/exercise')
 const User = require('../models/user')
 const Invite = require("../models/invite")
 const Class = require("../models/class")
-const School = require("../models/school")
-const Solution = require("../models/solution")
 
-let transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
     host: 'mail.privateemail.com',
     port: 465,
     secure: true,
@@ -50,7 +48,6 @@ const limitLogin = customRateLimit({
             }
         });
     },
-    draft_polli_ratelimit_headers: true,
     headers: true
 });
 
@@ -63,10 +60,10 @@ const softLimit = slowDown({
 
 router.post('/auth/login', limitLogin, async(req, res) => {
     try {
-        var user = await User.checkLogin(req.body.email, req.body.password)
+        let user = await User.checkLogin(req.body.email, req.body.password)
         console.log("Login: " + user.name + " success")
-        user = await User.logLogin(user._id)
-        var user = await User.findOne({ _id: user._id }).populate("classes", "name")
+        await User.logLogin(user._id)
+        user = await User.findOne({ _id: user._id }).populate("classes", "name")
         req.session.role = user.role;
         req.session.name = user.name;
         req.session.user_id = user._id;
@@ -101,16 +98,16 @@ router.post('/auth/login', limitLogin, async(req, res) => {
 })
 
 router.post('/auth/register', limitLogin, async(req, res) => {
-    var email = req.body.email.toLowerCase()
-    var password = req.body.password;
-    var name = req.body.name;
+    const email = req.body.email.toLowerCase()
+    const password = req.body.password;
+    const name = req.body.name;
     try {
-        var invite = await Invite.checkToken(req.body.token)
-            //console.log(invite)
+        const invite = await Invite.checkToken(req.body.token)
+        let ref;
         if (!req.body.ref) {
-            var ref = "/"
+            ref = "/"
         } else {
-            var ref = "/" + req.body.ref;
+            ref = "/" + req.body.ref;
         }
         if (email.length < 1 || name.length < 1) {
             console.log("Not every field filled out");
@@ -139,12 +136,12 @@ router.post('/auth/register', limitLogin, async(req, res) => {
                     status: '407'
                 });
             } else {
-                var sendClass = await Class.findOne({ _id: invite.class });
+                const sendClass = await Class.findOne({ _id: invite.class });
                 if (!sendClass) {
                     return res.status(403).json({ status: 404, response: "class not found" })
                 }
                 console.log("Name: " + email + " is using Invite: " + invite._id + " with role: " + invite.role)
-                var query = {
+                const query = {
                     _id: new mongoose.Types.ObjectId(),
                     email: email,
                     name: name,
@@ -182,7 +179,7 @@ router.post('/auth/register', limitLogin, async(req, res) => {
                                     });
                                 } else {
                                     console.log(user.name + " has been registered as " + user._id)
-                                    var count = await Invite.increaseUsed(invite._id)
+                                    let count = await Invite.increaseUsed(invite._id)
                                     req.session.role = user.role;
                                     req.session.name = user.name;
                                     req.session.user_id = user._id;
@@ -243,11 +240,10 @@ router.post('/auth/register', limitLogin, async(req, res) => {
 })
 
 router.post('/api/auth/change/password', limitLogin, middleware.auth(), async(req, res) => {
-    //console.log(req.session)
     if (req.body != undefined) {
         if (req.body.oldPassword != undefined && req.body.newPassword != undefined) {
             try {
-                var user = await User.checkPassword(req.session.user_id, req.body.oldPassword)
+                let user = await User.checkPassword(req.session.user_id, req.body.oldPassword)
                 console.log(user.name + " is trying to change their password")
                 if (/\s/.test(req.body.newPassword)) {
                     console.log("Password has whitespace");
@@ -266,7 +262,7 @@ router.post('/api/auth/change/password', limitLogin, middleware.auth(), async(re
                     });
                 } else if (req.body.newPassword.length >= 0) {
                     try {
-                        var user = await User.changePassword(req.session._id, req.body.newPassword)
+                        user = await User.changePassword(req.session._id, req.body.newPassword)
                         if (!user) {
                             console.log(user)
                             return res.status(400).json({
@@ -343,7 +339,7 @@ router.get('/reset', softLimit, async(req, res) => {
     if (req.query != undefined) {
         if (req.query.token != undefined) {
             try {
-                var user = await User.findOne({ resetPasswordToken: req.query.token })
+                const user = await User.findOne({ resetPasswordToken: req.query.token })
                 if (!user) {
                     console.log("user not found")
                     return res.sendStatus(404)
@@ -377,11 +373,11 @@ router.post('/api/auth/reset/password/request', softLimit, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.email != undefined) {
             try {
-                var user = await User.findByOneEmail(req.body.email)
+                const user = await User.findByOneEmail(req.body.email)
                 console.log(user.name + " is requesting to reset their password")
-                var token = await User.generateResetToken(user._id)
-                var vorname = user.name.split(' ')[0]
-                var data = await ejs.renderFile('./views/verifyMail.ejs', { name: vorname, token: token });
+                const token = await User.generateResetToken(user._id)
+                const vorname = user.name.split(' ')[0]
+                const data = await ejs.renderFile('./views/verifyMail.ejs', { name: vorname, token: token });
                 const mailOptions = {
                     from: `"ZGK Mailer" zgk@mxis.ch`,
                     replyTo: 'zgk@mxis.ch',
@@ -444,7 +440,7 @@ router.post('/api/auth/reset/password', limitLogin, async(req, res) => {
     if (req.body != undefined) {
         if (req.body.token != undefined && req.body.password != undefined) {
             try {
-                var user = await User.findOne({ resetPasswordToken: req.body.token })
+                let user = await User.findOne({ resetPasswordToken: req.body.token })
                 if (user.resetPasswordExpires < (new Date().getTime())) {
                     console.log("token expired")
                     return res.status(403).json({
@@ -470,7 +466,7 @@ router.post('/api/auth/reset/password', limitLogin, async(req, res) => {
                     });
                 } else if (req.body.password.length >= 0) {
                     try {
-                        var user = await User.changePassword(user._id, req.body.password)
+                        user = await User.changePassword(user._id, req.body.password)
                         if (!user) {
                             console.log(user)
                             return res.status(400).json({
@@ -537,7 +533,7 @@ router.post('/api/auth/reset/password', limitLogin, async(req, res) => {
 
 router.post('/auth/check/invite', softLimit, async(req, res) => {
     try {
-        var invite = await Invite.checkToken(req.body.token)
+        const invite = await Invite.checkToken(req.body.token)
         res.json({
             status: 200,
             response: "success",
@@ -590,26 +586,6 @@ router.get('/api/auth/', softLimit, middleware.auth(), async(req, res) => {
     })
 })
 
-/*
-router.get('/api/hash/emails', async(req, res) => {
-    console.log("Starting hashing...")
-    const users = await User.find()
-    console.log(users)
-    console.log("Starting hashing...")
-    for(i in users){
-        console.log("Hashing: " + users[i].email)
-        var emailHash = hashEmailAddress(users[i].email, salt)
-        console.log("Hash: " + emailHash)
-        await User.findOneAndUpdate({_id: users[i]._id}, {$set: {email: emailHash}})
-    }
-    console.log("done")
-    console.log(users)
-    res.json({
-        status: 200, 
-        response: "success"
-    })
-})*/
-
 router.get('/api/auth/admin', softLimit, middleware.auth({ admin: true }), async(req, res) => {
     console.log(req.session.name + " visited /admin")
     res.json({
@@ -638,11 +614,12 @@ router.get('/api/auth/new', softLimit, middleware.auth({ lehrer: true }), async(
 router.get('/api/auth/account', softLimit, middleware.auth(), async(req, res) => {
     console.log(req.session.name + " visited /account")
     try {
-        var user = await User.findOne({ _id: req.session._id }).populate('classes', 'name')
+        const user = await User.findOne({ _id: req.session._id }).populate('classes', 'name')
+        let botKey;
         if (user.botKey == undefined) {
-            var botKey = await User.generateBotKey(req.session._id);
+            botKey = await User.generateBotKey(req.session._id);
         } else {
-            var botKey = user.botKey;
+            botKey = user.botKey;
         }
         res.json({
             status: 200,
@@ -670,13 +647,11 @@ router.get('/api/auth/exercise', softLimit, middleware.auth(), async(req, res) =
     if (req.query != undefined) {
         if (req.query.id != undefined) {
             try {
-                var exercise = await Exercise.findOne({ _id: req.query.id }).populate("class", "name")
+                const exercise = await Exercise.findOne({ _id: req.query.id }).populate("class", "name")
                 if (!exercise) {
                     console.log("Fehler: Aufgabe existiert nicht")
                     return res.json({ status: 404, response: "aufgabe nicht gefunden" })
                 }
-                //console.log(exercise.class)
-                //console.log(req.session.classes)
                 if (req.session.classes.includes(String(exercise.class._id))) {
                     res.json({
                         status: 200,
@@ -726,28 +701,5 @@ router.get('/logout', softLimit, function(req, res) {
     req.session.destroy();
     res.redirect('/');
 });
-
-function hashEmailAddress(email, salt) {
-    var sum = crypto.createHash('sha256');
-    sum.update(email + salt);
-    return sum.digest('hex');
-}
-
-function CurrentDate() {
-    let date_ob = new Date();
-    let date = ("0" + date_ob.getDate()).slice(-2);
-    let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-    let year = date_ob.getFullYear();
-    let hours = date_ob.getHours();
-    let minutes = date_ob.getMinutes();
-    let seconds = date_ob.getSeconds();
-    var current_date = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
-    return current_date;
-}
-
-function validEmail(email) {
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
-}
 
 module.exports = router
