@@ -358,6 +358,19 @@ function switchMeetingDisplay(){
     }
 }
 
+window.addEventListener('keydown', function(e) {
+    if (e.keyCode == 37) {
+        e.preventDefault()
+        previous();
+    }else if (e.keyCode == 39) {
+        e.preventDefault()
+        next();
+    }else if (e.keyCode == 32) {
+        e.preventDefault()
+        switchMeetingDisplay();
+    }
+});
+
 async function getMeetings(){
     if(activeDisplay == "tag"){
         let list = document.getElementById('meetingsListDay');

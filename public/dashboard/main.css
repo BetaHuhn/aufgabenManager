@@ -1025,7 +1025,10 @@ td p:nth-of-type(2){
     .aufgabe {
         margin-top: 10px;
         margin-right: 0px;
-        width: 250px;
+        width: 100%;
+    }
+    .parent{
+        grid-template-columns: 1fr 1fr 30fr 1fr 1fr 1fr;
     }
     .blue{
         display: none;
@@ -1274,5 +1277,8 @@ td p:nth-of-type(2){
         margin-top: 1.2rem;
         font-size: 0.9rem;
         padding: 13px 35px;
+    }
+    .solutionDiv{
+        display: none;
     }
 }
