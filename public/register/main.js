@@ -42,7 +42,7 @@ async function auth() {
     if (json.status == 200) {
         var error = document.getElementById('error');
         error.innerHTML = "Du bist bereits angemeldet"
-        window.location.href = "/aufgaben"
+        window.location.href = "/dashboard"
         document.getElementById('loader').style.display = "none";
     } else {
         console.log("not logged in")
@@ -93,7 +93,7 @@ async function createUser() {
             var error = document.getElementById('error');
             error.innerHTML = "Register successfull"
             document.getElementById('loader').style.display = "none"
-            window.location.replace('/aufgaben');
+            window.location.replace('/dashboard');
         } else if (json.status == 408) {
             var error = document.getElementById('error');
             error.innerHTML = "Bitte fülle alle Felder aus"
