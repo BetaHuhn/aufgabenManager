@@ -778,26 +778,28 @@ router.get('/api/get/meetings', softLimit, middleware.auth(), async(req, res) =>
                 if(day < 0){
                     day = 6;
                 }
-                if(data[day].length < 1){
-                    data[day] = [{
-                        _id: meetings[i]._id,
-                        user: meetings[i].user,
-                        class: meetings[i].class,
-                        school: meetings[i].school,
-                        subject: meetings[i].subject,
-                        date: meetings[i].date,
-                        createdAt: meetings[i].createdAt
-                    }]
-                }else{
-                    data[day].push({
-                        _id: meetings[i]._id,
-                        user: meetings[i].user,
-                        class: meetings[i].class,
-                        school: meetings[i].school,
-                        subject: meetings[i].subject,
-                        date: meetings[i].date,
-                        createdAt: meetings[i].createdAt
-                    })
+                if(data[day] != undefined){
+                    if(data[day].length < 1){
+                        data[day] = [{
+                            _id: meetings[i]._id,
+                            user: meetings[i].user,
+                            class: meetings[i].class,
+                            school: meetings[i].school,
+                            subject: meetings[i].subject,
+                            date: meetings[i].date,
+                            createdAt: meetings[i].createdAt
+                        }]
+                    }else{
+                        data[day].push({
+                            _id: meetings[i]._id,
+                            user: meetings[i].user,
+                            class: meetings[i].class,
+                            school: meetings[i].school,
+                            subject: meetings[i].subject,
+                            date: meetings[i].date,
+                            createdAt: meetings[i].createdAt
+                        })
+                    }
                 }
             }
         }
