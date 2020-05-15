@@ -22,6 +22,10 @@ const classSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId, 
         ref:'Exercise' 
     }],
+    meetings: [{ 
+        type: Schema.Types.ObjectId, 
+        ref:'Meeting' 
+    }],
     createdAt: {
         type: Date
     }

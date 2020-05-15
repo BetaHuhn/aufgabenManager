@@ -33,7 +33,7 @@ async function auth() {
         login.href = "/logout"
         login.innerHTML = "Logout"
         const hero = document.getElementById('heroBtn');
-        hero.href = "/aufgaben"
+        hero.href = "/dashboard"
 
     } else {
         console.log("not logged in")
