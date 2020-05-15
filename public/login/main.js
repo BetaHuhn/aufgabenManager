@@ -38,7 +38,7 @@ async function auth() {
     if (json.status == 200) {
         var error = document.getElementById('error');
         error.innerHTML = "Du bist bereits angemeldet"
-        window.location.href = "/aufgaben"
+        window.location.href = "/dashboard"
         document.getElementById('loader').style.display = "none";
     } else {
         console.log("not logged in")
@@ -98,7 +98,7 @@ async function login() {
             console.log(ref)
             window.location.replace(ref)
         } else {
-            window.location.replace('/aufgaben')
+            window.location.replace('/dashboard')
         }
     } else {
         var error = document.getElementById('error');
