@@ -670,16 +670,16 @@ th{
     cursor: auto;
 }
 
-td p{
+td span{
     font-size: 20px;
     float: left;
-    margin-top: 20px;
+    margin-top: 6px;
 }
 
-td p:nth-of-type(2){
+td span:nth-of-type(2){
     float: right;
     font-size: 17px;
-    margin-top: 22px;
+    margin-top: 8px;
 }
 
 .futureMeeting{
@@ -886,11 +886,13 @@ td p:nth-of-type(2){
     .login {
         margin-top: 3rem;
     }
-    td p{
-        font-size: 18px;
+    td span{
+        float: initial;
     }
-    td p:nth-of-type(2) {
-        font-size: 15px;
+    td span:nth-of-type(2){
+        display: block;
+        margin-top: 10px;
+        float: initial;
     }
 }
 
@@ -952,14 +954,6 @@ td p:nth-of-type(2){
         margin-top: 1rem;
         font-size: 1rem;
         padding: 12px 25px;
-    }
-    td p{
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    td p:nth-of-type(2) {
-        float: left;
-        margin-top: 0px;
     }
 }
 
@@ -1119,10 +1113,6 @@ td p:nth-of-type(2){
         width: 10%;
         font-size: 20px;
     }
-    td p{
-        float: initial;
-        font-size: 15px;
-    }
     .meetingWeek{
         padding: 10px 10px;
     }
@@ -1233,10 +1223,10 @@ td p:nth-of-type(2){
         font-size: 12px;
         width: 5%;
     }
-    td p{
+    td span{
         font-size: 12px;
     }
-    td p:nth-of-type(2){
+    td span:nth-of-type(2){
         font-size: 12px;
     }
 }

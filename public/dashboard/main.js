@@ -529,8 +529,8 @@ async function getMeetings(){
                                 }
                                 td.id = currentMeetings[elem][i]._id
                                 td.innerHTML = `
-                                    <p>${currentMeetings[elem][i].subject}</p>
-                                    <p>${hour}:${minute} Uhr</p>
+                                    <span>${currentMeetings[elem][i].subject}</span>
+                                    <span>${hour}:${minute} Uhr</span>
                                 `
                                 td.setAttribute("data-subject", currentMeetings[elem][i].subject);
                                 td.setAttribute("data-date", currentMeetings[elem][i].date);
@@ -560,8 +560,8 @@ async function getMeetings(){
                                 }
                                 td.id = currentMeetings[elem][i]._id
                                 td.innerHTML = `
-                                    <p>${currentMeetings[elem][i].subject}</p>
-                                    <p>${hour}:${minute} Uhr</p>
+                                    <span>${currentMeetings[elem][i].subject}</span>
+                                    <span>${hour}:${minute} Uhr</span>
                                 `
                                 td.setAttribute("data-subject", currentMeetings[elem][i].subject);
                                 td.setAttribute("data-date", currentMeetings[elem][i].date);
