@@ -13,6 +13,9 @@
     --bg-color: #f5f6fa;
     --white: #fff;
     --white-hover: rgb(245, 245, 245);
+    --white-light: rgb(238, 238, 238);
+    --white-highlight:rgb(255, 255, 255);
+    --black: #575757;
     --underline: #fff;
     --nav: rgb(78, 121, 216);
     --input-color: rgb(230, 230, 230);
@@ -25,6 +28,9 @@
     --bg-code: rgba(0, 0, 0, .05);
     --previewImage: url('/static/previews/AufgabenViewLight.png');
     --previewBg: #fff;
+    --tab: #bfbfbf;
+    --tab-hover: #c9c9c9;
+    --meetingWeek-hover: brightness(98%);
 }
 
 [data-theme="dark"] {
@@ -40,6 +46,9 @@
     --bg-color: #1c1c1c;
     --white: #292929;
     --white-hover: #353535;
+    --white-light: #1f1f1f;
+    --white-highlight: #3a3a3a;
+    --black: rgb(255, 255, 255);
     --underline: rgb(78, 121, 216);
     --nav: #292929;
     --input-color: #1c1c1c;
@@ -52,6 +61,9 @@
     --bg-code: rgba(0, 0, 0, .05);
     --previewImage: url('/static/previews/AufgabenViewDark.png');
     --previewBg: #333;
+    --tab: #6d6d6d;
+    --tab-hover: #797979;
+    --meetingWeek-hover: brightness(90%);
 }
 
 html,
@@ -531,6 +543,245 @@ body {
     background-color: var(--white-hover);
 }
 
+.tabs{
+    display: flex;
+    width: 100%;
+    border-bottom: 2px solid var(--tab);
+}
+
+.withBtn{
+    width: 88%;
+}
+
+.tab{
+    margin-right: 2rem;
+    color: var(--tab);
+    margin-bottom: -2px;
+    padding-bottom: 10px;
+    padding-right: 5px;
+    padding-left: 5px;
+    cursor: pointer;
+}
+
+.tab:hover{
+    color: var(--tab-hover)
+}
+
+.activeTab{
+    color: var(--font-color);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.activeTab:hover{
+    color: var(--black)
+}
+
+#filterBtn{
+    float: right;
+    width: 10%;
+    margin: 20px;
+    margin-top: -22px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-right: 0px;
+}
+
+.btnIcon{
+    margin-right: 10px;
+}
+
+.controlIcon{
+    cursor: pointer;
+}
+
+.dateControl{
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    width: 100%;
+}
+
+#currentDate{
+    margin-top: 0px;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+#meetingsListDay{
+    margin-bottom: 4rem;
+}
+
+.meetingDay{
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 11px 24px;
+    box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+    height: 50px;
+    margin-top: 0.8rem;
+}
+
+.msBtn{
+    width: 180px;
+    height: 50px;
+    float: right;
+}
+
+.meetingText{
+    float: left;
+    margin-top: 15px;
+}
+
+.fach{
+    min-width: 150px;
+}
+
+.datetime{
+    min-width: 150px;
+}
+
+table{
+    width: 100%;
+    border-spacing: 30px 20px;
+}
+
+th{
+    text-align: left;
+    width: 20%;
+}
+
+.meetingWeek{
+    width: 20%;
+    height: 63px;
+    background-color: var(--white);
+    padding: 10px 20px;
+    border-radius: 20px;
+    opacity: 1;
+    -webkit-transition: opacity 1000ms linear;
+    transition: opacity 1000ms linear;
+    cursor: pointer;
+}
+
+.meetingWeek:hover{
+    filter: var(--meetingWeek-hover);
+}
+
+.noMeeting{
+    background-color: var(--white-light);
+    cursor: auto;
+}
+
+td span{
+    font-size: 20px;
+    float: left;
+    margin-top: 6px;
+}
+
+td span:nth-of-type(2){
+    float: right;
+    font-size: 17px;
+    margin-top: 8px;
+}
+
+.futureMeeting{
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+@keyframes moving-gradient {
+    0% { background-position: -250px 0; }
+    100% { background-position: 250px 0; }
+}
+
+@keyframes moving-gradient-large {
+    0% { background-position: -500px 0; }
+    100% { background-position: 500px 0; }
+}
+
+.loadingMeetings td {
+    background: linear-gradient(to right, var(--white-light) 0%, var(--white-highlight) 50%, var(--white-light) 100%);
+    background-size: auto;
+    background-size: 500px 100px;
+    animation-name: moving-gradient;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    cursor: auto;
+}
+
+.loadingMeetingDay{
+    background: linear-gradient(to right, var(--white-light) 20%, var(--white-highlight) 50%, var(--white-light) 100%);
+    background-size: auto;
+    background-size: 1000px 100px;
+    animation-name: moving-gradient-large;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+.calendar {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 10%; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.calendar-content {
+    background-color: var(--white);
+    margin: auto;
+    padding: 20px;
+    border-radius: 20px;
+    width: 300px;
+    height: 300px;
+}
+
+.calendar h1{
+    font-size: 22px;
+    text-align: center;
+}
+
+.calendar ul{
+    list-style-type: none;
+    margin-left: 2rem;
+}
+
+.calendar li{
+    margin-top: 1rem;
+    font-size: 20px;
+}
+
+.calendar a{
+    color: var(--font-color);
+    text-decoration: none;
+}
+
+.calendar i{
+    margin-right: 1rem;
+}
+
+.close {
+    color: var(--font-color);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: var(--font-color-hover);
+    text-decoration: none;
+    cursor: pointer;
+}
+
 .loader {
     display: inline-block;
     position: absolute;
@@ -635,6 +886,14 @@ body {
     .login {
         margin-top: 3rem;
     }
+    td span{
+        float: initial;
+    }
+    td span:nth-of-type(2){
+        display: block;
+        margin-top: 10px;
+        float: initial;
+    }
 }
 
 @media screen and (max-width: 1100px) {
@@ -698,7 +957,7 @@ body {
     }
 }
 
-@media screen and (max-width: 880px) {
+@media screen and (max-width: 900px) {
     .topnav a:not(:nth-child(2)) {
         display: none;
     }
@@ -732,12 +991,12 @@ body {
         margin-right: 20px;
     }
     .dashboard h1 {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
     }
     .dashboard {
-        width: 550px;
+        width: 90%;
     }
     .legend {
         height: 20px;
@@ -760,7 +1019,10 @@ body {
     .aufgabe {
         margin-top: 10px;
         margin-right: 0px;
-        width: 250px;
+        width: 100%;
+    }
+    .parent{
+        grid-template-columns: 1fr 1fr 30fr 1fr 1fr 1fr;
     }
     .blue{
         display: none;
@@ -823,6 +1085,37 @@ body {
         font-size: 0.8rem;
         padding: 12px 20px;
     }
+    .withBtn{
+        width: 82%;
+    }
+    #filterBtn{
+        width: 15%;
+    }
+    .meetingText{
+        font-size: 18px;
+    }
+    .datetime{
+        min-width: 10px;
+        max-width: 150px;
+    }
+    .fach{
+        min-width: 100px;
+        max-width: 150px;
+    }
+    .tab{
+        font-size: 20px;
+        margin-right: 1rem;
+    }
+    table{
+        border-spacing: 7px 7px;
+    }
+    th{
+        width: 10%;
+        font-size: 20px;
+    }
+    .meetingWeek{
+        padding: 10px 10px;
+    }
 }
 
 @media screen and (max-width: 600px) {
@@ -836,12 +1129,12 @@ body {
         margin-left: 0.5rem;
     }
     .dashboard h1 {
-        font-size: 1rem;
+        font-size: 1.3rem;
         margin-top: 1rem;
         margin-bottom: 1rem;
     }
     .dashboard {
-        width: 350px;
+        width: 90%;
     }
     .legend {
         font-size: 0.6rem;
@@ -905,6 +1198,37 @@ body {
         font-size: 0.8rem;
         padding: 10px 18px;
     }
+    .msBtn{
+        width: 100px;
+        font-size: 0.6rem;
+    }
+    .meetingDay{
+        padding: 11px 15px;
+    }
+    .meetingText{
+        font-size: 15px;
+        margin-right: 10px;
+    }
+    .fach{
+        min-width: 50px;
+    }
+    .withBtn{
+        width: 75%;
+    }
+    #filterBtn{
+        width: 20%;
+        font-size: 10px;
+    }
+    th{
+        font-size: 12px;
+        width: 5%;
+    }
+    td span{
+        font-size: 12px;
+    }
+    td span:nth-of-type(2){
+        font-size: 12px;
+    }
 }
 
 @media screen and (max-width: 500px) {
@@ -943,5 +1267,8 @@ body {
         margin-top: 1.2rem;
         font-size: 0.9rem;
         padding: 13px 35px;
+    }
+    .solutionDiv{
+        display: none;
     }
 }

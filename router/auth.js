@@ -611,6 +611,21 @@ router.get('/api/auth/new', softLimit, middleware.auth({ lehrer: true }), async(
     })
 })
 
+router.get('/api/auth/dashboard', softLimit, middleware.auth(), async(req, res) => {
+    console.log(req.session.name + " visited /dashboard")
+    res.json({
+        status: 200,
+        response: "authenticated",
+        data: {
+            _id: req.session._id,
+            name: req.session.name,
+            role: req.session.role,
+            classes: req.session.classes,
+            isoDateTime: CurrentDate()
+        }
+    })
+})
+
 router.get('/api/auth/account', softLimit, middleware.auth(), async(req, res) => {
     console.log(req.session.name + " visited /account")
     try {

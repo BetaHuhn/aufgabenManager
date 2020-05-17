@@ -12,9 +12,7 @@ function checkCookie() {
 }
 
 var check = checkCookie();
-console.log(check)
 if (!check) {
-    console.log("Cookies not enabled")
     document.getElementById('login').style.display = "none"
     var error = document.getElementById('error');
     error.innerHTML = '<p>Fehler, Cookies sind blockiert. <a href="https://enablecookies.info/de/">Hier</a> ist eine Anleitung wie du sie aktivierst</p>'
@@ -42,10 +40,9 @@ async function auth() {
     if (json.status == 200) {
         var error = document.getElementById('error');
         error.innerHTML = "Du bist bereits angemeldet"
-        window.location.href = "/aufgaben"
+        window.location.href = "/dashboard"
         document.getElementById('loader').style.display = "none";
     } else {
-        console.log("not logged in")
         document.getElementById('loader').style.display = "none";
         document.getElementById('user').style.display = "block";
     }
@@ -56,7 +53,6 @@ auth()
 var url_string = window.location.href;
 var url = new URL(url_string);
 var token = url.searchParams.get("token")
-console.log("token: " + token)
 if (token == undefined || token == null) {
     document.getElementById('register').style.display = 'block';
     document.getElementById('user').style.height = '90px'
@@ -89,58 +85,48 @@ async function createUser() {
         const response = await fetch('/auth/register', options);
         const json = await response.json();
         if (json.status == 200) {
-            console.log(json);
             var error = document.getElementById('error');
             error.innerHTML = "Register successfull"
             document.getElementById('loader').style.display = "none"
-            window.location.replace('/aufgaben');
+            window.location.replace('/dashboard');
         } else if (json.status == 408) {
             var error = document.getElementById('error');
             error.innerHTML = "Bitte fülle alle Felder aus"
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         } else if (json.status == 407) {
             var error = document.getElementById('error');
             error.innerHTML = "Bitte gib eine echte Email Adresse ein"
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         } else if (json.status == 410) {
             var error = document.getElementById('error');
             error.innerHTML = '<p>Diese Email wird bereits verwendet. Wenn das deine ist, setze <a href="https://zgk.mxis.ch/account/reset/">hier</a> dein Passwort zurück</p>'
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         } else if (json.status == 406) {
             var error = document.getElementById('error');
             error.innerHTML = "Das Passwort ist zu kurz (min 8)"
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         } else if (json.status == 405) {
             var error = document.getElementById('error');
             error.innerHTML = "Das Passwort ist zu lang (max 20)"
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         } else if (json.status == 404) {
             var error = document.getElementById('error');
             error.innerHTML = "Das Passwort darf keine Lücken enthalten"
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         } else if (json.status == 401) {
             var error = document.getElementById('error');
             error.innerHTML = "Der Invite Link ist abgelaufen oder wurde zu oft benutzt"
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         } else if (json.status == 403) {
             var error = document.getElementById('error');
             error.innerHTML = "Der Invite Link existiert nicht"
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         }else if (json.status == 429) {
             retryIn = json.error.retryIn;
             var error = document.getElementById('error');
             error.innerHTML = "Zu viele Login Versuche, bitte warte " + formatTime(json.error.retryIn)
             document.getElementById('loginBtn').disabled = true;
             document.getElementById('loader').style.display = "none";
-            console.log(json)
             var countdown = setInterval(function() {
                 retryIn = retryIn - 1000;
                 if(retryIn <= 0){
@@ -154,7 +140,6 @@ async function createUser() {
             var error = document.getElementById('error');
             error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
             document.getElementById('loader').style.display = "none"
-            console.log(json)
         }
     }
 }

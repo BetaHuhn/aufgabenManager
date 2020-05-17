@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId, 
         ref:'Solution' 
     }],
+    meetings: [{ 
+        type: Schema.Types.ObjectId, 
+        ref:'Meeting' 
+    }],
     invite:{
         type:Schema.Types.ObjectId, ref:'Invite'
     },

@@ -12,9 +12,7 @@ function checkCookie() {
 }
 
 var check = checkCookie();
-console.log(check)
 if (!check) {
-    console.log("Cookies not enabled")
     document.getElementById('login').style.display = "none"
     var error = document.getElementById('error');
     error.innerHTML = '<p>Fehler, Cookies sind blockiert. <a href="https://enablecookies.info/de/">Hier</a> ist eine Anleitung wie du sie aktivierst</p>'
@@ -24,7 +22,6 @@ if (!check) {
 var url_string = window.location.href; //window.location.href
 var url = new URL(url_string);
 var ref = url.searchParams.get("ref")
-console.log("Ref: " + ref)
 
 async function auth() {
     const options = {
@@ -38,10 +35,9 @@ async function auth() {
     if (json.status == 200) {
         var error = document.getElementById('error');
         error.innerHTML = "Du bist bereits angemeldet"
-        window.location.href = "/aufgaben"
+        window.location.href = "/dashboard"
         document.getElementById('loader').style.display = "none";
     } else {
-        console.log("not logged in")
         document.getElementById('loader').style.display = "none";
         document.getElementById('container').style.display = "block";
     }
@@ -78,7 +74,6 @@ async function login() {
         error.innerHTML = "Zu viele Login Versuche, bitte warte " + formatTime(json.error.retryIn)
         document.getElementById('loginBtn').disabled = true;
         document.getElementById('loader').style.display = "none";
-        console.log(json)
         var countdown = setInterval(function() {
             retryIn = retryIn - 1000;
             if(retryIn <= 0){
@@ -90,15 +85,13 @@ async function login() {
 
         }, 1000);
     } else if (json.status == 200) {
-        console.log(json);
         var error = document.getElementById('error');
         error.innerHTML = "Login erfolgreich"
         document.getElementById('loader').style.display = "none";
         if (ref != undefined) {
-            console.log(ref)
             window.location.replace(ref)
         } else {
-            window.location.replace('/aufgaben')
+            window.location.replace('/dashboard')
         }
     } else {
         var error = document.getElementById('error');

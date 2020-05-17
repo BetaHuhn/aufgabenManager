@@ -28,15 +28,14 @@ async function auth() {
     const response = await fetch('/api/auth', options);
     const json = await response.json();
     if (json.status == 200) {
-        console.log(json);
         const login = document.getElementById('login');
         login.href = "/logout"
         login.innerHTML = "Logout"
         const hero = document.getElementById('heroBtn');
-        hero.href = "/aufgaben"
+        hero.href = "/dashboard"
 
     } else {
-        console.log("not logged in")
+        //console.log("not logged in")
         /* let message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Du bist nicht angemeldet</p>`

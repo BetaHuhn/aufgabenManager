@@ -15,13 +15,13 @@ function myFunction() {
 let last = document.getElementById('fileDiv')
 
 let role;
+let activeTab = "password"
 
 function validateForm() {
     let a = document.getElementById('fach').value;
     let b = document.getElementById('klasse').value;
     let c = document.getElementById('text').value;
     let d = document.getElementById('abgabe').value;
-    console.log("a: " + a + " b: " + b + " c: " + c + " d: " + d)
     if (a == null || a == "", b == null || b == "", c == null || c == "", d == null || d == "" || b == "Klasse") {
         //console.log(false)
         return false;
@@ -41,7 +41,6 @@ async function authenticate() {
     const response = await fetch('/api/auth/account', options);
     const json = await response.json();
     if (json.status == 200) {
-        console.log(json);
         role = json.data.role
         if (role == "user") {
             let newReiter = document.getElementById('new');
@@ -89,10 +88,10 @@ async function authenticate() {
         //   let text = createElement('p', 'message', 'message', "Hallo!")
         //   text.id = 'message'
         //   last.parentElement.appendChild(text)
+        loadTab();
         document.getElementById('loader').style.display = "none";
         document.getElementById('user').style.display = "block";
     } else if (json.status == 405) {
-        console.log(json);
         document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
         document.getElementById('loader').style.display = "none";
         document.getElementById('user').style.display = "block";
@@ -121,7 +120,6 @@ async function change() {
     const response = await fetch('/api/auth/change/password', options);
     const json = await response.json();
     if (json.status == 200) {
-        console.log(json);
         let error = document.getElementById('error');
         error.innerHTML = "Passwort wurde geändert"
         document.getElementById('loader').style.display = "none";
@@ -130,45 +128,37 @@ async function change() {
         let error = document.getElementById('error');
         error.innerHTML = "Falsches Passwort"
         document.getElementById('loader').style.display = "none";
-        console.log(json)
     } else if (json.status == 407) {
         let error = document.getElementById('error');
         error.innerHTML = "Bitte fülle beide Felder aus"
         document.getElementById('loader').style.display = "none";
-        console.log(json)
     } else if (json.status == 406) {
         let error = document.getElementById('error');
         error.innerHTML = "Das Passwort ist zu kurz (min 8)"
         document.getElementById('loader').style.display = "none";
-        console.log(json)
     } else if (json.status == 405) {
         let error = document.getElementById('error');
         error.innerHTML = "Das Passwort ist zu lang (max 20)"
         document.getElementById('loader').style.display = "none";
-        console.log(json)
     } else if (json.status == 402) {
         let error = document.getElementById('error');
         error.innerHTML = "Das Passwort darf keine Lücken enthalten"
         document.getElementById('loader').style.display = "none";
-        console.log(json)
     } else if (json.status == 403) {
         let error = document.getElementById('error');
         error.innerHTML = "Bitte melde dich zuerst an"
         document.getElementById('loader').style.display = "none";
         window.location.replace("/login")
-        console.log(json)
     } else if (json.status == 401) {
         let error = document.getElementById('error');
         error.innerHTML = "Bitte benutze ein anderes Passwort"
         document.getElementById('loader').style.display = "none";
-        console.log(json)
     }else if (json.status == 429) {
         retryIn = json.error.retryIn;
         let error = document.getElementById('error');
         error.innerHTML = "Zu viele Login Versuche, bitte warte " + formatTime(json.error.retryIn)
         document.getElementById('changeBtn').disabled = true;
         document.getElementById('loader').style.display = "none";
-        console.log(json)
         let countdown = setInterval(function() {
             retryIn = retryIn - 1000;
             if(retryIn <= 0){
@@ -183,7 +173,6 @@ async function change() {
         let error = document.getElementById('error');
         error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
         document.getElementById('loader').style.display = "none";
-        console.log(json)
     }
 
 }
@@ -226,6 +215,36 @@ function createElement(elem, className, id, text, title) {
         element.appendChild(node);
     }
     return element
+}
+
+function loadTab(){
+    let url = new URL(window.location.href);
+    let tab = url.searchParams.get("tab");
+    if(tab != undefined && tab != activeTab){
+        switchTab();
+    }
+}
+
+function switchTab(){
+    if(activeTab == "password"){
+        document.getElementById('passwordTab').classList.remove("activeTab");
+        document.getElementById('botTab').classList.add("activeTab");
+        document.getElementById('password').style.display = "none";
+        document.getElementById('bot').style.display = "block";
+        activeTab = "bot";
+    }else{
+        document.getElementById('passwordTab').classList.add("activeTab");
+        document.getElementById('botTab').classList.remove("activeTab");
+        document.getElementById('password').style.display = "block";
+        document.getElementById('bot').style.display = "none";
+        activeTab = "password";
+        
+    }
+    let url = new URL(window.location.href);
+    let search_params = url.searchParams;
+    search_params.set('tab', activeTab);
+    url.search = search_params.toString();
+    window.history.replaceState(null, null, url)
 }
 
 function AvoidSpace(event) {

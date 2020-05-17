@@ -1,0 +1,159 @@
+<!-- index.html - Maximilian Schiller 2020 -->
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard</title>
+    <meta name="viewport" content="widp=device-widp,initial-scale=1">
+
+    <meta name="title" content="Dashboard">
+    <meta name="description" content="Alle aktuellen Aufgaben und Meetings im Überblick">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://zgk.mxis.ch/aufgaben">
+    <meta property="og:title" content="Aufgaben Manager">
+    <meta property="og:description" content="Alle aktuellen Aufgaben und Meetings im Überblick">
+    <meta property="og:image" content="https://zgk.mxis.ch/static/banner.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://zgk.mxis.ch/aufgaben">
+    <meta property="twitter:title" content="Aufgaben Manager">
+    <meta property="twitter:description" content="Alle aktuellen Aufgaben und Meetings im Überblick">
+    <meta property="twitter:image" content="https://zgk.mxis.ch/static/banner.png">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/static/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/static/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/static/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/static/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/static/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/static/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/static/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/static/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="main.css">
+    <script async src="https://stats.mxis.ch/statistik.js" data-ackee-server="https://stats.mxis.ch"
+        data-ackee-domain-id="0c19f821-94e9-40dd-860b-339a1c57c332" data-ackee-opts='{ "detailed": true }'></script>
+    <script src="https://kit.fontawesome.com/ca8ffbc206.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/statuspage/style.css">
+    <script src="/statuspage/main.js"></script>
+    <noscript>Dein Browser unterstützt JavaScript nicht!</noscript>
+</head>
+
+<body onload="authenticate()">
+    <div class="topnav" id="myTopnav">
+        <div class="modeSwitcher">
+            <label class="theme-switch" for="checkbox" title="Klicke um das Theme zu wechseln">
+                <input type="checkbox" id="checkbox"><span id="checkboxIcon" class="fas fa-adjust light"
+                    aria-hidden="true"></span></input>
+            </label>
+        </div>
+        <a id="logo" href="/" class="logo">ZGK <span id="dot" class="green">•</span><span class="green">
+                online</span></a>
+        <a id="logoutLink" href="/logout" class="menu underline">Logout</a>
+        <a id="accountLink" href="/account" class="menu underline">Account</a>
+        <a id="new" href="/new" class="menu underline">Neu</a>
+        <a id="aufgabenLink" href="/dashboard" class="menu active">Dashboard</a>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="burger fa fa-bars"></i>
+        </a>
+    </div>
+
+    <main id="main">
+        <div id="loader" class="loader">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="dashboard" id="dashboard" style="display: none;">
+            <h1>Dashboard</h1>
+            <div id="seperator">
+                <div id="tabs" class="tabs">
+                    <p id="aufgabenTab" class="tab activeTab" onclick="switchTab();">Aufgaben</p>
+                    <p id="meetingsTab" class="tab" onclick="switchTab();">Meetings</p>
+                </div>
+                <button id="filterBtn" class="buttons" style="display: none;" onclick="switchMeetingDisplay();"><i
+                        class="btnIcon fa fa-calendar-week"></i>Woche</button>
+            </div>
+            <p id="error" style="display: none;"></p>
+            <div id="aufgaben">
+                <div id="legend" class="legend parent">
+                    <p class="child text name">Fach</p>
+                    <p class="child text">Abgabe</p>
+                    <p class="child aufgabe">Aufgabe</p>
+                    <p class="child downloads">Downloads</p>
+                    <p class="child stack">Dateien</p>
+                    <p class="child solution">Lösung</p>
+                </div>
+            </div>
+            <div id="meetings" style="display: none;">
+                <div class="dateControl">
+                    <i onclick="previous();" class="controlIcon fa fa-chevron-left"></i>
+                    <p id="currentDate">Donnerstag, 14.02.2020</p>
+                    <i onclick="next();" class="controlIcon fa fa-chevron-right"></i>
+                </div>
+                <div id="meetingsListDay">
+                    <div id="loadingMeeting" class="meetingDay loadingMeetingDay"></div>
+                </div>
+                <div id="meetingsListWeek" style="display: none;">
+                    <table>
+                        <tbody id="meetingTable">
+                            <tr id="thead">
+                                <th>Montag</th>
+                                <th>Dienstag</th>
+                                <th>Mittwoch</th>
+                                <th>Donnerstag</th>
+                                <th>Freitag</th>
+                            </tr>
+                            <tr class="loadingMeeting">
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                            </tr>
+                            <tr class="loadingMeeting">
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                            </tr>
+                            <tr class="loadingMeeting">
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                                <td class="meetingWeek" style="height: 63px;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- The Modal -->
+        <div id="modal" class="calendar">
+            <div id="modalContent" class="calendar-content">
+            
+            </div>
+        </div>
+    </main>
+    <a href="/dokumentation" title="Hilfe" class="help"><i id="help" class="fas fa-question-circle"></i></a>
+    <script src="main.js"></script>
+    <script src="/static/theme/darkmode.js"></script>
+    <script src="cal.min.js"></script>
+</body>
+
+</html>

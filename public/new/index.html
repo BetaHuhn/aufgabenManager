@@ -4,23 +4,23 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Neue Aufgabe</title>
+    <title>Neue Aufgabe/Meeting</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <meta name="title" content="Neue Aufgabe erstellen">
+    <meta name="title" content="Neue Aufgabe/Meeting erstellen">
     <meta name="description" content="Erstelle eine Aufgabe mit Abgabetermin und Fach. Optional kannst du auch Dateien hochladen">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://zgk.mxis.ch/new">
-    <meta property="og:title" content="Neue Aufgabe erstellen">
+    <meta property="og:title" content="Neue Aufgabe/Meeting erstellen">
     <meta property="og:description" content="Erstelle eine Aufgabe mit Abgabetermin und Fach. Optional kannst du auch Dateien hochladen">
     <meta property="og:image" content="https://zgk.mxis.ch/static/banner.png">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://zgk.mxis.ch/new">
-    <meta property="twitter:title" content="Neue Aufgabe erstellen">
+    <meta property="twitter:title" content="Neue Aufgabe/Meeting erstellen">
     <meta property="twitter:description" content="Erstelle eine Aufgabe mit Abgabetermin und Fach. Optional kannst du auch Dateien hochladen">
     <meta property="twitter:image" content="https://zgk.mxis.ch/static/banner.png">
 
@@ -62,7 +62,7 @@
         <a id="logout" href="/logout" class="menu underline">Logout</a>
         <a href="/account" class="menu underline">Account</a>
         <a href="/new" class="menu active">Neu</a>
-        <a href="/aufgaben" class="menu underline">Aufgaben</a>
+        <a href="/dashboard" class="menu underline">Dashboard</a>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
             <i class="burger fa fa-bars"></i>
         </a>
@@ -75,10 +75,14 @@
         </div>
         <div class="container">
             <div id="user" class="login" style="display: none;">
-                <h1 id="heading">Erstelle eine Aufgabe</h1>
+                <h1 id="heading">Erstellen</h1>
+                <div id="tabs" class="tabs">
+                    <p id="aufgabenTab" class="tab activeTab" onclick="switchTab();">Aufgabe</p>
+                    <p id="meetingsTab" class="tab" onclick="switchTab();">Meeting</p>
+                </div>
                 <div id="form">
                     <p>Fach:</p>
-                    <input required title="Gib ein Fach ein" class="input" type="text" id="fach" />
+                    <input required title="Gib ein Fach ein" class="input fach" type="text" id="fach" />
 
                     <select required title="Wähle eine Klasse aus" id="klasse">
                         <option selected disabled>Klasse</option>
@@ -101,6 +105,23 @@
                         </form>
                     </div>
                 </div>
+                <div id="meeting" style="display: none;">
+                    <p>Fach:</p>
+                    <input required title="Gib ein Fach ein" class="input fach" type="text" id="fachMeeting" />
+
+                    <select required title="Wähle eine Klasse aus" id="klasseMeeting">
+                        <option selected disabled>Klasse</option>
+                    </select>
+
+                    <p>Termin:</p>
+                    <input type="datetime-local" name="showCally" id="showCally" value="2018-06-12T19:30"
+                    min="2018-06-07T00:00" max="2020-06-14T00:00"  readonly style="display: none;">
+                    <div class="cally-modal">
+  
+                    </div>
+
+                    <button id="submitBtnMeeting" type="button" onclick="createMeeting()">Erstellen</button>
+                </div>
                 <p class="message" id="error"></p>
 
                 <div id="progressDiv" class="progress" style="display: none;">
@@ -111,6 +132,7 @@
         </div>
     </main>
     <a href="/dokumentation" title="Hilfe" class="help"><i id="help" class="fas fa-question-circle"></i></a>
+    <script src="/static/calendary/cally.js"></script>
     <script src="main.js"></script>
     <script src="/static/theme/darkmode.js"></script>
 </body>

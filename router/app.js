@@ -4,17 +4,18 @@ const request = require('request');
 const _ = require('lodash');
 const zipFolder = require('zip-folder');
 const slowDown = require("express-slow-down");
-const CurrentDate = require("../utils/currentDate")
-const mongoose = require('mongoose')
-const middleware = require("../middleware/middleware")
-const router = express.Router()
+const CurrentDate = require("../utils/currentDate");
+const mongoose = require('mongoose');
+const middleware = require("../middleware/middleware");
+const router = express.Router();
 
-const Exercise = require('../models/exercise')
-const User = require('../models/user')
-const Invite = require("../models/invite")
-const Class = require("../models/class")
-const School = require("../models/school")
-const Solution = require("../models/solution")
+const Exercise = require('../models/exercise');
+const User = require('../models/user');
+const Invite = require("../models/invite");
+const Class = require("../models/class");
+const School = require("../models/school");
+const Solution = require("../models/solution");
+const Meeting = require("../models/meeting");
 
 router.use(fileUpload({
     createParentPath: true,
@@ -27,6 +28,14 @@ const softLimit = slowDown({
     delayMs: 200,
     maxDelayMs: 10 * 1000
 });
+
+router.get('/meetings', async(req, res) => {
+    res.redirect("/dashboard?tab=meetings")
+})
+
+router.get('/aufgaben', async(req, res) => {
+    res.redirect("/dashboard?tab=aufgaben")
+})
 
 router.get('/api/get/home', softLimit, middleware.auth(), async(req, res) => { //, middleware.cache(900)
     try {
@@ -731,6 +740,180 @@ router.post('/api/new/solution', softLimit, middleware.auth({ user: true }), asy
         res.json({
             status: '400',
             type: 'keine exercise angegeben'
+        });
+    }
+})
+
+router.get('/api/get/meetings', softLimit, middleware.auth(), async(req, res) => {
+    console.log(req.session.name + " is getting meetings")
+    try {
+        let meetings = [];
+        if(req.query.date != undefined){
+            console.log(req.query.date)
+            let date = new Date(req.query.date)
+            date.setHours(0, 0, 0, 0)
+            let endDate = new Date(date)
+            endDate.setHours(23, 59, 59, 59)
+            meetings = await Meeting.find({ class: { $in: req.session.classes }, date: {"$lt": endDate, "$gte": date } })
+            console.log(meetings)
+            var data = [];
+            for(i in meetings){
+                data.push({
+                    _id: meetings[i]._id,
+                    user: meetings[i].user,
+                    class: meetings[i].class,
+                    school: meetings[i].school,
+                    subject: meetings[i].subject,
+                    date: meetings[i].date,
+                    createdAt: meetings[i].createdAt
+                })
+            }
+        }else if(req.query.week != undefined){
+            /* week needs to be a ISO date of the first day of the given week */
+            console.log(req.query.week)
+            let date = new Date(req.query.week)
+            date.setHours(0, 0, 0, 0)
+            let endDate = new Date(date)        
+            endDate.setTime( endDate.getTime() + 5 * 86400000 )
+            endDate.setHours(23, 59, 59, 59)
+            meetings = await Meeting.find({ class: { $in: req.session.classes }, date: {"$lt": endDate, "$gte": date } })
+            console.log(meetings)
+            /* Returns 2d Array that contains an array of meetings for each day of the week starting with sunday */
+            var data = [[],[],[],[],[]]
+            for(i in meetings){
+                let date = new Date(meetings[i].date)
+                let day = date.getDay() - 1;
+                if(day < 0){
+                    day = 6;
+                }
+                if(data[day] != undefined){
+                    if(data[day].length < 1){
+                        data[day] = [{
+                            _id: meetings[i]._id,
+                            user: meetings[i].user,
+                            class: meetings[i].class,
+                            school: meetings[i].school,
+                            subject: meetings[i].subject,
+                            date: meetings[i].date,
+                            createdAt: meetings[i].createdAt
+                        }]
+                    }else{
+                        data[day].push({
+                            _id: meetings[i]._id,
+                            user: meetings[i].user,
+                            class: meetings[i].class,
+                            school: meetings[i].school,
+                            subject: meetings[i].subject,
+                            date: meetings[i].date,
+                            createdAt: meetings[i].createdAt
+                        })
+                    }
+                }
+            }
+        }
+        res.json({
+            status: 200,
+            response: "success",
+            type: "data",
+            data: data
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ status: 400, response: "error", type: "error" })
+    }
+})
+
+router.post('/api/new/meeting', softLimit, middleware.auth({ lehrer: true }), async(req, res) => {
+    console.log(req.session.name + " will ein meeting erstellen")
+    if (req.body != undefined) {
+        if ((req.body.klasse != undefined || req.body.klasse != '' || req.body.klasse.length != 0) && req.body.date != undefined) {
+            if (req.session.classNames.includes(req.body.klasse) || req.session.role == "admin") {
+                const sendClass = await Class.findOne({ name: req.body.klasse });
+                if (!sendClass) {
+                    return res.json({ status: 404, type: "error", response: "class not found" })
+                }
+                const uid = new mongoose.Types.ObjectId();
+                const query = {
+                    _id: uid,
+                    user: req.session._id,
+                    subject: req.body.subject,
+                    date: new Date(req.body.date),
+                    class: sendClass._id,
+                    school: sendClass.school,
+                    createdAt: new Date()
+                }
+                try {
+                    const meeting = new Meeting(query)
+                    meeting.save(async function(err, doc) {
+                        if (err) {
+                            console.log(err)
+                            res.json({
+                                status: '400',
+                                type: 'error'
+                            });
+
+                        } else {
+                            const user = await User.findOne({ _id: req.session._id })
+                            if (user.meetings == undefined || user.meetings == null) {
+                                user.meetings = [doc._id]
+                            } else {
+                                user.meetings.push(doc._id)
+                            }
+                            user.save(function(err) {
+                                if (err) {
+                                    console.error(err);
+                                }
+                            });
+                            if (sendClass.meetings == undefined || sendClass.meetings == null) {
+                                sendClass.meetings = [doc._id]
+                            } else {
+                                sendClass.meetings.push(doc._id)
+                            }
+                            sendClass.save(function(err) {
+                                if (err) {
+                                    console.error(err);
+                                }
+                            });
+                            console.log("Meeting hinzugefügt als: " + doc._id)
+                            res.json({
+                                status: '200',
+                                response: "success",
+                                type: 'data',
+                                data: doc
+                            });
+                        }
+                    })
+                } catch (error) {
+                    console.log(error)
+                    res.json({
+                        status: '400',
+                        type: 'error'
+                    });
+                }
+            } else {
+                console.log(req.session.name + " is not part of " + req.body.klasse)
+                res.json({
+                    status: '401',
+                    type: "error",
+                    response: 'nicht teil der Klasse ' + req.body.klasse
+                });
+            }
+        } else {
+            console.log("not all fields filled out")
+            console.log(req.body)
+            res.json({
+                status: '421',
+                type: "error",
+                response: 'nicht alle Felder ausgefuellt'
+            });
+        }
+    } else {
+        console.log("not all fields filled out")
+        console.log(req.body)
+        res.json({
+            status: '421',
+            type: "error",
+            response: 'nicht alle Felder ausgefuellt'
         });
     }
 })
