@@ -30,15 +30,12 @@ let last = document.getElementById('fileDiv')
 
 const url = new URL(window.location.href);
 const aufgabenId = url.searchParams.get("id")
-console.log("Aufgabe: " + aufgabenId)
 let role;
 
 function validateForm() {
     if (document.getElementById('select-button').files.length === 0) {
-        //console.log(false)
         return false;
     } else {
-        //console.log(true)
         return true
     }
 }
@@ -46,7 +43,6 @@ function validateForm() {
 async function upload() {
     document.getElementById('loader').style.display = "inline-block"
     let filledOut = validateForm();
-    console.log(filledOut)
     if (filledOut) {
         const fi = document.getElementById('select-button');
         // Check if any file is selected.
@@ -72,7 +68,6 @@ async function upload() {
             let data = new FormData(form); // create formData object
             //data.append("filename", document.getElementById('filename').value);
             data.append("id", aufgabenId);
-            console.log(data)
             xhr.upload.addEventListener("progress", function(event) {
                 if (event.lengthComputable) {
                     let complete = (event.loaded / event.total * 100 | 0);
@@ -88,7 +83,6 @@ async function upload() {
                 document.getElementById('status').style.display = "none";
                 if (xhr.status == 200) {
                     let json = JSON.parse(this.responseText)
-                    console.log(json);
                     if (json.status == 200) {
                         document.getElementById('error').innerHTML = `Lösung erfolgreich hochgeladen!`;
                         renderUser()
@@ -104,7 +98,7 @@ async function upload() {
                         document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
                     }
                 } else {
-                    console.log(xhr.status)
+                    document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
                 }
 
             }
@@ -129,9 +123,7 @@ async function upload() {
 
 function moveBar(progress) {
     let elem = document.getElementById("progressBar");
-    if (progress >= 100) {
-        console.log("finished")
-    } else {
+    if (progress < 100) {
         elem.style.width = progress + '%';
         elem.innerHTML = progress * 1 + '%';
     }
@@ -144,7 +136,6 @@ function Filevalidation() {
     if (fi.files.length > 0) {
         let file = 0;
         for (let i = 0; i < fi.files.length; i++) {
-            console.log(fi.files[i])
             file += Math.round(fi.files.item(i).size)
         }
         // The size of the file.
@@ -177,7 +168,6 @@ async function authenticate() {
     const response = await fetch('/api/auth/exercise?id=' + aufgabenId, options);
     const json = await response.json();
     if (json.status == 200) {
-        console.log(json);
         role = json.user.role
         document.getElementById('fach').innerHTML = json.data.subject + " Aufgabe (" + json.data.class + ")";
         document.getElementById('text').innerHTML = json.data.text;
@@ -204,7 +194,6 @@ async function authenticate() {
             renderTeacher()
         }
     } else if (json.status == 403) {
-        console.log(json);
         let message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
@@ -212,7 +201,6 @@ async function authenticate() {
         document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 405) {
-        console.log(json);
         let message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
@@ -220,7 +208,6 @@ async function authenticate() {
         document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 404 || json.status == 400) {
-        console.log(json);
         let message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Diese Aufgabe gibt es nicht</p>`
@@ -248,7 +235,6 @@ async function renderTeacher() {
     const response = await fetch('/api/get/table?id=' + aufgabenId, options);
     const json = await response.json();
     if (json.status == 200) {
-        console.log(json);
         document.getElementById('solutionHead').innerHTML = `Lösungen` //<a href="/api/v1/generate/pdf?id=${json.exercise}"><span class="fas fa-file-pdf cloud" title="Als PDF exportieren" aria-hidden="true"></span></a>
         if(json.data.length >= 1){
             let customers = new Array();
@@ -256,22 +242,17 @@ async function renderTeacher() {
             for (i in json.data) {
                 customers.push([json.data[i].name, json.data[i].createdAt, json.data[i].fileUrl, json.data[i].status, json.data[i]._id]);
             }
-            console.log(customers)
-                //Create a HTML Table element.
             let table = document.createElement("table");
-            //Get the count of columns.
             let columnCount = customers[0].length;
-            //Add the header row.
             let row = table.insertRow(-1);
             for (let i = 0; i < columnCount; i++) {
                 let headerCell = document.createElement("TH");
                 headerCell.innerHTML = customers[0][i];
                 row.appendChild(headerCell);
             }
-            //Add the data rows.
-            for (let i = 1; i < customers.length; i++) { //Rows
+            for (let i = 1; i < customers.length; i++) { 
                 row = table.insertRow(-1);
-                for (let j = 0; j < columnCount; j++) { //Column
+                for (let j = 0; j < columnCount; j++) { 
                     let cell = row.insertCell(-1);
                     if (j == 0) {
                         if (customers[i][j] != null) {
@@ -285,7 +266,6 @@ async function renderTeacher() {
                             cell.innerHTML = "-"
                         }
                     } else if (j == 2) {
-                        console.log(customers[i][2])
                         if (customers[i][2] != null) {
                             let btn = document.createElement('span');
                             btn.id = customers[i][j];
@@ -295,10 +275,7 @@ async function renderTeacher() {
                             cell.appendChild(btn);
                         }
                     } else if (j == 3) {
-                        /* <span onclick="document.getElementById('link_test').click()" id="abcdefg" title="Lösung Herunterladen" class="fas fa-check-circle no"></span>
-                            <a id="link_test" href="/new" hidden=""></a> */
                         let btn = document.createElement('span');
-                        //console.log(customers[i])
                         if (customers[i][3]) {
                             btn.className = "fas fa-check-circle yes";
                             btn.title = "Abgegeben";
@@ -325,7 +302,6 @@ async function renderTeacher() {
         document.getElementById('loader').style.display = "none"
         document.getElementById('user').style.display = "block";
     } else if (json.status == 403) {
-        console.log(json);
         let message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
@@ -333,7 +309,6 @@ async function renderTeacher() {
         document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 405) {
-        console.log(json);
         let message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
@@ -341,7 +316,6 @@ async function renderTeacher() {
         document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 404) {
-        console.log(json);
         document.getElementById('solutionHead').style.display = "none"
         document.getElementById('loader').style.display = "none"
         document.getElementById('user').style.display = "block";
@@ -371,7 +345,6 @@ async function renderUser() {
     const response = await fetch('/api/get/solutions?id=' + aufgabenId, options);
     const json = await response.json();
     if (json.status == 200) {
-        console.log(json);
         document.getElementById('solutionHead').innerHTML = "Deine Lösungen:"
         for (i in json.data) {
             let div = document.createElement('div');
@@ -387,7 +360,6 @@ async function renderUser() {
         document.getElementById('loader').style.display = "none"
         document.getElementById('user').style.display = "block";
     } else if (json.status == 403) {
-        console.log(json);
         let message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
@@ -395,7 +367,6 @@ async function renderUser() {
         document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 405) {
-        console.log(json);
         let message = createElement('div', 'message', 'message')
         last.parentElement.appendChild(message)
         message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
@@ -403,7 +374,6 @@ async function renderUser() {
         document.getElementById('user').style.display = "block";
         window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else if (json.status == 404) {
-        console.log(json);
         document.getElementById('solutionHead').innerHTML = "Lösung Hochladen:"
         document.getElementById('form').style.display = "block"
         document.getElementById('loader').style.display = "none"
