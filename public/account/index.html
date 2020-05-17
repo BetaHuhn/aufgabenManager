@@ -62,7 +62,7 @@
         <a id="logout" href="/logout" class="menu underline">Logout</a>
         <a href="/account" class="menu active">Account</a>
         <a href="/new" id="new" class="menu underline">Neu</a>
-        <a href="/aufgaben" class="menu underline">Aufgaben</a>
+        <a href="/dashboard" class="menu underline">Dashboard</a>
         <a href="javascript:void(0);" class="icon" onclick="myFunction()">
             <i class="burger fa fa-bars"></i>
         </a>
@@ -77,24 +77,27 @@
             <div id="user" class="login" style="display: none;">
                 <h1 id="heading">Account:</h1>
                 <div id="form">
-                    <p>Name:</p>
+                    <p class="loginText">Name:</p>
                     <p class="result" id="name"></p>
-
-                    <p>Neues Passwort:</p>
-                    <input required class="input" title="Gib dein altes Passwort ein" type="password" id="oldPassword" placeholder="Altes Passwort" />
-                    <input required class="input" title="Gib ein neues Passwort ein" type="password" id="newPassword" placeholder="Neues Passwort" />
-                    <button id="changeBtn" onclick="change();">Ändern</button>
-                    <p class="message" id="error"></p>
-
-                    <h1>Discord/Telegram Bot:</h1>
-                    <p>Mit diesem Link kannst du den Bot direkt zu einer Telegram Gruppe hinzufügen: </p>
-                    <!--  <ul class="klassen" id="klassen"></ul> -->
-                    <div style="text-align: center;">
-                        <a id="telegram-link"></a>
+                    <div id="tabs" class="tabs">
+                        <p id="passwordTab" class="tab activeTab" onclick="switchTab();">Passwort ändern</p>
+                        <p id="botTab" class="tab" onclick="switchTab();">Bot einrichten</p>
                     </div>
-
-                    <p>Bot Key für manuelles setup:</p>
-                    <p class="result" id="botKey"></p><br>
+                    <div id="password">
+                        <input required class="input" title="Gib dein altes Passwort ein" type="password" id="oldPassword" placeholder="Altes Passwort" />
+                        <input required class="input" title="Gib ein neues Passwort ein" type="password" id="newPassword" placeholder="Neues Passwort" />
+                        <button id="changeBtn" onclick="change();">Ändern</button>
+                    </div>
+                    <div id="bot" style="display: none;">
+                        <p class="loginText">Mit diesem Link kannst du den Bot direkt zu einer Telegram Gruppe hinzufügen: </p>
+                        <!--  <ul class="klassen" id="klassen"></ul> -->
+                        <div style="text-align: center;">
+                            <a id="telegram-link"></a>
+                        </div>
+                        <p class="loginText">Bot Key für manuelles setup:</p>
+                        <p class="result loginText" id="botKey"></p><br>
+                    </div>
+                    <p class="message loginText" id="error"></p>
 
                 </div>
             </div>

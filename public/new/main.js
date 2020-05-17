@@ -29,25 +29,72 @@ function myFunction() {
 var last = document.getElementById('fileDiv')
 
 var role;
+let activeTab = "aufgabe";
 
-function validateForm() {
-    var a = document.getElementById('fach').value;
-    var b = document.getElementById('klasse').value;
-    var c = document.getElementById('text').value;
-    var d = document.getElementById('abgabe').value;
-    console.log("a: " + a + " b: " + b + " c: " + c + " d: " + d)
-    if ((a == null || a == "") || (b == null || b == "") || (c == null || c == "") || (d == null || d == "") || b == "Klasse") {
-        //console.log(false)
-        return false;
+async function authenticate() {
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    };
+    const response = await fetch('/api/auth/new', options);
+    const json = await response.json();
+    if (json.status == 200) {
+        role = json.data.role
+        if (json.data.classes == null) {
+            var el = document.getElementById('klasse');
+            var newEl = document.createElement('input');
+            newEl.id = 'klasse';
+            newEl.placeholder = "klasse";
+            newEl.className = 'klasse'
+            el.parentNode.replaceChild(newEl, el);
+            var el2 = document.getElementById('klasseMeeting');
+            var newEl2 = document.createElement('input');
+            newEl2.id = 'klasseMeeting';
+            newEl2.placeholder = "klasse";
+            newEl2.className = 'klasse'
+            el2.parentNode.replaceChild(newEl2, el2);
+            //el2.parentNode.replaceChild(newEl, el2);
+        } else {
+            if (json.data.classes.length >= 1) {
+                for (i in json.data.classes) {
+                    var sel = document.getElementById('klasse');
+                    var sel2 = document.getElementById('klasseMeeting');
+                    var opt = document.createElement('option');
+                    opt.appendChild(document.createTextNode(json.data.classes[i]));
+                    opt.value = json.data.classes[i];
+                    sel.appendChild(opt);
+                    sel2.appendChild(opt);
+                }
+            } else {
+                alert("Fehler: Du bist nicht Mitglied einer Klasse. Bitte melde dich erneut an")
+                var message = createElement('div', 'message', 'message')
+                last.parentElement.appendChild(message)
+                message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+                window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
+            }
+        }
+        loadTab();
+    } else if (json.status == 405) {
+        var message = createElement('div', 'message', 'message')
+        last.parentElement.appendChild(message)
+        message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     } else {
-        //console.log(true)
-        return true
+        var message = createElement('div', 'message', 'message')
+        last.parentElement.appendChild(message)
+        message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
+        document.getElementById('loader').style.display = "none";
+        document.getElementById('user').style.display = "block";
+        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
     }
 }
 
 async function upload() {
     var filledOut = validateForm();
-    console.log(filledOut)
     if (filledOut) {
         const fi = document.getElementById('select-button');
         // Check if any file is selected.
@@ -80,9 +127,7 @@ async function upload() {
             } else {
                 var klasse = e.options[e.selectedIndex].value;
             }
-            console.log(klasse)
             data.append("klasse", klasse)
-            console.log(data)
             xhr.upload.addEventListener("progress", function(event) {
                 if (event.lengthComputable) {
 
@@ -98,7 +143,6 @@ async function upload() {
                 document.getElementById('status').style.display = "none";
                 if (xhr.status == 200) {
                     var json = JSON.parse(this.responseText)
-                    console.log(json);
                     if (json.status == 200) {
                         document.getElementById('heading').style.display = "none";
                         document.getElementById('error').innerHTML = `Aufgabe erfolgreich erstellt!`;
@@ -117,7 +161,7 @@ async function upload() {
                         document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
                     }
                 } else {
-                    console.log(xhr.status)
+                  document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
                 }
 
             }
@@ -147,7 +191,6 @@ async function upload() {
                 document.getElementById('error').innerHTML = `Aufgabe erfolgreich erstellt!`;
                 window.location.href = "/aufgabe?id=" + json.data._id
             } else if (json.status == 405) {
-                console.log(json);
                 document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
                 window.location.replace('/login?ref=new')
             } else if (json.status == 421) {
@@ -180,13 +223,23 @@ async function upload() {
 
 }
 
+function validateForm() {
+    var a = document.getElementById('fach').value;
+    var b = document.getElementById('klasse').value;
+    var c = document.getElementById('text').value;
+    var d = document.getElementById('abgabe').value;
+    if ((a == null || a == "") || (b == null || b == "") || (c == null || c == "") || (d == null || d == "") || b == "Klasse") {
+        return false;
+    } else {
+        return true
+    }
+}
+
 function moveBar(progress) {
     var elem = document.getElementById("progressBar");
-    if (progress >= 100) {
-        console.log("finished")
-    } else {
-        elem.style.width = progress + '%';
-        elem.innerHTML = progress * 1 + '%';
+    if (progress < 100) {
+      elem.style.width = progress + '%';
+      elem.innerHTML = progress * 1 + '%';
     }
 
 }
@@ -197,7 +250,6 @@ function Filevalidation() {
     if (fi.files.length > 0) {
         var file = 0;
         for (var i = 0; i < fi.files.length; i++) {
-            console.log(fi.files[i])
             file += Math.round(fi.files.item(i).size)
         }
         // The size of the file.
@@ -218,65 +270,6 @@ function formatBytes(bytes, decimals) {
         sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
         i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
-
-
-async function authenticate() {
-    const options = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    };
-    const response = await fetch('/api/auth/new', options);
-    const json = await response.json();
-    if (json.status == 200) {
-        console.log(json);
-        role = json.data.role
-        if (json.data.classes == null) {
-            var el = document.getElementById('klasse');
-            var newEl = document.createElement('input');
-            newEl.id = 'klasse';
-            newEl.placeholder = "klasse";
-            newEl.className = 'klasse'
-                // replace el with newEL
-            el.parentNode.replaceChild(newEl, el);
-        } else {
-            if (json.data.classes.length >= 1) {
-                for (i in json.data.classes) {
-                    console.log(json.data.classes[i])
-                    var sel = document.getElementById('klasse');
-                    var opt = document.createElement('option');
-                    opt.appendChild(document.createTextNode(json.data.classes[i]));
-                    opt.value = json.data.classes[i];
-                    sel.appendChild(opt);
-                }
-            } else {
-                alert("Fehler: Du bist nicht Mitglied einer Klasse. Bitte melde dich erneut an")
-                var message = createElement('div', 'message', 'message')
-                last.parentElement.appendChild(message)
-                message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-                window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
-            }
-        }
-        document.getElementById('loader').style.display = "none";
-        document.getElementById('user').style.display = "block";
-    } else if (json.status == 405) {
-        console.log(json);
-        var message = createElement('div', 'message', 'message')
-        last.parentElement.appendChild(message)
-        message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
-        document.getElementById('loader').style.display = "none";
-        document.getElementById('user').style.display = "block";
-        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
-    } else {
-        var message = createElement('div', 'message', 'message')
-        last.parentElement.appendChild(message)
-        message.innerHTML = `<p class="message" id="message">Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.</p>`
-        document.getElementById('loader').style.display = "none";
-        document.getElementById('user').style.display = "block";
-        window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
-    }
 }
 
 function copy(resp) {
@@ -310,6 +303,112 @@ function createElement(elem, className, id, text, title) {
     }
     return element
 }
+
+function loadTab(){
+    let url = new URL(window.location.href);
+    let tab = url.searchParams.get("tab");
+    document.getElementById('loader').style.display = "none";
+    document.getElementById('user').style.display = "block";
+    if(tab != undefined && tab != activeTab){
+        switchTab();
+    }
+}
+
+function switchTab(){
+    if(activeTab == "aufgabe"){
+        document.getElementById('form').style.display = "none";
+        document.getElementById('meeting').style.display = "block";
+        document.getElementById('aufgabenTab').classList.remove("activeTab");
+        document.getElementById('meetingsTab').classList.add("activeTab");
+        activeTab = "meeting";
+    }else{
+        document.getElementById('form').style.display = "block";
+        document.getElementById('meeting').style.display = "none";
+        document.getElementById('aufgabenTab').classList.add("activeTab");
+        document.getElementById('meetingsTab').classList.remove("activeTab");
+        activeTab = "aufgabe";
+    }
+    let url = new URL(window.location.href);
+    let search_params = url.searchParams;
+    search_params.set('tab', activeTab);
+    url.search = search_params.toString();
+    window.history.replaceState(null, null, url)
+}
+
+async function createMeeting(){
+    var filledOut = validateMeeting();
+    if (filledOut) {
+        document.getElementById('error').innerHTML = `<p class="message" id="message">Hochladen...</h1>`;
+        document.getElementById('meeting').style.display = "none";
+        var e = document.getElementById("klasseMeeting");
+        if (role == "admin") {
+            var klasse = e.value;
+        } else {
+            var klasse = e.options[e.selectedIndex].value;
+        }
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ date: document.getElementById('showCally').value, subject: document.getElementById('fachMeeting').value, klasse: klasse })
+        };
+        const response = await fetch('/api/new/meeting', options);
+        const json = await response.json();
+        if (json.status == 200) {
+            //(id, name, ip, send, receive, lastHandshake, createdAt, pub, priv){
+            document.getElementById('heading').style.display = "none";
+            document.getElementById('error').innerHTML = `Meeting erfolgreich erstellt!`;
+            //window.location.href = "/dashboard?tab=meetings";
+        } else if (json.status == 405) {
+            document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
+            window.location.replace('/login?ref=new')
+        } else if (json.status == 421) {
+            document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
+            document.getElementById('meeting').style.display = "block";
+        } else if (json.status == 404) {
+            document.getElementById('error').innerHTML = `<p class="message" id="message">Diese Klasse gibt es nicht.</p>`
+            document.getElementById('meeting').style.display = "block";
+        } else {
+            document.getElementById('error').innerHTML = `Shit... Es scheint ein Fehler aufgetreten zu sein. Lade bitte die Seite nochmal.`;
+        }
+        
+    } else {
+        document.getElementById('error').innerHTML = `<p class="message" id="message">Nicht alle Felder ausgefüllt</p>`
+        var a = document.getElementById('fachMeeting');
+        var b = document.getElementById('klasseMeeting');
+        var c = document.getElementById('showCally');
+        var array = [a, b, c]
+        for(i in array){
+            if(array[i].value == null || array[i].value == ""){
+                array[i].style.border = "1px solid var(--red)"
+            }else{
+                array[i].style.border = "none"
+            }
+        }
+        alert("Bitte Fülle alle Felder aus (Datei und Datei Name Optional): Fach: " + a.value + " Klasse: " + ((b.value == "Klasse") ? undefined : b.value) + " Termin: " + c.value);
+    }
+}
+
+function validateMeeting() {
+    console.log(document.getElementById('klasseMeeting'))
+    var a = document.getElementById('fachMeeting').value;
+    var b = document.getElementById('klasseMeeting').value;
+    var c = document.getElementById('showCally').value;
+    if ((a == null || a == "") || (b == null || b == "") || (c == null || c == "") || b == "Klasse") {
+        return false;
+    } else {
+        return true
+    }
+}
+
+let cally;
+(function(window, document) {
+    cally = new Calendary({ lang: "de" });
+    let cali = document.getElementById("showCally");
+    cally.setCally(new Date());
+})(window, document);
+  
 
 function AvoidSpace(event) {
     var k = event ? event.which : window.event.keyCode;

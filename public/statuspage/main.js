@@ -8,7 +8,6 @@ async function checkStatus() {
     const response = await fetch('/api/v1/status?page=' + window.location.pathname + window.location.search, options);
     const json = await response.json();
     if (json.status == 200) {
-        console.log(json);
         var div = document.createElement('div');
         div.className = 'status-page-container';
         document.body.appendChild(div);
@@ -37,13 +36,9 @@ async function checkStatus() {
             monitoring: "Überwachen",
             resolved: "Gelöst"
         }
-        console.log(json.data.status.description)
-        console.log(description[json.data.status.description])
-        console.log(indicator[description[json.data.status.description]])
         if(json.data.status.indicator == "none"){
-            console.log("no status reports")
+           // console.log("no status reports")
         }else{
-            console.log(description[json.data.status.description])
             div.innerHTML = '<a class="status-page-link status-page-indicator-' + indicator[description[json.data.status.description]] + '" href="https://' + json.data.page.id + '.statuspage.io/" target="_blank" title="' + description[json.data.status.description] + '">' + description[json.data.status.description] + '</a>';
             var updates = ""
             var div2 = document.createElement('div')
@@ -64,7 +59,6 @@ async function checkStatus() {
                 var name = json.data.incidents[0].name;
                 div2.innerHTML = `<p>Meldung: ${name}</p><p>Updates:</p>` + updates
             }else if(json.data.components.filter(function(e) { return e.status != 'operational'; }).length > 0){
-                console.log("found")
                 if(json.data.components[i].name == 'DigitalOcean FRA1'){
                     var name = json.data.components[i].status;
                     div2.innerHTML = "<p>vor " + dateDifference((new Date(json.data.components[i].updated_at)), new Date()) + " - " + ` ${name}, unser hosing provider hat zurzeit probleme. Dadurch kann es auch bei uns zu Fehlern kommen.</p>`
@@ -76,8 +70,6 @@ async function checkStatus() {
             }
         }
         
-    } else {
-       console.log(json)
     }
 }
 

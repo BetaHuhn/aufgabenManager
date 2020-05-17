@@ -56,7 +56,6 @@ function onScroll(event){
 }
 
 function copy(e){
-    console.log(e)
     var resp = "https://zgk.mxis.ch/dokumentation#" + e.id
     var $body = document.getElementsByTagName('body')[0]
     var $tempInput = document.createElement('INPUT');

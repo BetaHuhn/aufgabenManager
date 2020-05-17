@@ -19,6 +19,7 @@ const Invite = require("../models/invite")
 const Class = require("../models/class")
 const School = require("../models/school")
 const Solution = require("../models/solution")
+const Meeting = require("../models/meeting");
 
 router.use(fileUpload({
     createParentPath: true,
@@ -53,6 +54,10 @@ router.get('/api/v1/status', async(req, res) => {
     request(url, (err, response, body) => {
         if (err) {
             console.log(err)
+            res.status(500).json({
+                status: 500,
+                response: "error"
+            })
         }
         res.json({
             status: 200,
@@ -595,6 +600,68 @@ router.get('/api/v1/get/user', limitApi, async(req, res) => {
                 if (error.code == 405) {
                     console.log("User not found")
                     res.json({ status: 404, response: "user nicht gefunden" })
+                } else {
+                    console.log(error)
+                    res.json({ status: 500, response: "internal error, bitte kontaktiere support" })
+                }
+            }
+        } else {
+            console.log("not authorized")
+            res.json({
+                status: '401',
+                response: "nicht autorisiert"
+            });
+        }
+    } else {
+        console.log("not api key sent")
+        res.json({
+            status: '400',
+            response: 'kein api key gesendet'
+        });
+    }
+});
+
+router.get('/api/v1/get/meetings', limitApi, async(req, res) => {
+    console.log(req.query)
+    if (req.query != undefined) {
+        if (req.query.apiKey == apiKey) {
+            try {
+                let meeting;
+                if (req.query.id != undefined) {
+                    meeting = await Meeting.find({ _id: req.query.id }).populate('class school', 'name')
+                } else if (req.query.klasse != undefined) {
+                    meeting = await Meeting.find({ class: req.query.class }).populate('class school', 'name')
+                } else if (req.query.subject != undefined) {
+                    meeting = await Meeting.find({ subject: req.query.subject }).populate('class school', 'name')
+                } else if (req.query.date != undefined) {
+                    meeting = await Meeting.find({ date: req.query.date }).populate('class school', 'name')
+                } else {
+                    meeting = await Meeting.find().populate('class school', 'name')
+                }
+                let data = []
+                for (i in meeting) {
+                    data.push({
+                        _id: meeting[i]._id,
+                        user: meeting[i].user,
+                        class: meeting[i].class,
+                        school: meeting[i].school,
+                        subject: meeting[i].subject,
+                        date: meeting[i].date,
+                        createdAt: meeting[i].createdAt
+                    })
+                }
+                console.log("Sending meetings")
+                console.log(data)
+                res.json({
+                    status: 200,
+                    response: 'success',
+                    type: 'data',
+                    data: data
+                })
+            } catch (error) {
+                if (error.code == 405) {
+                    console.log("Meeting not found")
+                    res.json({ status: 404, response: "meeting nicht gefunden" })
                 } else {
                     console.log(error)
                     res.json({ status: 500, response: "internal error, bitte kontaktiere support" })
