@@ -25,7 +25,6 @@ function getCookie(cname) {
 
 function swichToLight(){
     let pictures = ['AufgabenView', 'Aufgabe', 'AufgabeLehrer', 'AufgabenMobile', 'AufgabeLehrerMobile']
-    console.log("Switching to the light side")
     for(i in pictures){
         let image = document.getElementById(pictures[i])
         if(image) { image.src = "/static/previews/" + pictures[i] + "Light.png" }
@@ -38,7 +37,6 @@ function swichToLight(){
 
 function swichToDark(){
     let pictures = ['AufgabenView', 'Aufgabe', 'AufgabeLehrer', 'AufgabenMobile', 'AufgabeLehrerMobile']
-    console.log("Switching to the dark side")
     for(i in pictures){
         let image = document.getElementById(pictures[i])
         if(image) { image.src = "/static/previews/" + pictures[i] + "Dark.png" }
@@ -69,7 +67,6 @@ function switchTheme() {
 
 //Runs in the beginning. Checks if System Dark mode is on or if preference set in cookie
 function detectDarkMode() {
-    console.log("Cookie: " + getCookie('darkmode'))
     if (getCookie('darkmode') == 'false') {
         swichToLight()
     } else if (getCookie('darkmode') == 'true') {

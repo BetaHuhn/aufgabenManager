@@ -24,7 +24,6 @@ async function change() {
         const response = await fetch('/api/auth/reset/password/request', options);
         const json = await response.json();
         if (json.status == 200) {
-            console.log(json);
             let error = document.getElementById('error');
             error.innerHTML = "Wir haben dir eine Email geschickt"
             document.getElementById('loader').style.display = "none"
@@ -33,24 +32,20 @@ async function change() {
             error.innerHTML = "Bitte fülle alle Felder aus"
             document.getElementById('loader').style.display = "none"
             document.getElementById('form').style.display = "block"
-            console.log(json)
         } else if (json.status == 404) {
             let error = document.getElementById('error');
             error.innerHTML = "Diese Email gibt es nicht"
             document.getElementById('loader').style.display = "none"
             document.getElementById('form').style.display = "block"
-            console.log(json)
         } else {
             let error = document.getElementById('error');
             error.innerHTML = "Es ist ein Fehler aufgetreten, bitte warte kurz"
             document.getElementById('loader').style.display = "none"
             document.getElementById('form').style.display = "block"
-            console.log(json)
         }
     } else {
         let error = document.getElementById('error');
         error.innerHTML = "Bitte fülle alle Felder aus"
-        console.log("Email field not filled out")
     }
 
 }

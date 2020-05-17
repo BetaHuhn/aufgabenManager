@@ -57,9 +57,7 @@ async function authenticate() {
         const response = await fetch('/api/auth/dashboard', options);
         const json = await response.json();
         if (json.status == 200) {
-            console.log(json);
             user_id = json.data._id;
-            console.log(user_id)
             role = json.data.role
             currentDay = new Date(json.data.isoDateTime)
             if(Number.isNaN(currentDay.getMonth())) {
@@ -72,14 +70,12 @@ async function authenticate() {
                 currentDay.setDate(currentDay.getDate() + 2);
             }
             if (role == 'user') {
-                console.log("user")
                 var newReiter = document.getElementById('new');
                 newReiter.
                 style.display = 'none'
             }
             loadTab();
         } else if (json.status == 405) {
-            console.log(json);
             let message = document.getElementById('error');
             message.style.display = "block";
             message.innerHTML = `<p class="message" id="message">Nicht angemeldet. Wenn du nicht automatisch weiter geleitet wirst, klicke <a href="/login">hier</a></p>`
@@ -111,10 +107,8 @@ async function getAufgaben() {
         const response = await fetch('/api/get/home', options);
         const json = await response.json();
         if (json.status == 200) {
-            console.log(json);
             aufgaben = json.data;
         } else if (json.status == 405) {
-            console.log(json);
             window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
             let message = document.getElementById('error');
             message.style.display = "block";
@@ -131,9 +125,7 @@ async function getAufgaben() {
         }
     }
     let par = document.getElementById("aufgaben");
-    console.log(par.children)
     while(par.children.length > 1){
-        console.log(par.lastChild)
         par.removeChild(par.lastChild)
     }
     if (aufgaben.length >= 1) {
@@ -145,7 +137,6 @@ async function getAufgaben() {
             last.parentElement.appendChild(row);
             last = row;
         }
-        console.log(numAufgaben + " aufgaben")
         if (role != 'user') {
             var button = document.createElement('button')
             button.className = 'addButton';
@@ -164,7 +155,6 @@ async function getAufgaben() {
 }
 
 function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserId) {
-    //console.log(file)
     var div = createElement('div', 'device parent', id)
     div.onclick = function() { window.location.href = "/aufgabe?id=" + id; }
     div.style.cursor = "pointer";
@@ -228,10 +218,8 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
     div2.appendChild(p)
     files.parentElement.appendChild(div2)
 
-    console.log("Aufgabe von: " + aufgabeUserId + " User ID: " + user_id + " Role: " + role)
     if (role != 'user') {
         if (user_id == aufgabeUserId || role == 'admin') {
-            console.log(true)
             var removeDiv = createElement('div', 'child deleteButton', id)
             removeDiv.id = id
             removeDiv.title = "Klicke um die Aufgabe zu löschen"
@@ -269,7 +257,6 @@ function createElement(elem, className, id, text, title) {
 }
 
 async function remove(id) {
-    console.log(id)
     var check = confirm('Bist du sicher, dass du die Aufgabe löschen willst?');
     if (check) {
         const options = {
@@ -299,10 +286,8 @@ async function remove(id) {
 }
 
 function download(e) {
-    console.log(e.id)
     event.cancelBubble = true;
     if (event.stopPropagation) event.stopPropagation();
-    console.log("Donwloading: " + e.id)
     var link = document.getElementById('link_' + e.id).href;
     if (link != undefined) {
         window.open(link, "_blank");
@@ -395,10 +380,8 @@ async function getMeetings(){
                 const response = await fetch(`/api/get/meetings?date=${currentDay.toISOString()}`, options);
                 const json = await response.json();
                 if (json.status == 200) {
-                    console.log(json.data)
                     meetings[isoToDate(currentDay)] = json.data;
                 }else{
-                    console.log(json.data)
                     let message = document.getElementById('error');
                     message.style.display = "block";
                     message.innerHTML = "Es ist ein Fehler aufgetreten"
@@ -461,8 +444,6 @@ async function getMeetings(){
         let day = date.getDay();
         let diff = date.getDate() - day + (day == 0 ? -6:1);
         let week = new Date(date.setDate(diff));
-        console.log(week)
-        console.log(meetingsWeek[isoToDate(week)])
         if(meetingsWeek[isoToDate(week)] == undefined){
             const options = {
                 method: 'GET',
@@ -473,10 +454,8 @@ async function getMeetings(){
             const response = await fetch(`/api/get/meetings?week=${week.toISOString()}`, options);
             const json = await response.json();
             if (json.status == 200) {
-                console.log(json.data)
                 meetingsWeek[isoToDate(week)] = json.data;
             }else{
-                console.log(json.data)
                 let message = document.getElementById('error');
                 message.style.display = "block";
                 message.innerHTML = "Es ist ein Fehler aufgetreten"
@@ -492,10 +471,8 @@ async function getMeetings(){
                 maxLen = currentMeetings[i].length;
             }
         }
-        console.log(maxLen)
         table = document.getElementById('meetingTable');
         if(maxLen < 1){
-            console.log("keine meetings")
             for(var i = 0; i < 4; i++){
                 if(i >= 1){
                     for(a in parent.children[i].children){
@@ -514,11 +491,9 @@ async function getMeetings(){
                     maxLen += 1;
                 }
                 while(maxLen < parent.children[i] - 1){
-                    console.log("remove")
                     parent.removeChild(parent.children[i])
                 }
                 for(var i = 0; i < maxLen; i++){
-                    console.log("1 run")
                     if(parent.children[i + 1] == undefined){
                         let tr = document.createElement("tr");
                         for(elem in currentMeetings){
@@ -555,12 +530,9 @@ async function getMeetings(){
                                 let date = new Date(currentMeetings[elem][i].date)
                                 let hour = ('0' + date.getHours()).slice(-2);
                                 let minute = ('0' + date.getMinutes()).slice(-2);
-                                console.log("meeting: " + date + " jetzt: " + new Date())
                                 if(date > new Date()){
-                                    console.log("future")
                                     td.className = "meetingWeek futureMeeting";
                                 }else{
-                                    console.log("past")
                                     td.className = "meetingWeek";
                                 }
                                 td.id = currentMeetings[elem][i]._id
