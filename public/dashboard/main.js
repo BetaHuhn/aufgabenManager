@@ -66,6 +66,11 @@ async function authenticate() {
                 let arr = json.data.isoDateTime.split(/[- :]/);
                 currentDay = new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]);
             }
+            if(currentDay.getDay() == 0){
+                currentDay.setDate(currentDay.getDate() + 1);
+            }else if(currentDay.getDay() == 6){
+                currentDay.setDate(currentDay.getDate() + 2);
+            }
             if (role == 'user') {
                 console.log("user")
                 var newReiter = document.getElementById('new');
@@ -632,7 +637,13 @@ function createTermin(e){
 
 function next(){
     if(activeDisplay == "tag"){
-        currentDay.setDate(currentDay.getDate() + 1);
+        if(currentDay.getDay() + 1 == 0){
+            currentDay.setDate(currentDay.getDate() + 2);
+        }else if(currentDay.getDay() + 1 == 6){
+            currentDay.setDate(currentDay.getDate() + 3);
+        }else{
+            currentDay.setDate(currentDay.getDate() + 1);
+        }
     }else{
         currentDay.setDate(currentDay.getDate() + 7);
     }
@@ -641,7 +652,13 @@ function next(){
 
 function previous(){
     if(activeDisplay == "tag"){
-        currentDay.setDate(currentDay.getDate() - 1);
+        if(currentDay.getDay() - 1 == 0){
+            currentDay.setDate(currentDay.getDate() - 3);
+        }else if(currentDay.getDay() - 1 == 6){
+            currentDay.setDate(currentDay.getDate() - 2);
+        }else{
+            currentDay.setDate(currentDay.getDate() - 1);
+        }
     }else{
         currentDay.setDate(currentDay.getDate() - 7);
     }
