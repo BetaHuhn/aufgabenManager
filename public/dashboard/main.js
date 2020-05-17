@@ -224,7 +224,7 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
     var p = document.createElement('p')
     p.className = "blue"
     p.style.margin = "2px"
-    p.innerHTML = (role == "user") ? "Details" : "Lösungen"
+    p.innerHTML = (role == "user") ? "Mehr" : "Lösungen"
     div2.appendChild(p)
     files.parentElement.appendChild(div2)
 

@@ -29,6 +29,14 @@ const softLimit = slowDown({
     maxDelayMs: 10 * 1000
 });
 
+router.get('/meetings', async(req, res) => {
+    res.redirect("/dashboard?tab=meetings")
+})
+
+router.get('/aufgaben', async(req, res) => {
+    res.redirect("/dashboard?tab=aufgaben")
+})
+
 router.get('/api/get/home', softLimit, middleware.auth(), async(req, res) => { //, middleware.cache(900)
     try {
         const classes = await Class.find({ '_id': { $in: req.session.classes } }).populate("exercises")

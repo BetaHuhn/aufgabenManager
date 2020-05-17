@@ -12,6 +12,10 @@
     --font-color-hover: #7a7a7a;
     --bg-color: #f5f6fa;
     --white: #fff;
+    --white-hover: rgb(245, 245, 245);
+    --white-light: rgb(238, 238, 238);
+    --white-highlight:rgb(255, 255, 255);
+    --black: #575757;
     --underline: #fff;
     --nav: rgb(78, 121, 216);
     --input-color: rgb(230, 230, 230);
@@ -22,6 +26,8 @@
     --green: #5dd64d;
     --green-hover: #60e642;
     --bg-code: rgba(0, 0, 0, .05);
+    --tab: #bfbfbf;
+    --tab-hover: #c9c9c9;
 }
 
 [data-theme="dark"] {
@@ -36,6 +42,10 @@
     --font-color-hover: #7a7a7a;
     --bg-color: #1c1c1c;
     --white: #292929;
+    --white-hover: #353535;
+    --white-light: #1f1f1f;
+    --white-highlight: #3a3a3a;
+    --black: rgb(255, 255, 255);
     --underline: rgb(78, 121, 216);
     --nav: #292929;
     --input-color: #1c1c1c;
@@ -46,6 +56,8 @@
     --green: #5dd64d;
     --green-hover: #60e642;
     --bg-code: rgba(0, 0, 0, .05);
+    --tab: #6d6d6d;
+    --tab-hover: #797979;
 }
 
 html,
@@ -266,7 +278,7 @@ h2 {
     font-size: 1.8rem;
 }
 
-.login p {
+.loginText{
     margin-left: 10px;
     font-size: 1rem;
 }
@@ -335,6 +347,42 @@ h2 {
 .login button[disabled]{
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.tabs{
+    display: flex;
+    width: 95%;
+    border-bottom: 2px solid var(--tab);
+    margin-left: 10px;
+    margin-top: 15px;
+    justify-content: center;
+}
+
+.tabs p{
+    margin-left: 0px;
+    font-size: 1rem;
+    width: 50%;
+    text-align: center;
+}
+
+.tab{
+    color: var(--tab);
+    margin-bottom: -2px;
+    padding-bottom: 10px;
+    cursor: pointer;
+}
+
+.tab:hover{
+    color: var(--tab-hover)
+}
+
+.activeTab{
+    color: var(--font-color);
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.activeTab:hover{
+    color: var(--black)
 }
 
 .loader {
@@ -440,9 +488,8 @@ h2 {
     h2 {
         font-size: 1.5rem;
     }
-    .login p {
+    .loginText{
         margin-left: 10px;
-        font-size: 1rem;
     }
     .input {
         width: 400px;
@@ -486,9 +533,8 @@ h2 {
     h2 {
         font-size: 1.2rem;
     }
-    .login p {
+    .loginText{
         margin-left: 10px;
-        font-size: 1rem;
     }
     .input {
         width: 350px;
@@ -511,6 +557,9 @@ h2 {
         width: 200px;
         float: left;
         margin-left: 5px;
+    }
+    .tab{
+        margin-right: 10px;
     }
 }
 
@@ -544,8 +593,11 @@ h2 {
     h2 {
         font-size: 1rem;
     }
-    .login p {
+    .loginText{
         margin-left: 6px;
+        font-size: 0.8rem;
+    }
+    .tabs p{
         font-size: 0.8rem;
     }
     .input {
