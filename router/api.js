@@ -628,15 +628,15 @@ router.get('/api/v1/get/meetings', limitApi, async(req, res) => {
             try {
                 let meeting;
                 if (req.query.id != undefined) {
-                    meeting = await Meeting.find({ _id: req.query.id }).populate('class school', 'name')
+                    meeting = await Meeting.find({ _id: req.query.id }).populate('class school', 'name').sort({date: 'asc'})
                 } else if (req.query.klasse != undefined) {
-                    meeting = await Meeting.find({ class: req.query.class }).populate('class school', 'name')
+                    meeting = await Meeting.find({ class: req.query.class }).populate('class school', 'name').sort({date: 'asc'})
                 } else if (req.query.subject != undefined) {
-                    meeting = await Meeting.find({ subject: req.query.subject }).populate('class school', 'name')
+                    meeting = await Meeting.find({ subject: req.query.subject }).populate('class school', 'name').sort({date: 'asc'})
                 } else if (req.query.date != undefined) {
-                    meeting = await Meeting.find({ date: req.query.date }).populate('class school', 'name')
+                    meeting = await Meeting.find({ date: req.query.date }).populate('class school', 'name').sort({date: 'asc'})
                 } else {
-                    meeting = await Meeting.find().populate('class school', 'name')
+                    meeting = await Meeting.find().populate('class school', 'name').sort({date: 'asc'})
                 }
                 let data = []
                 for (i in meeting) {
@@ -651,7 +651,7 @@ router.get('/api/v1/get/meetings', limitApi, async(req, res) => {
                     })
                 }
                 console.log("Sending meetings")
-                console.log(data)
+                //console.log(data)
                 res.json({
                     status: 200,
                     response: 'success',
