@@ -754,8 +754,8 @@ router.get('/api/get/meetings', softLimit, middleware.auth(), async(req, res) =>
             date.setHours(0, 0, 0, 0)
             let endDate = new Date(date)
             endDate.setHours(23, 59, 59, 59)
-            meetings = await Meeting.find({ class: { $in: req.session.classes }, date: {"$lt": endDate, "$gte": date } })
-            console.log(meetings)
+            meetings = await Meeting.find({ class: { $in: req.session.classes }, date: {"$lt": endDate, "$gte": date } }).sort({date: 'asc'})
+            //console.log(meetings)
             var data = [];
             for(i in meetings){
                 data.push({
@@ -776,8 +776,8 @@ router.get('/api/get/meetings', softLimit, middleware.auth(), async(req, res) =>
             let endDate = new Date(date)        
             endDate.setTime( endDate.getTime() + 5 * 86400000 )
             endDate.setHours(23, 59, 59, 59)
-            meetings = await Meeting.find({ class: { $in: req.session.classes }, date: {"$lt": endDate, "$gte": date } })
-            console.log(meetings)
+            meetings = await Meeting.find({ class: { $in: req.session.classes }, date: {"$lt": endDate, "$gte": date } }).sort({date: 'asc'})
+            //console.log(meetings)
             /* Returns 2d Array that contains an array of meetings for each day of the week starting with sunday */
             var data = [[],[],[],[],[]]
             for(i in meetings){
