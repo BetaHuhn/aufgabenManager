@@ -39,9 +39,11 @@ async function checkStatus() {
         if(json.data.status.indicator == "none"){
            // console.log("no status reports")
         }else{
-            div.innerHTML = '<a class="status-page-link status-page-indicator-' + indicator[description[json.data.status.description]] + '" href="https://' + json.data.page.id + '.statuspage.io/" target="_blank" title="' + description[json.data.status.description] + '">' + description[json.data.status.description] + '</a>';
+            div.innerHTML = '<a id="statusInfoBanner" onclick="showStatusInfo(this);" onmouseenter="showStatusInfo(this);" class="status-page-link status-page-indicator-' + indicator[description[json.data.status.description]] + '">' + description[json.data.status.description] + "...mehr" + '</a>';
             var updates = ""
             var div2 = document.createElement('div')
+            div2.id = "statusInfoDiv"
+            div2.onmouseleave = function (){ hideStatusInfo(this); }
             div2.className = 'status-page-text status-page-indicator-' + indicator[description[json.data.status.description]]
             div.appendChild(div2)
             if(json.data.scheduled_maintenances.length >= 1){
@@ -50,23 +52,23 @@ async function checkStatus() {
                     updates += body
                 }
                 var name = json.data.scheduled_maintenances[0].name;
-                div2.innerHTML = `<p>Meldung: ${name}</p><p>Updates:</p>` + updates
+                div2.innerHTML = `<span class="close" id="close">&times;</span><p>Meldung: ${name}</p><p>Updates:</p>` + updates
             }else if(json.data.incidents.length >= 1){
                 for(i in json.data.incidents[0].incident_updates){
                     var body = "<p>vor " + dateDifference((new Date(json.data.incidents[0].incident_updates[i].updated_at)), new Date()) + " - " + json.data.incidents[0].incident_updates[i].body + " [" + status[json.data.incidents[0].incident_updates[i].status] + "]" + "</p>"
                     updates += body
                 }
                 var name = json.data.incidents[0].name;
-                div2.innerHTML = `<p>Meldung: ${name}</p><p>Updates:</p>` + updates
+                div2.innerHTML = `<span class="close" id="close">&times;</span><p>Meldung: ${name}</p><p>Updates:</p>` + updates
             }else if(json.data.components.filter(function(e) { return e.status != 'operational'; }).length > 0){
                 if(json.data.components[i].name == 'DigitalOcean FRA1'){
                     var name = json.data.components[i].status;
-                    div2.innerHTML = "<p>vor " + dateDifference((new Date(json.data.components[i].updated_at)), new Date()) + " - " + ` ${name}, unser hosing provider hat zurzeit probleme. Dadurch kann es auch bei uns zu Fehlern kommen.</p>`
+                    div2.innerHTML = '<span class="close" id="close">&times;</span>' + "<p>vor " + dateDifference((new Date(json.data.components[i].updated_at)), new Date()) + " - " + ` ${name}, unser hosing provider hat zurzeit probleme. Dadurch kann es auch bei uns zu Fehlern kommen.</p>`
                 }else{
-                    div2.innerHTML = `<p>Derzeit keine weiteren Informationen verfügbar</p>`
+                    div2.innerHTML = `<span class="close" id="close">&times;</span><p>Derzeit keine weiteren Informationen verfügbar</p>`
                 }
             }else{
-                div2.innerHTML = `<p>Derzeit keine weiteren Informationen verfügbar</p>`
+                div2.innerHTML = `<span class="close" id="close">&times;</span><p>Derzeit keine weiteren Informationen verfügbar</p>`
             }
         }
         
@@ -89,5 +91,16 @@ function dateDifference(a, b){
         return secondsDiff + ' sec'
        }
 }
+
+function showStatusInfo(e){
+    document.getElementById('statusInfoDiv').style.display = "block";
+    document.getElementById('statusInfoBanner').style.display = "none";
+}
+
+function hideStatusInfo(e){
+    document.getElementById('statusInfoDiv').style.display = "none";
+    document.getElementById('statusInfoBanner').style.display = "block";
+}
+
 
 checkStatus()

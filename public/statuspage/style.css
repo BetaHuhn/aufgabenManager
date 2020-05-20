@@ -32,6 +32,8 @@
     font-size: 13px !important;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     max-width: 500px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 .status-page-text p {
@@ -39,9 +41,9 @@
     font-size: 13px;
 }
 
-.status-page-container:hover .status-page-text{
+/* .status-page-container:hover .status-page-text{
     display: block;
-}
+} */
 
 .status-page-indicator-none {
     background-color: #2fcc66;
@@ -61,4 +63,18 @@
 
 .status-page-indicator-critical {
     background-color: #da4131;
+}
+
+.close {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: rgb(70, 70, 70);
+    text-decoration: none;
+    cursor: pointer;
 }
