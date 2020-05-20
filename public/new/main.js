@@ -55,17 +55,19 @@ async function authenticate() {
             newEl2.placeholder = "klasse";
             newEl2.className = 'klasse'
             el2.parentNode.replaceChild(newEl2, el2);
-            //el2.parentNode.replaceChild(newEl, el2);
         } else {
             if (json.data.classes.length >= 1) {
                 for (i in json.data.classes) {
                     var sel = document.getElementById('klasse');
-                    var sel2 = document.getElementById('klasseMeeting');
                     var opt = document.createElement('option');
                     opt.appendChild(document.createTextNode(json.data.classes[i]));
                     opt.value = json.data.classes[i];
                     sel.appendChild(opt);
-                    sel2.appendChild(opt);
+                    var sel2 = document.getElementById('klasseMeeting');
+                    var opt2 = document.createElement('option');
+                    opt2.appendChild(document.createTextNode(json.data.classes[i]));
+                    opt2.value = json.data.classes[i];
+                    sel2.appendChild(opt2);
                 }
             } else {
                 alert("Fehler: Du bist nicht Mitglied einer Klasse. Bitte melde dich erneut an")
