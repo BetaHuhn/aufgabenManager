@@ -319,7 +319,7 @@ router.get('/api/v1/get/invites', limitApi, async(req, res) => {
             try {
                 let invite;
                 if (req.query.id != undefined) {
-                   invite = await Invite.find({ _id: req.query.id })
+                    invite = await Invite.find({ _id: req.query.id })
                 } else if (req.query.token != undefined) {
                     invite = await Invite.find({ token: req.query.token })
                 } else if (req.query.klasse != undefined) {
@@ -628,15 +628,15 @@ router.get('/api/v1/get/meetings', limitApi, async(req, res) => {
             try {
                 let meeting;
                 if (req.query.id != undefined) {
-                    meeting = await Meeting.find({ _id: req.query.id }).populate('class school', 'name').sort({date: 'asc'})
+                    meeting = await Meeting.find({ _id: req.query.id }).populate('class school', 'name').sort({ date: 'asc' })
                 } else if (req.query.klasse != undefined) {
-                    meeting = await Meeting.find({ class: req.query.class }).populate('class school', 'name').sort({date: 'asc'})
+                    meeting = await Meeting.find({ class: req.query.class }).populate('class school', 'name').sort({ date: 'asc' })
                 } else if (req.query.subject != undefined) {
-                    meeting = await Meeting.find({ subject: req.query.subject }).populate('class school', 'name').sort({date: 'asc'})
+                    meeting = await Meeting.find({ subject: req.query.subject }).populate('class school', 'name').sort({ date: 'asc' })
                 } else if (req.query.date != undefined) {
-                    meeting = await Meeting.find({ date: req.query.date }).populate('class school', 'name').sort({date: 'asc'})
+                    meeting = await Meeting.find({ date: req.query.date }).populate('class school', 'name').sort({ date: 'asc' })
                 } else {
-                    meeting = await Meeting.find().populate('class school', 'name').sort({date: 'asc'})
+                    meeting = await Meeting.find().populate('class school', 'name').sort({ date: 'asc' })
                 }
                 let data = []
                 for (i in meeting) {
@@ -651,7 +651,7 @@ router.get('/api/v1/get/meetings', limitApi, async(req, res) => {
                     })
                 }
                 console.log("Sending meetings")
-                //console.log(data)
+                    //console.log(data)
                 res.json({
                     status: 200,
                     response: 'success',
@@ -832,18 +832,18 @@ router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), 
     const id = req.query.id;
     console.log("Generating PDF for Exercise: " + req.query.id)
     const exercise = await Exercise.findOne({ _id: id }).populate({
-            path: 'class',
-            select: 'name users',
+        path: 'class',
+        select: 'name users',
+        populate: {
+            path: 'users',
+            select: 'name role solutions',
             populate: {
-                path: 'users',
-                select: 'name role solutions',
-                populate: {
-                    path: 'solutions',
-                    select: 'file createdAt',
-                    match: { exercise: id }
-                }
+                path: 'solutions',
+                select: 'file createdAt',
+                match: { exercise: id }
             }
-        })
+        }
+    })
     let students = []
     for (i in exercise.class.users) {
         if (exercise.class.users[i].role == "user") {
@@ -885,12 +885,15 @@ router.get("/api/v1/generate/pdf", limitApi, middleware.auth({ lehrer: true }), 
                     "height": "20mm",
                 },
             };
-            pdf.create(data, options).toFile("report.pdf", function(err, data) {
+            pdf.create(data, options).toStream(function(err, stream) {
                 if (err) {
+                    console.log(err)
                     res.send(err);
                 } else {
-                    //res.send("File created successfully");
-                    res.download(path.join(__dirname, '../report.pdf'), exercise.subject + exercise.class.name + ".pdf");
+                    res.setHeader("content-type", "application/pdf");
+                    res.setHeader("Content-Disposition", `attachment; filename=${exercise.subject}-${exercise.class.name}.pdf`)
+                    stream.pipe(res);
+                    //res.download(path.join(__dirname, '../report.pdf'), exercise.subject + exercise.class.name + ".pdf");
                 }
             });
         }
