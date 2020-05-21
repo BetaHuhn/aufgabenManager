@@ -384,22 +384,22 @@ router.get('/api/v1/download/:code', limitApi, middleware.auth(), async(req, res
             const aufgabe = await Exercise.findOne({ _id: code })
             if (!aufgabe) {
                 console.log("File not found")
-                return res.sendStatus(404);
+                return res.render('error.ejs', { code: 404, short: "Datei nicht gefunden", message: "Diese Aufgabe existiert nicht (mehr)", redirectLink: "/dashboard", redirectText: "Zum Dashboard" })
             }
             const count = await Exercise.increaseDownloads(aufgabe._id, req.session)
             console.log("Sending file: " + aufgabe.files.fileName + '.' + aufgabe.files.type + " - downloaded " + count + " times so far")
             res.download(path.join(__dirname, '../files/', aufgabe._id + '.' + aufgabe.files.type), aufgabe.files.fileName + '.' + aufgabe.files.type);
         } else {
             console.log("not a valid ObjectID: " + code)
-            res.sendStatus(404);
+            res.render('error.ejs', { code: 404, short: "Datei nicht gefunden", message: "Diese Aufgabe existiert nicht (mehr)", redirectLink: "/dashboard", redirectText: "Zum Dashboard" })
         }
     } catch (error) {
         if (error.code == 405) {
             console.log("File not found")
-            res.sendStatus(404);
+            res.render('error.ejs', { code: 404, short: "Datei nicht gefunden", message: "Diese Aufgabe existiert nicht (mehr)", redirectLink: "/dashboard", redirectText: "Zum Dashboard" })
         } else {
             console.log(error)
-            res.sendStatus(404);
+            res.render('error.ejs', { code: 404, short: "Datei nicht gefunden", message: "Diese Aufgabe existiert nicht (mehr)", redirectLink: "/dashboard", redirectText: "Zum Dashboard" })
         }
     }
 });
@@ -410,7 +410,7 @@ router.get('/api/v1/solution/download', limitApi, middleware.auth(), async(req, 
         const solution = await Solution.findOne({ _id: req.query.id }).populate('user', 'name')
         if (!solution) {
             console.log("Fehler: Solution existiert nicht")
-            return res.sendStatus(404);
+            return res.render('error.ejs', { code: 404, short: "Datei nicht gefunden", message: "Diese Datei existiert nicht (mehr)", redirectLink: "/dashboard", redirectText: "Zum Dashboard" })
         }
         if (solution.access.includes(req.session._id) || req.session.role == "admin") {
             console.log("Sending file: " + solution._id)
@@ -421,15 +421,15 @@ router.get('/api/v1/solution/download', limitApi, middleware.auth(), async(req, 
             }
         } else {
             console.log("Fehler: " + req.session.name + " nicht der Inhaber von: " + solution._id)
-            return res.sendStatus(404);
+            return res.render('error.ejs', { code: 403, short: "Nicht Autorisiert", message: "Du hast besitzt nicht die erforderlichen Rechte um diese Datei herunterzuladen", redirectLink: "/dashboard", redirectText: "Zum Dashboard" })
         }
     } catch (error) {
         if (error.code == 405) {
             console.log("Fehler: Datei existiert nicht")
-            res.sendStatus(404);
+            res.render('error.ejs', { code: 404, short: "Datei nicht gefunden", message: "Diese Datei existiert nicht (mehr)", redirectLink: "/dashboard", redirectText: "Zum Dashboard" })
         } else {
             console.log(error)
-            res.sendStatus(404);
+            res.render('error.ejs', { code: 400, short: "Fehler", message: "Es ist ein Fehler aufgetreten, bitte versuche es erneut", redirectLink: "/dashboard", redirectText: "Zum Dashboard" })
         }
     }
 });
