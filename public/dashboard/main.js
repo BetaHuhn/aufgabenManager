@@ -47,7 +47,7 @@ let role;
 let user_id;
 
 async function authenticate() {
-    try{
+    try {
         const options = {
             method: 'GET',
             headers: {
@@ -60,13 +60,13 @@ async function authenticate() {
             user_id = json.data._id;
             role = json.data.role
             currentDay = new Date(json.data.isoDateTime)
-            if(Number.isNaN(currentDay.getMonth())) {
+            if (Number.isNaN(currentDay.getMonth())) {
                 let arr = json.data.isoDateTime.split(/[- :]/);
-                currentDay = new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]);
+                currentDay = new Date(arr[0], arr[1] - 1, arr[2], arr[3], arr[4], arr[5]);
             }
-            if(currentDay.getDay() == 0){
+            if (currentDay.getDay() == 0) {
                 currentDay.setDate(currentDay.getDate() + 1);
-            }else if(currentDay.getDay() == 6){
+            } else if (currentDay.getDay() == 6) {
                 currentDay.setDate(currentDay.getDate() + 2);
             }
             if (role == 'user') {
@@ -90,14 +90,14 @@ async function authenticate() {
             document.getElementById('loader').style.display = "none";
             window.location.replace('/login?ref=' + window.location.pathname + window.location.search)
         }
-    }catch(err){
+    } catch (err) {
         alert(err)
     }
 }
 
 async function getAufgaben() {
     let last = document.getElementById('legend')
-    if(aufgaben.length < 1){
+    if (aufgaben.length < 1) {
         const options = {
             method: 'GET',
             headers: {
@@ -125,7 +125,7 @@ async function getAufgaben() {
         }
     }
     let par = document.getElementById("aufgaben");
-    while(par.children.length > 1){
+    while (par.children.length > 1) {
         par.removeChild(par.lastChild)
     }
     if (aufgaben.length >= 1) {
@@ -180,7 +180,7 @@ function createRow(id, fach, klasse, abgabe, text, downloads, file, aufgabeUserI
     var downloads = createElement('span', 'child downloads', id, downloads + " Downloads")
         //downloads.onclick = function(e) { e.stopPropagation(); }
         //downloads.style.cursor = "text";
-        exercise.parentElement.appendChild(downloads)
+    exercise.parentElement.appendChild(downloads)
 
     var files = createElement('div', 'child stack', id)
         //files.onclick = function(e) { e.stopPropagation(); }
@@ -294,18 +294,18 @@ function download(e) {
     }
 }
 
-function loadTab(){
+function loadTab() {
     let url = new URL(window.location.href);
     let tab = url.searchParams.get("tab");
-    if(tab != undefined && tab != activeTab){
+    if (tab != undefined && tab != activeTab) {
         switchTab();
-    }else{
+    } else {
         getAufgaben();
     }
 }
 
-function switchTab(){
-    if(activeTab == "aufgaben"){
+function switchTab() {
+    if (activeTab == "aufgaben") {
         document.getElementById('aufgabenTab').classList.remove("activeTab");
         document.getElementById('meetingsTab').classList.add("activeTab");
         document.getElementById('aufgaben').style.display = "none";
@@ -313,8 +313,19 @@ function switchTab(){
         document.getElementById('tabs').classList.add("withBtn");
         document.getElementById('filterBtn').style.display = "block";
         activeTab = "meetings";
-        getMeetings();
-    }else{
+        let url = new URL(window.location.href);
+        let search_params = url.searchParams;
+        let view = url.searchParams.get("view");
+        search_params.set('tab', activeTab);
+        if (view != undefined && view != activeDisplay) {
+            switchMeetingDisplay();
+        } else {
+            search_params.set('view', activeDisplay);
+            getMeetings();
+        }
+        url.search = search_params.toString();
+        window.history.replaceState(null, null, url)
+    } else {
         document.getElementById('aufgabenTab').classList.add("activeTab");
         document.getElementById('meetingsTab').classList.remove("activeTab");
         document.getElementById('aufgaben').style.display = "block";
@@ -322,23 +333,23 @@ function switchTab(){
         document.getElementById('tabs').classList.remove("withBtn");
         document.getElementById('filterBtn').style.display = "none";
         activeTab = "aufgaben";
+        let url = new URL(window.location.href);
+        let search_params = url.searchParams;
+        search_params.set('tab', activeTab);
+        url.search = search_params.toString().split('&view=')[0];
+        window.history.replaceState(null, null, url)
         getAufgaben();
     }
-    let url = new URL(window.location.href);
-    let search_params = url.searchParams;
-    search_params.set('tab', activeTab);
-    url.search = search_params.toString();
-    window.history.replaceState(null, null, url)
 }
 
-function switchMeetingDisplay(){
-    if(activeDisplay == "tag"){
+function switchMeetingDisplay() {
+    if (activeDisplay == "tag") {
         document.getElementById('filterBtn').innerHTML = '<i class="btnIcon fa fa-calendar-day"></i>Tag';
         document.getElementById('meetingsListWeek').style.display = "block";
         document.getElementById('meetingsListDay').style.display = "none";
         activeDisplay = "woche";
         getMeetings();
-    }else{
+    } else {
         document.getElementById('filterBtn').innerHTML = '<i class="btnIcon fa fa-calendar-week"></i>Woche';
         document.getElementById('meetingsListWeek').style.display = "none";
         document.getElementById('meetingsListDay').style.display = "block";
@@ -346,31 +357,36 @@ function switchMeetingDisplay(){
         currentDay = new Date()
         getMeetings();
     }
+    let url = new URL(window.location.href);
+    let search_params = url.searchParams;
+    search_params.set('view', activeDisplay);
+    url.search = search_params.toString();
+    window.history.replaceState(null, null, url)
 }
 
 window.addEventListener('keydown', function(e) {
     if (e.keyCode == 37) {
         e.preventDefault()
         previous();
-    }else if (e.keyCode == 39) {
+    } else if (e.keyCode == 39) {
         e.preventDefault()
         next();
-    }else if (e.keyCode == 32) {
+    } else if (e.keyCode == 32) {
         e.preventDefault()
         switchMeetingDisplay();
     }
 });
 
-async function getMeetings(){
-    if(activeDisplay == "tag"){
+async function getMeetings() {
+    if (activeDisplay == "tag") {
         let list = document.getElementById('meetingsListDay');
         list.innerHTML = "";
         let loadingDiv = document.createElement("div");
         loadingDiv.id = "loadingMeeting";
         loadingDiv.className = "meetingDay loadingMeetingDay";
         list.appendChild(loadingDiv)
-        if(meetings[isoToDate(currentDay)] == undefined){
-            try{
+        if (meetings[isoToDate(currentDay)] == undefined) {
+            try {
                 const options = {
                     method: 'GET',
                     headers: {
@@ -381,31 +397,31 @@ async function getMeetings(){
                 const json = await response.json();
                 if (json.status == 200) {
                     meetings[isoToDate(currentDay)] = json.data;
-                }else{
+                } else {
                     let message = document.getElementById('error');
                     message.style.display = "block";
                     message.innerHTML = "Es ist ein Fehler aufgetreten"
                 }
-            }catch(err){
+            } catch (err) {
                 alert(err)
             }
-            
+
         }
 
         document.getElementById('dashboard').style.display = "block";
         document.getElementById('loader').style.display = "none";
         let parent = document.getElementById('meetingsListDay');
-        let currentMeetings =  meetings[isoToDate(currentDay)];
-        setTimeout( function(){
+        let currentMeetings = meetings[isoToDate(currentDay)];
+        setTimeout(function() {
             document.getElementById('loadingMeeting').style.display = "none"
-            if(currentMeetings.length < 1){
+            if (currentMeetings.length < 1) {
                 document.getElementById('meetingsListDay').innerHTML = "";
                 let p = document.createElement('p');
                 p.style.textAlign = "center"
                 p.innerHTML = "Keine Meetings"
                 parent.appendChild(p)
-            }else{
-                for(i in currentMeetings){
+            } else {
+                for (i in currentMeetings) {
                     let div = document.createElement('div');
                     let dateObj = new Date(currentMeetings[i].date);
                     let hour = ('0' + dateObj.getHours()).slice(-2);
@@ -421,18 +437,18 @@ async function getMeetings(){
                 }
             }
         }, 200);
-        
+
         document.getElementById('currentDate').innerHTML = tage[currentDay.getDay()] + ", " + isoToDate(currentDay);
-    }else{
+    } else {
         var parent = document.getElementById('thead').parentElement;
         let table = document.getElementById('meetingTable');
         while (table.children.length > 1) {
             table.removeChild(table.lastChild);
         }
-        for(var i = 0; i < 3; i++){
+        for (var i = 0; i < 3; i++) {
             let tr = document.createElement("tr");
             tr.className = "loadingMeetings"
-            for(var a = 0; a < 5; a++){
+            for (var a = 0; a < 5; a++) {
                 let td = document.createElement("td");
                 td.className = "meetingWeek";
                 //td.style.height = "63px"
@@ -442,9 +458,9 @@ async function getMeetings(){
         }
         let date = currentDay;
         let day = date.getDay();
-        let diff = date.getDate() - day + (day == 0 ? -6:1);
+        let diff = date.getDate() - day + (day == 0 ? -6 : 1);
         let week = new Date(date.setDate(diff));
-        if(meetingsWeek[isoToDate(week)] == undefined){
+        if (meetingsWeek[isoToDate(week)] == undefined) {
             const options = {
                 method: 'GET',
                 headers: {
@@ -455,7 +471,7 @@ async function getMeetings(){
             const json = await response.json();
             if (json.status == 200) {
                 meetingsWeek[isoToDate(week)] = json.data;
-            }else{
+            } else {
                 let message = document.getElementById('error');
                 message.style.display = "block";
                 message.innerHTML = "Es ist ein Fehler aufgetreten"
@@ -464,47 +480,47 @@ async function getMeetings(){
         document.getElementById('dashboard').style.display = "block";
         document.getElementById('loader').style.display = "none";
 
-        let currentMeetings =  meetingsWeek[isoToDate(week)];
+        let currentMeetings = meetingsWeek[isoToDate(week)];
         let maxLen = 0;
-        for(i in currentMeetings){
-            if(currentMeetings[i].length > maxLen){
+        for (i in currentMeetings) {
+            if (currentMeetings[i].length > maxLen) {
                 maxLen = currentMeetings[i].length;
             }
         }
         table = document.getElementById('meetingTable');
-        if(maxLen < 1){
-            for(var i = 0; i < 4; i++){
-                if(i >= 1){
-                    for(a in parent.children[i].children){
-                       parent.children[i].children[a].className = "meetingWeek noMeeting"
+        if (maxLen < 1) {
+            for (var i = 0; i < 4; i++) {
+                if (i >= 1) {
+                    for (a in parent.children[i].children) {
+                        parent.children[i].children[a].className = "meetingWeek noMeeting"
                     }
                 }
             }
-            setTimeout( function(){
-                for(var i = 0; i < 4; i++){
+            setTimeout(function() {
+                for (var i = 0; i < 4; i++) {
                     parent.children[i].classList.remove("loadingMeetings")
                 }
             }, 300);
-        }else{
-            setTimeout(function(){
-                while(maxLen < 3){
+        } else {
+            setTimeout(function() {
+                while (maxLen < 3) {
                     maxLen += 1;
                 }
-                while(maxLen < parent.children[i] - 1){
+                while (maxLen < parent.children[i] - 1) {
                     parent.removeChild(parent.children[i])
                 }
-                for(var i = 0; i < maxLen; i++){
-                    if(parent.children[i + 1] == undefined){
+                for (var i = 0; i < maxLen; i++) {
+                    if (parent.children[i + 1] == undefined) {
                         let tr = document.createElement("tr");
-                        for(elem in currentMeetings){
+                        for (elem in currentMeetings) {
                             let td = document.createElement("td")
-                            if(currentMeetings[elem][i] != undefined){
+                            if (currentMeetings[elem][i] != undefined) {
                                 let date = new Date(currentMeetings[elem][i].date)
                                 let hour = ('0' + date.getHours()).slice(-2);
                                 let minute = ('0' + date.getMinutes()).slice(-2);
-                                if(date > new Date()){
+                                if (date > new Date()) {
                                     td.className = "meetingWeek futureMeeting";
-                                }else{
+                                } else {
                                     td.className = "meetingWeek";
                                 }
                                 td.id = currentMeetings[elem][i]._id
@@ -516,23 +532,23 @@ async function getMeetings(){
                                 td.setAttribute("data-date", currentMeetings[elem][i].date);
                                 td.setAttribute("data-id", currentMeetings[elem][i]._id);
                                 td.title = "Klicke um das Meeting zu deinem Kalender hinzuzufügen"
-                                td.onclick = function(){ createTermin(this); }
-                            }else{
+                                td.onclick = function() { createTermin(this); }
+                            } else {
                                 td.className = "meetingWeek noMeeting";
                             }
                             tr.appendChild(td);
                         }
                         parent.appendChild(tr)
-                    }else{
-                        for(elem in currentMeetings){
+                    } else {
+                        for (elem in currentMeetings) {
                             let td = parent.children[i + 1].children[elem];
-                            if(currentMeetings[elem][i] != undefined){
+                            if (currentMeetings[elem][i] != undefined) {
                                 let date = new Date(currentMeetings[elem][i].date)
                                 let hour = ('0' + date.getHours()).slice(-2);
                                 let minute = ('0' + date.getMinutes()).slice(-2);
-                                if(date > new Date()){
+                                if (date > new Date()) {
                                     td.className = "meetingWeek futureMeeting";
-                                }else{
+                                } else {
                                     td.className = "meetingWeek";
                                 }
                                 td.id = currentMeetings[elem][i]._id
@@ -543,29 +559,29 @@ async function getMeetings(){
                                 td.setAttribute("data-subject", currentMeetings[elem][i].subject);
                                 td.setAttribute("data-date", currentMeetings[elem][i].date);
                                 td.setAttribute("data-id", currentMeetings[elem][i]._id);
-                                td.onclick = function(){ createTermin(this); }
+                                td.onclick = function() { createTermin(this); }
                                 td.title = "Klicke um das Meeting zu deinem Kalender hinzuzufügen"
-                            }else{
+                            } else {
                                 td.className = "meetingWeek noMeeting";
                             }
-                        
+
                         }
                     }
                 }
             }, 300);
-            setTimeout( function(){
-                for(var i = 0; i < 4; i++){
+            setTimeout(function() {
+                for (var i = 0; i < 4; i++) {
                     parent.children[i].classList.remove("loadingMeetings")
                 }
             }, 300);
         }
-        let endDate = new Date(week);    
-        endDate.setTime( endDate.getTime() + 7 * 86400000 )
-        document.getElementById('currentDate').innerHTML =  isoToDate(week) + " - " + isoToDate(endDate);
+        let endDate = new Date(week);
+        endDate.setTime(endDate.getTime() + 7 * 86400000)
+        document.getElementById('currentDate').innerHTML = isoToDate(week) + " - " + isoToDate(endDate);
     }
 }
 
-function createTermin(e){
+function createTermin(e) {
     let id = e.getAttribute('data-id');
     var date = new Date(e.getAttribute('data-date'));
     let hour = ('0' + date.getHours()).slice(-2);
@@ -577,10 +593,10 @@ function createTermin(e){
             id: id + "meeting"
         },
         data: {
-          title: subject + " Teams Meeting",
-          start: date,
-          duration: 45, //minutes
-          description: subject + " Teams Meeting am " + isoToDate(date) + " um " + hour + ":" + minute + " Uhr"
+            title: subject + " Teams Meeting",
+            start: date,
+            duration: 45, //minutes
+            description: subject + " Teams Meeting am " + isoToDate(date) + " um " + hour + ":" + minute + " Uhr"
         }
     });
     let modal = document.getElementById("modal");
@@ -607,37 +623,37 @@ function createTermin(e){
     }
 }
 
-function next(){
-    if(activeDisplay == "tag"){
-        if(currentDay.getDay() + 1 == 0){
+function next() {
+    if (activeDisplay == "tag") {
+        if (currentDay.getDay() + 1 == 0) {
             currentDay.setDate(currentDay.getDate() + 2);
-        }else if(currentDay.getDay() + 1 == 6){
+        } else if (currentDay.getDay() + 1 == 6) {
             currentDay.setDate(currentDay.getDate() + 3);
-        }else{
+        } else {
             currentDay.setDate(currentDay.getDate() + 1);
         }
-    }else{
+    } else {
         currentDay.setDate(currentDay.getDate() + 7);
     }
     getMeetings();
 }
 
-function previous(){
-    if(activeDisplay == "tag"){
-        if(currentDay.getDay() - 1 == 0){
+function previous() {
+    if (activeDisplay == "tag") {
+        if (currentDay.getDay() - 1 == 0) {
             currentDay.setDate(currentDay.getDate() - 3);
-        }else if(currentDay.getDay() - 1 == 6){
+        } else if (currentDay.getDay() - 1 == 6) {
             currentDay.setDate(currentDay.getDate() - 2);
-        }else{
+        } else {
             currentDay.setDate(currentDay.getDate() - 1);
         }
-    }else{
+    } else {
         currentDay.setDate(currentDay.getDate() - 7);
     }
     getMeetings();
 }
 
-function isoToDate(d){
+function isoToDate(d) {
     let day = ('0' + d.getDate()).slice(-2);
     let month = ('0' + (d.getMonth() + 1)).slice(-2);
     let year = d.getFullYear();
@@ -648,4 +664,3 @@ setInterval(function() {
     var dot = document.getElementById("dot")
     dot.className = (dot.className == 'green') ? 'blink' : 'green';
 }, 1000);
-
