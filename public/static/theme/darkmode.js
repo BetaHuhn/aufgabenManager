@@ -5,24 +5,6 @@ if(toggleSwitch != undefined){
 }
 
 /* Dark Mode switch logic */
-
-//Gets a cookie by key
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return undefined;
-}
-
 function swichToLight(){
     let pictures = ['AufgabenView', 'Aufgabe', 'AufgabeLehrer', 'AufgabenMobile', 'AufgabeLehrerMobile']
     for(i in pictures){
@@ -32,7 +14,7 @@ function swichToLight(){
     document.documentElement.setAttribute('data-theme', 'light');
     toggleSwitch.checked = false;
     document.getElementById('checkboxIcon').className = "fas fa-adjust light"
-    document.cookie = "darkmode=false;path=/;domain=zgk.mxis.ch";
+    localStorage.setItem('darkmode', 'false');
 }
 
 function swichToDark(){
@@ -44,10 +26,10 @@ function swichToDark(){
     document.documentElement.setAttribute('data-theme', 'dark');
     toggleSwitch.checked = true;
     document.getElementById('checkboxIcon').className = "fas fa-adjust dark"
-    document.cookie = "darkmode=true;path=/;domain=zgk.mxis.ch";
+    localStorage.setItem('darkmode', 'true');
 }
 
-//Switch theme when slider changes
+/* Switch theme when slider changes */
 function switchThemeSlider() {
     if (toggleSwitch.checked) {
         swichToDark()
@@ -56,8 +38,8 @@ function switchThemeSlider() {
     }
 }
 
-//Switch between light and dark theme
-function switchTheme() {
+/* Switch when prefers-color-scheme changes */
+function switchThemePrefers() {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         swichToDark()
     } else {
@@ -65,18 +47,20 @@ function switchTheme() {
     }
 }
 
-//Runs in the beginning. Checks if System Dark mode is on or if preference set in cookie
+/* Runs in the beginning. Checks if System Dark mode is on or if preference set in local storage */
 function detectDarkMode() {
-    if (getCookie('darkmode') == 'false') {
+    const storageValue = localStorage.getItem('darkmode');
+    if (storageValue == 'false') {
         swichToLight()
-    } else if (getCookie('darkmode') == 'true') {
+    } else if (storageValue == 'true') {
         swichToDark()
     } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         swichToDark()
     } else {
         swichToLight()
     }
-    window.matchMedia("(prefers-color-scheme: dark)").addListener(e => e.matches && switchTheme())
-    window.matchMedia("(prefers-color-scheme: light)").addListener(e => e.matches && switchTheme())
+    /* Attach event listeners to prefers-color-scheme and toggle */
+    window.matchMedia("(prefers-color-scheme: dark)").addListener(e => e.matches && switchThemePrefers())
+    window.matchMedia("(prefers-color-scheme: light)").addListener(e => e.matches && switchThemePrefers())
     toggleSwitch.addEventListener('change', switchThemeSlider, false);
 }
