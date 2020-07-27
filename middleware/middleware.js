@@ -7,7 +7,7 @@ const { getClientIp } = require('request-ip')
 const routerCache = new cacheUtil.Cache();
 
 const sendResult = function(res, data, code) {
-    res.status(code).json({
+    res.json({
         status: code,
         time: new Date(),
         data: data,
